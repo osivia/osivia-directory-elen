@@ -1,0 +1,3 @@
+<jboss-web>
+<context-root>/osivia-services-directory</context-root>
+</jboss-web>
