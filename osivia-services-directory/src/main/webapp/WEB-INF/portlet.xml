@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
+version="1.0">
+
+	<portlet>
+		<description>Portlet Osivia services Directory</description>
+		<portlet-name>osivia-services-directoryPortlet</portlet-name>
+        <display-name>Osivia services Directory</display-name>
+
+        <portlet-class>org.osivia.services.directory.DirectoryPortlet</portlet-class>
+
+		<!--  Fichier de configuration Spring de l'application --> 
+        <!-- 
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+		<init-param>
+			<name>contextConfigLocation</name>
+			<value>/WEB-INF/applicationContext.xml</value>
+		</init-param>
+		 -->
+         
+		<supports>
+			<mime-type>text/html</mime-type>
+		</supports>
+		<portlet-info>
+			<title>Osivia services Directory</title>
+		</portlet-info>
+	</portlet>
+	
+	
+</portlet-app>
