@@ -9,7 +9,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osivia.portal.api.directory.IDirectoryService;
-import org.osivia.portal.api.directory.ProxyDirectoryBean;
+import org.osivia.portal.api.directory.DirectoryBean;
 import org.osivia.portal.api.directory.entity.DirectoryPerson;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.Link;
@@ -80,7 +80,7 @@ public class DirectoryService implements IDirectoryService, PortletContextAware,
         return person;
     }
 
-    public <T extends ProxyDirectoryBean> T getDirectoryBean(String name, Class<T> requiredType) {
+    public <T extends DirectoryBean> T getDirectoryBean(String name, Class<T> requiredType) {
 
         return appContext.getBean(name, requiredType);
 

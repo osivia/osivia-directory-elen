@@ -1,9 +1,14 @@
 package org.osivia.services.directory;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 
+import org.jboss.mx.server.MBeanInvoker;
+import org.jboss.mx.util.MBeanProxy;
+import org.jboss.mx.util.MBeanServerLocator;
 import org.osivia.portal.api.directory.IDirectoryService;
 import org.osivia.portal.api.directory.IDirectoryServiceLocator;
 import org.osivia.portal.api.locator.Locator;
@@ -33,6 +38,19 @@ public class DirectoryPortlet extends CMSPortlet {
         IDirectoryService iface = (IDirectoryService) directoryService;
         dirLocator.register(iface);
 
+
+        try {
+
+            MBeanServer mbeanServer = MBeanServerLocator.locateJBoss();
+
+            MBeanInvoker mbean = (MBeanInvoker) MBeanProxy.get(MBeanInvoker.class, new ObjectName("portal:deployer=Adapter"), mbeanServer);
+
+            mbean.invoke("stop", null, null);
+            mbean.invoke("start", null, null);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
