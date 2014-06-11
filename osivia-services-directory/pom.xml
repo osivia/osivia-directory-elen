@@ -96,6 +96,21 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>outils.ldap</groupId>
+            <artifactId>toutatice-annuaire-dao</artifactId>
+            <version>2.2.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>        
 <!-- 
 		<dependency>
 			<groupId>javax.portlet</groupId>
@@ -252,7 +267,12 @@
             <scope>provided</scope>
         </dependency>
 
-
+            <dependency>
+                <groupId>jboss</groupId>
+                <artifactId>jboss-jmx</artifactId>
+                <version>4.2.3.GA</version>
+                <scope>provided</scope>
+            </dependency>
 	</dependencies>
 
 
