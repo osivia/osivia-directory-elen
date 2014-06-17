@@ -1,17 +1,33 @@
+/*
+ * (C) Copyright 2014 OSIVIA (http://www.osivia.com)
+ * 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Lesser General Public License
+ * (LGPL) version 2.1 which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/lgpl-2.1.html
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ */
 package org.osivia.services.directory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osivia.portal.api.directory.IDirectoryService;
 import org.osivia.portal.api.directory.DirectoryBean;
+import org.osivia.portal.api.directory.IDirectoryService;
 import org.osivia.portal.api.directory.entity.DirectoryPerson;
 import org.osivia.portal.api.locator.Locator;
+import org.osivia.portal.api.login.IUserDatasModule;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.cms.CMSServiceCtx;
@@ -24,11 +40,9 @@ import org.springframework.web.portlet.context.PortletConfigAware;
 import org.springframework.web.portlet.context.PortletContextAware;
 
 import fr.toutatice.outils.ldap.entity.Person;
-import fr.toutatice.outils.ldap.entity.Profil;
-import fr.toutatice.outils.ldap.entity.Structure;
 
 
-public class DirectoryService implements IDirectoryService, PortletContextAware, PortletConfigAware {
+public class DirectoryService implements IDirectoryService, IUserDatasModule, PortletContextAware, PortletConfigAware {
 
     /** Logger. */
     protected static final Log logger = LogFactory.getLog(DirectoryService.class);
@@ -39,11 +53,6 @@ public class DirectoryService implements IDirectoryService, PortletContextAware,
     @Autowired
     private Person personne;
 
-    @Autowired
-    private Structure structure;
-
-    @Autowired
-    private Profil profil;
 
     ApplicationContext appContext;
 
@@ -94,4 +103,25 @@ public class DirectoryService implements IDirectoryService, PortletContextAware,
     public void setPortletConfig(PortletConfig portletConfig) {
         this.portletConfig = portletConfig;
     }
+
+    public void computeUserDatas(HttpServletRequest request, Map<String, Object> datas) {
+        String uid = request.getUserPrincipal().getName();
+        if (uid != null) {
+            Person userConnecte = personne.findUtilisateur(uid);
+            if (userConnecte != null) {
+                userConnecte.populateMap(datas);
+            }
+        }
+    }
+
+    public DirectoryPerson computeLoggedUser(HttpServletRequest request) {
+        DirectoryPerson person = null;
+        String uid = request.getUserPrincipal().getName();
+        if (uid != null) {
+            person = getPerson(uid);
+        }
+
+        return person;
+    }
+
 }

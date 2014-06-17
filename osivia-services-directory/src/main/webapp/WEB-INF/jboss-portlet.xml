@@ -5,17 +5,23 @@
 
 
 <portlet-app>
-	<portlet>
-		<portlet-name>osivia-services-directoryPortlet</portlet-name>
+    <portlet>
+        <portlet-name>osivia-services-directoryPortlet</portlet-name>
 
-		<transaction>
-			<trans-attribute>Required</trans-attribute>
-		</transaction>
-		<header-content>
+        <transaction>
+            <trans-attribute>Required</trans-attribute>
+        </transaction>
+        <header-content>
 
-		</header-content>
+        </header-content>
 
-	</portlet>
+    </portlet>
+
+    <service>
+        <service-name>UserDatasModulesRepository</service-name>
+        <service-class>org.osivia.portal.api.login.IUserDatasModuleRepository</service-class>
+        <service-ref>osivia:service=Interceptor,type=Server,name=ServerLogin</service-ref>
+    </service>
 
 </portlet-app>
 
