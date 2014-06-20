@@ -95,6 +95,13 @@ public class DirectoryService implements IDirectoryService, IUserDatasModule, Po
 
     }
 
+    /**
+     * @return the portletContext
+     */
+    public PortletContext getPortletContext() {
+        return portletContext;
+    }
+
     public void setPortletContext(PortletContext ctx) {
         this.portletContext = ctx;
         this.appContext = PortletApplicationContextUtils.getWebApplicationContext(portletContext);

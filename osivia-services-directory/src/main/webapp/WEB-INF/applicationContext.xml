@@ -1,91 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context 
                            http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/mvc
                            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-   
-
-<!-- 
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basenames">
-			<list>
-				<value>message_fr</value>
-				<value>message</value>
-			</list>
-		</property>
-	</bean>
- -->
-	<!-- Default View Resolver -->
-    <!-- 
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
 
 
-	
-     -->
-	<bean
-		class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+    <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 
-     
-    <bean id="directoryService"
+
+    <bean
+        id="directoryService"
         class="org.osivia.services.directory.DirectoryService">
     </bean>
-    
-    
-     <context:annotation-config />
-	<context:component-scan base-package="fr.toutatice.identite.portail.fichePersonne" />
 
 
-    <bean id="placeholderConfigMetier"
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>/WEB-INF/classes/toutatice_annuaire.properties
-                </value>
-            </list>
-        </property>
-    </bean>
-<!-- 
-	<bean id="placeholderConfigMetier"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>file:///${PORTAL_PROP_FILE}</value>
-			</list>
-		</property>
-	</bean>
-
-	<bean id="fichePersonneController"
-		class="fr.toutatice.identite.portail.fichePersonne.FichePersonneController">
-		<property name="deleteSurchageWhenUpdatePwd" value="${fichePersonne.deleteSurchageWhenUpdatePwd}" />
-		<property name="messages" ref="messageSource" />
-		<property name="contextPath" value="${portal.proxyName}"/>
-	</bean>
-
-	<bean id="habilitation"
-		class="fr.toutatice.identite.portail.fichePersonne.Habilitation"
-		scope="prototype">
-		<property name="roleAdministrateur" value="${fichePersonne.roleAdministrateur}" />
-		<property name="roleRazMdp" value="${fichePersonne.roleRazMdp}" />
-	</bean>
-	
-
-
-    <bean id="portletMultipartResolver" class="org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver">
-    	<property name="maxUploadSize" value="2000000"/>
-	</bean>
-    
-     -->
+    <context:annotation-config />
+    <context:component-scan base-package="fr.toutatice.identite.portail.fichePersonne" />
 
 </beans>
