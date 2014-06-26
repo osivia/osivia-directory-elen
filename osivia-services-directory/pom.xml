@@ -15,7 +15,7 @@
     <properties>
         <toutatice.cms.version>3.3.0-SNAPSHOT</toutatice.cms.version>
         <jboss.version>4.2.3.GA</jboss.version>
-        <toutatice.annuaire.version>2.2.1-osivia-SNAPSHOT</toutatice.annuaire.version>
+        <toutatice.annuaire.version>2.3.5-osivia-SNAPSHOT</toutatice.annuaire.version>
     </properties>
 
 
