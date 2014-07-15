@@ -60,33 +60,38 @@ public class DirectoryService implements IDirectoryService, IUserDatasModule, Po
     public DirectoryPerson getPerson(String username) {
         Person findUtilisateur = personne.findUtilisateur(username);
 
-        DirectoryPerson person = new DirectoryPerson();
-        person.setNativeItem(findUtilisateur);
+        if (findUtilisateur != null) {
+            DirectoryPerson person = new DirectoryPerson();
+            person.setNativeItem(findUtilisateur);
 
-        try {
-            BeanUtils.copyProperties(person, findUtilisateur);
-        } catch (IllegalAccessException e) {
-            logger.error("unable to map properties from ldap ", e);
-        } catch (InvocationTargetException e) {
-            logger.error("unable to map properties from ldap ", e);
+            try {
+                BeanUtils.copyProperties(person, findUtilisateur);
+            } catch (IllegalAccessException e) {
+                logger.error("unable to map properties from ldap ", e);
+            } catch (InvocationTargetException e) {
+                logger.error("unable to map properties from ldap ", e);
+            }
+
+            ICMSServiceLocator cmsLocator = Locator.findMBean(ICMSServiceLocator.class, "osivia:service=CmsServiceLocator");
+            ICMSService cmsService = cmsLocator.getCMSService();
+
+            try {
+                CMSServiceCtx cmsCtx = new CMSServiceCtx();
+                cmsCtx.setPortletCtx(portletContext);
+                Link userAvatar = cmsService.getUserAvatar(cmsCtx, username);
+                person.setAvatar(userAvatar);
+
+
+            } catch (CMSException e) {
+                logger.error("unable to prepare user avatar link ", e);
+            }
+
+
+            return person;
+        } else {
+            logger.warn("no person with uid " + username + " found ");
+            return null;
         }
-
-        ICMSServiceLocator cmsLocator = Locator.findMBean(ICMSServiceLocator.class, "osivia:service=CmsServiceLocator");
-        ICMSService cmsService = cmsLocator.getCMSService();
-
-        try {
-            CMSServiceCtx cmsCtx = new CMSServiceCtx();
-            cmsCtx.setPortletCtx(portletContext);
-            Link userAvatar = cmsService.getUserAvatar(cmsCtx, username);
-            person.setAvatar(userAvatar);
-
-
-        } catch (CMSException e) {
-            logger.error("unable to prepare user avatar link ", e);
-        }
-
-
-        return person;
     }
 
     public <T extends DirectoryBean> T getDirectoryBean(String name, Class<T> requiredType) {
