@@ -8,14 +8,14 @@
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory</artifactId>
     <name>Service OSIVIA - Directory</name>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <description>Services for browse and update LDAP</description>
     <packaging>war</packaging>
 
     <properties>
-        <toutatice.cms.version>3.3.0-SNAPSHOT</toutatice.cms.version>
+        <toutatice.cms.version>3.3.0-rc1</toutatice.cms.version>
         <jboss.version>4.2.3.GA</jboss.version>
-        <toutatice.annuaire.version>2.3.5-osivia-SNAPSHOT</toutatice.annuaire.version>
+        <toutatice.annuaire.version>3.0.0-osivia-rc1</toutatice.annuaire.version>
     </properties>
 
 
