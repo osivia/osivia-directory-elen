@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-    xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory</artifactId>
     <name>Service OSIVIA - Directory</name>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-rc1</version>
     <description>Services for browse and update LDAP</description>
     <packaging>war</packaging>
 
@@ -70,7 +67,7 @@
 
     -
     <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/trunk</developerConnection>
+        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/tags/1.0-rc1</developerConnection>
     </scm>
 
 
@@ -124,9 +121,7 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy
-                                            file="${basedir}/target/${project.build.finalName}.war"
-                                            todir="${deploy.osivia.dir}" />
+                                        <copy file="${basedir}/target/${project.build.finalName}.war" todir="${deploy.osivia.dir}" />
                                     </tasks>
                                 </configuration>
                                 <phase>package</phase>
