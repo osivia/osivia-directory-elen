@@ -10,9 +10,9 @@
     <packaging>war</packaging>
 
     <properties>
-        <toutatice.cms.version>3.3.0</toutatice.cms.version>
+        <toutatice.cms.version>3.4.0-SNAPSHOT</toutatice.cms.version>
         <jboss.version>4.2.3.GA</jboss.version>
-        <toutatice.annuaire.version>3.0.0-osivia</toutatice.annuaire.version>
+        <toutatice.annuaire.version>3.1.0-osivia-SNAPSHOT</toutatice.annuaire.version>
     </properties>
 
 
@@ -65,7 +65,6 @@
         </plugins>
     </build>
 
-    -
     <scm>
         <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/trunk</developerConnection>
     </scm>
@@ -77,14 +76,14 @@
 
         <dependency>
             <groupId>outils.ldap</groupId>
-            <artifactId>toutatice-annuaire</artifactId>
+            <artifactId>toutatice-annuaire-interfaces</artifactId>
             <version>${toutatice.annuaire.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>outils.ldap</groupId>
-            <artifactId>toutatice-annuaire-dao</artifactId>
+            <artifactId>toutatice-annuaire-impl</artifactId>
             <version>${toutatice.annuaire.version}</version>
         </dependency>
 
