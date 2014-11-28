@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <toutatice.cms.version>3.4.0-SNAPSHOT</toutatice.cms.version>
+        <toutatice.cms.version>3.5.0-SNAPSHOT</toutatice.cms.version>
         <jboss.version>4.2.3.GA</jboss.version>
         <toutatice.annuaire.version>3.1.0-osivia-SNAPSHOT</toutatice.annuaire.version>
     </properties>

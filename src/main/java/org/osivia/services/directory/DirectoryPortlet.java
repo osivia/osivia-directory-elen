@@ -22,6 +22,7 @@ import javax.portlet.PortletException;
 import org.jboss.mx.server.MBeanInvoker;
 import org.jboss.mx.util.MBeanProxy;
 import org.jboss.mx.util.MBeanServerLocator;
+import org.osivia.portal.api.deployment.DeploymentContext;
 import org.osivia.portal.api.directory.IDirectoryService;
 import org.osivia.portal.api.directory.IDirectoryServiceLocator;
 import org.osivia.portal.api.locator.Locator;
@@ -39,6 +40,9 @@ public class DirectoryPortlet extends CMSPortlet {
 
     protected IUserDatasModuleRepository repository;
     private UserDatasModuleMetadatas userDatasModule;
+    
+    
+    private static String CONTEXT_NAME = "/osivia-services-directory";
 
     @Override
     public void init(PortletConfig config) throws PortletException {
@@ -74,16 +78,18 @@ public class DirectoryPortlet extends CMSPortlet {
             throw new PortletException(e);
         }
 
-
         // force reload of other portlets
         try {
 
+            DeploymentContext.getContext().put("osivia.portlet.currentContext", CONTEXT_NAME);
+            
             MBeanServer mbeanServer = MBeanServerLocator.locateJBoss();
 
             MBeanInvoker mbean = (MBeanInvoker) MBeanProxy.get(MBeanInvoker.class, new ObjectName("portal:deployer=Adapter"), mbeanServer);
 
             mbean.invoke("stop", null, null);
             mbean.invoke("start", null, null);
+            
 
         } catch (Exception e) {
             throw new RuntimeException(e);
