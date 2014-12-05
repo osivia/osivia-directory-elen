@@ -62,7 +62,6 @@ public class DirectoryService implements IDirectoryService, IUserDatasModule, Po
 
         if (findUtilisateur != null) {
             DirectoryPerson person = new DirectoryPerson();
-            person.setNativeItem(findUtilisateur);
 
             try {
                 BeanUtils.copyProperties(person, findUtilisateur);
