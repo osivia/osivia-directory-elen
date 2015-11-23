@@ -1,0 +1,28 @@
+<!DOCTYPE portlet-app PUBLIC
+   "-//JBoss Portal//DTD JBoss Portlet 2.6//EN"
+   "http://www.jboss.org/portal/dtd/jboss-portlet_2_6.dtd">
+
+
+
+<portlet-app>
+    <portlet>
+        <portlet-name>osivia-services-directoryPortlet</portlet-name>
+
+        <transaction>
+            <trans-attribute>Required</trans-attribute>
+        </transaction>
+        <header-content>
+
+        </header-content>
+
+    </portlet>
+
+    <service>
+        <service-name>UserDatasModulesRepository</service-name>
+        <service-class>org.osivia.portal.api.login.IUserDatasModuleRepository</service-class>
+        <service-ref>osivia:service=Interceptor,type=Server,name=ServerLogin</service-ref>
+    </service>
+
+</portlet-app>
+
+	

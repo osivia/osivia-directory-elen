@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.osivia.services.directory</groupId>
+        <artifactId>osivia-services-directory-parent</artifactId>
+        <version>4.2.0-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>osivia-services-directory-ear</artifactId>
+    <packaging>ear</packaging>
+    
+    <name>OSIVIA Services - Directory - EAR</name>
+    
+    
+    <dependencies>
+        
+        <!-- Socle services -->
+        <dependency>
+            <groupId>org.osivia.services.directory.socle</groupId>
+            <artifactId>osivia-services-directory-socle-services</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+    </dependencies>
+    
+    
+    <build>
+        <plugins>
+        
+            <!-- EAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <modules>
+                        <webModule>
+                            <groupId>org.osivia.services.directory.socle</groupId>
+                            <artifactId>osivia-services-directory-socle-services</artifactId>
+                            <contextRoot>/osivia-services-directory</contextRoot>
+                        </webModule>
+                    </modules>
+                </configuration>
+            </plugin>
+        
+        </plugins>
+    </build>
+    
+</project>
