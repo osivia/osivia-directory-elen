@@ -24,6 +24,7 @@
         <module>socle</module>
         <module>person</module>
         <module>group</module>
+        <module>workspace</module>
         
         <module>ear</module>
     </modules>

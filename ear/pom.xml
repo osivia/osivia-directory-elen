@@ -67,6 +67,22 @@
             <type>war</type>
         </dependency>
         
+        <!-- Workspace management -->
+        <dependency>
+            <groupId>org.osivia.services.directory.workspace</groupId>
+            <artifactId>osivia-services-directory-workspace-management</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
+        <!-- Workspace participants -->
+        <dependency>
+            <groupId>org.osivia.services.directory.workspace</groupId>
+            <artifactId>osivia-services-directory-workspace-participants</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
     </dependencies>
     
     
@@ -109,6 +125,16 @@
                             <groupId>org.osivia.services.directory.group</groupId>
                             <artifactId>osivia-services-directory-group-management</artifactId>
                             <contextRoot>/osivia-services-directory-group-management</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.osivia.services.directory.workspace</groupId>
+                            <artifactId>osivia-services-directory-workspace-management</artifactId>
+                            <contextRoot>/osivia-services-directory-workspace-management</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.osivia.services.directory.workspace</groupId>
+                            <artifactId>osivia-services-directory-workspace-participants</artifactId>
+                            <contextRoot>/osivia-services-directory-workspace-participants</contextRoot>
                         </webModule>
                     </modules>
                 </configuration>
