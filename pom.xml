@@ -15,12 +15,15 @@
     
     <properties>
         <toutatice.version>4.2.0-SNAPSHOT</toutatice.version>
+        
+        <jsoup.version>1.6.1</jsoup.version>
     </properties>
     
     
     <modules>
         <module>socle</module>
         <module>person</module>
+        <module>group</module>
         
         <module>ear</module>
     </modules>
@@ -41,6 +44,14 @@
                 <artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
                 <version>${toutatice.version}</version>
                 <scope>test</scope>
+            </dependency>
+            
+            <!-- jsoup -->
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
+                <scope>compile</scope>
             </dependency>
         
         </dependencies>
