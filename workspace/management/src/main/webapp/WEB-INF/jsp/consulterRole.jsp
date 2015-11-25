@@ -23,7 +23,7 @@
 	    <div class="panel-heading" role="tab" id="headingOne">
 	      <h4 class="panel-title">
 	        <a class="no-ajax-link" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-						<is:getProperty key="label.animateur" />
+						<op:translate  key="label.animateur" />
 			</a>
 	      </h4>
 	    </div>
@@ -34,7 +34,7 @@
 	       
 	       			<c:choose>
 						 <c:when test="${empty workspace.membresGroupeAnimateurs && empty workspace.listeProfilAnimateurs}">
-								<p class="text-muted">Il n'y a encore aucune personne ni groupe d'associé au rôle <is:getProperty key="label.animateurs" /></p>
+								<p class="text-muted">Il n'y a encore aucune personne ni groupe d'associé au rôle <op:translate  key="label.animateurs" /></p>
 						</c:when>
 						
 						<c:otherwise>
@@ -74,7 +74,7 @@
 												</portlet:renderURL>"
 							       			class="btn btn-default">
 											<i class="glyphicons group"> </i>
-											<span><is:getProperty key="label.gererRoleAnimateur" /></span>
+											<span><op:translate  key="label.gererRoleAnimateur" /></span>
 										</a>
 							</p>
 						</c:if>
@@ -92,7 +92,7 @@
 	    <div class="panel-heading" role="tab" id="headingTwo">
 	      	<h4 class="panel-title">
 		        <a class="no-ajax-link" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-					<is:getProperty key="label.contributeur" />
+					<op:translate  key="label.contributeur" />
 				</a>
 			</h4>	
 		</div>	
@@ -104,7 +104,7 @@
 	 	
 			 	<c:choose>
 					 <c:when test="${empty workspace.membresGroupeContributeurs && empty workspace.listeProfilContributeurs}">
-							<p class="text-muted">Il n'y a encore aucune personne ni groupe d'associé au rôle <is:getProperty key="label.contributeurs" /></p>
+							<p class="text-muted">Il n'y a encore aucune personne ni groupe d'associé au rôle <op:translate  key="label.contributeurs" /></p>
 					</c:when>
 					
 					<c:otherwise>
@@ -145,7 +145,7 @@
 										</portlet:renderURL>"
 					       			class="btn btn-default">
 									<i class="glyphicons group"> </i>
-									<span><is:getProperty key="label.gererRoleContributeur" /></span>
+									<span><op:translate  key="label.gererRoleContributeur" /></span>
 								</a>
 					</p>
 				</c:if>
@@ -161,7 +161,7 @@
 		    <div class="panel-heading" role="tab" id="headingThree">
 		      	<h4 class="panel-title">
 			        <a class="no-ajax-link" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-						<is:getProperty key="label.lecteur" />
+						<op:translate  key="label.lecteur" />
 					</a>
 				</h4>	
 			</div>	
@@ -173,7 +173,7 @@
 		 	
 				 	<c:choose>
 						 <c:when test="${empty workspace.membresGroupeLecteurs && empty workspace.listeProfilLecteurs}">
-								<p class="text-muted">Il n'y a encore aucune personne ni groupe d'associé au rôle <is:getProperty key="label.lecteurs" /></p>
+								<p class="text-muted">Il n'y a encore aucune personne ni groupe d'associé au rôle <op:translate  key="label.lecteurs" /></p>
 						</c:when>
 						
 						<c:otherwise>
@@ -212,7 +212,7 @@
 										</portlet:renderURL>"
 					       			class="btn btn-default">
 									<i class="glyphicons group"> </i>
-									<span><is:getProperty key="label.gererRoleLecteur" /></span>
+									<span><op:translate  key="label.gererRoleLecteur" /></span>
 								</a>
 					</p>
 				</c:if>

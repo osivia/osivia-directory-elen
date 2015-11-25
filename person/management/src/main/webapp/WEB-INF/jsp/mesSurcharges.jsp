@@ -14,7 +14,7 @@
 			</portlet:actionURL>
 
 			<a class="btn btn-default no-ajax-link" href="${refresh}"> <i class="glyphicons refresh"></i> 
-			<is:getProperty key="btn.refresh" /></a>
+			<op:translate  key="btn.refresh" /></a>
 		</p>
 	</div>
 </div>
@@ -38,13 +38,13 @@
 		
 			<display:column titleKey="label.tbl.motif">
 				<c:if test="${personUrl.personne.typeSurcharge == 'SUPERADMIN'}">
-					<i class="glyphicons sheriffs_star" title="<is:getProperty key="label.role.sadmin" />"></i>
+					<i class="glyphicons sheriffs_star" title="<op:translate  key="label.role.sadmin" />"></i>
 				</c:if>
 				<c:if test="${personUrl.personne.typeSurcharge == 'ADMIN'}">
-					<i class="glyphicons cogwheel" title="<is:getProperty key="label.role.admin" />"></i>
+					<i class="glyphicons cogwheel" title="<op:translate  key="label.role.admin" />"></i>
 				</c:if>
 				<c:if test="${personUrl.personne.typeSurcharge == 'ASSISTANCE'}">
-					<i class="glyphicons life_preserver" title="<is:getProperty key="label.role.assistance" />"></i>
+					<i class="glyphicons life_preserver" title="<op:translate  key="label.role.assistance" />"></i>
 				</c:if>
 			
 				<i class="glyphicons circle_info" title="${personUrl.personne.motifSurcharge}"></i>
@@ -74,16 +74,16 @@
 	<div class="container-fluid text-center no-ajax-link" id="delete_surcharge">
 
 		<p>
-			<is:getProperty key="confirm.deleteSurcharge" />
+			<op:translate  key="confirm.deleteSurcharge" />
 		</p>
 
 		<a id="deleteSurchargeConfirmedBtn" class="btn btn-default btn-warning"
 			href=""> <i class="glyphicons halflings warning-sign"></i> <span
-			class="hidden-xs"><is:getProperty key="YES" /></span>
+			class="hidden-xs"><op:translate  key="YES" /></span>
 		</a>
 		<button class="btn btn-default" type="button"
 			onclick="closeFancybox()">
-			<is:getProperty key="NO" />
+			<op:translate  key="NO" />
 		</button>
 	</div>
 </div>

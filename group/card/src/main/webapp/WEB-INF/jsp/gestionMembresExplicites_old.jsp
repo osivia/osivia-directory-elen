@@ -115,7 +115,7 @@
 
 						<div class="form-group">
 							<form:label path="filtreMembre" cssClass="col-md-4 control-label">
-								<is:getProperty key="label.filtreMembre" />
+								<op:translate  key="label.filtreMembre" />
 							</form:label>
 							<div class="col-md-8">
 								<form:input id="filtreMembre" path="filtreMembre" size="15"
@@ -127,7 +127,7 @@
 
 						<div class="form-group">
 							<form:label path="filtreRne" cssClass="col-md-4 control-label">
-								<is:getProperty key="label.filtreRne" />
+								<op:translate  key="label.filtreRne" />
 							</form:label>
 							<div class="col-md-8">
 								<form:select id="filtreRne" path="filtreRne"
@@ -141,7 +141,7 @@
 
 						<div class="form-group">
 							<form:label path="macroProfil" cssClass="col-md-4 control-label">
-								<is:getProperty key="label.macroProfil" />
+								<op:translate  key="label.macroProfil" />
 							</form:label>
 							<div class="col-md-8">
 								<form:select id="macroProfil" path="macroProfil"
@@ -158,7 +158,7 @@
 							<div class="col-md-4"></div>
 							<div class="col-md-8">
 								<button class="btn btn-default" type="submit">
-									<i class="glyphicons search"></i> <span><is:getProperty
+									<i class="glyphicons search"></i> <span><op:translate 
 											key="btn.search" /></span>
 								</button>
 
@@ -237,7 +237,7 @@
 							<div class="form-group">
 								<form:label path="filtreAjoutGroupe"
 									cssClass="col-md-4 control-label">
-									<is:getProperty key="label.filtreAjoutGroupe" />
+									<op:translate  key="label.filtreAjoutGroupe" />
 								</form:label>
 
 								<div class="col-md-8">
@@ -254,7 +254,7 @@
 								<div class="col-md-4"></div>
 								<div class="col-md-8">
 									<button class="btn btn-default" type="submit" >
-										<i class="glyphicons plus"></i> <span><is:getProperty
+										<i class="glyphicons plus"></i> <span><op:translate 
 												key="btn.ajoutGroupe" /></span>
 									</button>
 

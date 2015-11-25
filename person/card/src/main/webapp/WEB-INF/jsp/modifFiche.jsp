@@ -26,7 +26,7 @@
 	
 	<div class="form-group">
 		<form:label path="file" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.avatar" />
+			<op:translate  key="label.avatar" />
 		</form:label>
 		
 		<div class="col-md-10">
@@ -44,7 +44,7 @@
 
 	<div class="form-group">
 		<form:label path="title" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.title" />	
+			<op:translate  key="label.title" />	
 		</form:label>	
 	
 		<div class="col-md-10">
@@ -62,7 +62,7 @@
 
 	<div class="form-group">
 		<form:label path="sn" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.sn" />
+			<op:translate  key="label.sn" />
 		
 		</form:label>	
 	
@@ -74,7 +74,7 @@
 	</div>
 	<div class="form-group">
 		<form:label path="givenName" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.givenName" />
+			<op:translate  key="label.givenName" />
 			
 	
 		</form:label>	
@@ -88,7 +88,7 @@
 
 	<div class="form-group">
 		<form:label path="nouveauEmail" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.mail" />
+			<op:translate  key="label.mail" />
 
 		</form:label>
 		
@@ -101,7 +101,7 @@
 
 	<div class="form-group">
 		<form:label path="bio" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.bio" />
+			<op:translate  key="label.bio" />
 			
 		
 		</form:label>	
@@ -116,7 +116,7 @@
 	
 	<div class="form-group"> 	
 		<form:label path="departementCns" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.departementCns" />
+			<op:translate  key="label.departementCns" />
 			
 		
 		</form:label>
@@ -128,7 +128,7 @@
 	</div>
 	<div class="form-group"> 	
 		<form:label path="entiteAdm" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.entiteAdm" />
+			<op:translate  key="label.entiteAdm" />
 			
 	
 		</form:label>
@@ -140,7 +140,7 @@
 	</div>
 	<div class="form-group"> 	
 		<form:label path="telFixe" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.telFixe" />
+			<op:translate  key="label.telFixe" />
 			
 	
 		</form:label>
@@ -152,7 +152,7 @@
 	</div>
 	<div class="form-group"> 	
 		<form:label path="telMobile" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.telMobile" />
+			<op:translate  key="label.telMobile" />
 		
 		</form:label>
 	
@@ -163,7 +163,7 @@
 	</div>
 	<div class="form-group"> 	
 		<form:label path="mailGenerique" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.mailGenerique" />
+			<op:translate  key="label.mailGenerique" />
 	
 		</form:label>
 	
@@ -174,7 +174,7 @@
 	</div>				
 	<div class="form-group"> 	
 		<form:label path="referent" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.referent" />
+			<op:translate  key="label.referent" />
 		
 		</form:label>
 	
@@ -192,10 +192,10 @@
 		<div class="col-md-10 no-ajax-link">
 			<button class="btn btn-primary" onclick="form.submit"> 
 				<i class="glyphicons ok_2"></i>
-				<span><is:getProperty key="label.btn.ok" /></span>
+				<span><op:translate  key="label.btn.ok" /></span>
 			</button>
 			
-			<input class="btn btn-default" type="button" id="annuler" value="<is:getProperty key="label.btn.back" />" onclick="updatePortletContent(this,'${annuler}');" />
+			<input class="btn btn-default" type="button" id="annuler" value="<op:translate  key="label.btn.back" />" onclick="updatePortletContent(this,'${annuler}');" />
 				
 		</div>
 	</div>

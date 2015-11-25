@@ -82,6 +82,7 @@ import fr.toutatice.outils.ldap.entity.Structure;
 import fr.toutatice.outils.ldap.exception.ToutaticeAnnuaireException;
 import fr.toutatice.portail.cms.nuxeo.api.CMSPortlet;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoException;
 import fr.toutatice.portail.cms.nuxeo.api.ResourceUtil;
 import fr.toutatice.portail.cms.nuxeo.api.VocabularyEntry;
 import fr.toutatice.portail.cms.nuxeo.api.VocabularyHelper;
@@ -114,10 +115,10 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 	@Autowired
 	private HabilitationModifMailPwd habilitationModifMailPwd;
-	
+
 	@Autowired
 	private HabilitationModifFiche habilitationModifFiche;
-	
+
 	@Autowired
 	private HabilitationConsultation habilitationConsultation;
 
@@ -162,16 +163,16 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	@PostConstruct
 	public void initNuxeoService() throws Exception {
 		super.init();
-		if (portletContext != null && portletContext.getAttribute("nuxeoService") == null) {
+		if ((this.portletContext != null) && (this.portletContext.getAttribute("nuxeoService") == null)) {
 
-			this.init(portletConfig);
+			this.init(this.portletConfig);
 		}
 
 	}
 
 	/**
 	 * Initialise la fiche personne avec le user connecté et le user recherché
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return
@@ -184,9 +185,9 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		DirectoryPerson personConnect = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
 
 		Person userConnecte = null;
-		
+
 		if(personConnect != null) {
-			userConnecte = personne.findUtilisateur(personConnect.getUid());
+			userConnecte = this.personne.findUtilisateur(personConnect.getUid());
 		}
 
 		Fiche fiche = new Fiche();
@@ -198,11 +199,11 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 		Person userConsulte = null;
 		// Consultation d'une autre personne, soit en anonyme, soit connecté et dans ce cas l'UID est différent de soi
-		if (userConnecte == null || (uid != null && !(uid.equals(userConnecte.getUid())))) {
+		if ((userConnecte == null) || ((uid != null) && !(uid.equals(userConnecte.getUid())))) {
 
-			DirectoryPerson personConsult = getDirectoryService().getPerson(uid);
+			DirectoryPerson personConsult = this.getDirectoryService().getPerson(uid);
 			avatar = personConsult.getAvatar();
-			userConsulte = personne.findUtilisateur(uid);
+			userConsulte = this.personne.findUtilisateur(uid);
 		} else {
 			avatar = personConnect.getAvatar();
 			userConsulte = userConnecte;
@@ -212,19 +213,19 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		}
 
 		fiche.setUserConsulte(userConsulte);
-		fiche.setListeEtb(structure.findStructuresPersonneByProfil(userConsulte));
-		fiche.setListeProfils(profil.findProfilsPersonne(userConsulte));
-		fiche.setLevelUserConnecteSurcharge(habilitationSurcharge.findRoleUser(userConnecte, userConsulte));
-		fiche.setLevelUserConnecteRazMdp(habilitationRazMdp.findRoleUser(userConnecte, userConsulte));
-		fiche.setLevelUserConnecteModifPwdMail(habilitationModifMailPwd.findRoleUser(userConnecte, userConsulte));
-		fiche.setLevelConsultation(habilitationConsultation.getLevelConsultation(userConnecte, userConsulte));
-		fiche.setLevelUserConnecteModifFiche(habilitationModifFiche.findRoleUser(userConnecte, userConsulte));
+		fiche.setListeEtb(this.structure.findStructuresPersonneByProfil(userConsulte));
+		fiche.setListeProfils(this.profil.findProfilsPersonne(userConsulte));
+		fiche.setLevelUserConnecteSurcharge(this.habilitationSurcharge.findRoleUser(userConnecte, userConsulte));
+		fiche.setLevelUserConnecteRazMdp(this.habilitationRazMdp.findRoleUser(userConnecte, userConsulte));
+		fiche.setLevelUserConnecteModifPwdMail(this.habilitationModifMailPwd.findRoleUser(userConnecte, userConsulte));
+		fiche.setLevelConsultation(this.habilitationConsultation.getLevelConsultation(userConnecte, userConsulte));
+		fiche.setLevelUserConnecteModifFiche(this.habilitationModifFiche.findRoleUser(userConnecte, userConsulte));
 
 		if(userConsulte.getTitle().equalsIgnoreCase("ELE")){
-			fiche.setClasse(profil.findClasseEleve(userConsulte));
+			fiche.setClasse(this.profil.findClasseEleve(userConsulte));
 			List<Person> listeParents = userConsulte.findParents();
 			List<PersonUrl> listeParentsUrl = new ArrayList<PersonUrl>();
-			PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
+			PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 			for(Person p:listeParents){
 				try{
 					listeParentsUrl.add(this.buildUrlPerson(p, portalControllerContext));
@@ -234,7 +235,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 			}
 			fiche.setListeParents(listeParentsUrl);
 		}
-		
+
 		fiche.setAvatar(avatar);
 
 		// chargement des données de profil présentes dans nuxeo
@@ -242,29 +243,35 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		if (profilNx != null) {
 			fiche.setProfilNuxeo(profilNx);
 		}
-		
-		
-		
+
+
+
 		// Traduction entité
-		NuxeoController nuxeoController = new NuxeoController(request, response, portletContext);
-		VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "[CNS] Entité");
-		
-		Map<String, VocabularyEntry> children = vocabularyEntry.getChildren();
+		NuxeoController nuxeoController = new NuxeoController(request, response, this.portletContext);
+
+        Map<String, VocabularyEntry> children;
+        try {
+            VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "[CNS] Entité");
+            children = vocabularyEntry.getChildren();
+        } catch (NuxeoException e) {
+            logger.error(e.getMessage(), e);
+            children = new HashMap<String, VocabularyEntry>(0);
+        }
 		Map<String, String> listeDptCns = new LinkedHashMap<String, String>();
 		listeDptCns.put("", "");
-		
+
 		for(Map.Entry<String, VocabularyEntry>  entry : children.entrySet()) {
 			listeDptCns.put(entry.getValue().getId(), entry.getValue().getLabel());
 		}
 
 		fiche.setListeDptCns(listeDptCns);
-		
+
 
 		if(userConsulte.getDivcod() != null) {
 			fiche.setDepartementCns(listeDptCns.get(userConsulte.getDivcod()));
 		}
-		
-		
+
+
 
 		return fiche;
 	}
@@ -275,7 +282,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 		String retour;
 
-		PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 		this.setListeProfilUrlModel(fiche.getUserConsulte().getListeProfils(), portalControllerContext);
 
 		// Pour les élèves, on affiche un message d'erreur si le mot de passe n'a pas été changé
@@ -283,22 +290,22 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		if (fiche.isSelf() && fiche.getUserConsulte().getTitle().equalsIgnoreCase("ELE")) {
 			boolean mdpModifie = fiche.getUserConsulte().eleveHasChangedPassword();
 			if (!mdpModifie && fiche.isSelf()) {
-				addNotification(portalControllerContext, "label.mdpNonModifie", NotificationsType.ERROR);
+				this.addNotification(portalControllerContext, "label.mdpNonModifie", NotificationsType.ERROR);
 
 			}
 			if(fiche.getUserConsulte().getEmail().trim().isEmpty()){
-				addNotification(portalControllerContext, "label.emailNonSaisi", NotificationsType.ERROR);
+				this.addNotification(portalControllerContext, "label.emailNonSaisi", NotificationsType.ERROR);
 			}
 		}
-		
+
 		// Avertissement à l'assistance si un profil n'est pas surchargeable
 		if(fiche.getLevelUserConnecteSurcharge().equals(HabilitationSurcharge.level.NON_SURCHARGEABLE)) {
-			addNotification(portalControllerContext, "warn.surchargeNonAutorise", NotificationsType.INFO);
+			this.addNotification(portalControllerContext, "warn.surchargeNonAutorise", NotificationsType.INFO);
 		}
 
 		response.setTitle(fiche.getUserConsulte().getCn());
 
-		if (config.getEnableModeENT()) {
+		if (this.config.getEnableModeENT()) {
 			if (fiche.getUserConsulte().isParent()) {
 				int i = fiche.getUserConsulte().getUid().toLowerCase().indexOf("@aten");
 				if(i>0){
@@ -308,8 +315,8 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				List<Enfant> liste = new ArrayList<Enfant>();
 				for (String uid : fiche.getUserConsulte()
 						.getListeUidElevesConcernes()) {
-					Person p = personne.findUtilisateur(uid);
-					Structure etb = structure.findStructure(p.getListeRnes()
+					Person p = this.personne.findUtilisateur(uid);
+					Structure etb = this.structure.findStructure(p.getListeRnes()
 							.get(0));
 					liste.add(new Enfant(p, etb));
 				}
@@ -337,13 +344,13 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 			throws ToutaticeAnnuaireException, PortalException, CMSException {
 
 		String retour = null;
-		
+
 		if (fiche.getLevelUserConnecteModifPwdMail().equals(HabilitationModifMailPwd.Level.DROITMODIF)) {
 			retour = "chgtMdp";
 		} else {
-			PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
-			addNotification(pcc, "label.modifNonAutorise", NotificationsType.WARNING);
-			retour = showFichePersonne(fiche, request, response);
+			PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
+			this.addNotification(pcc, "label.modifNonAutorise", NotificationsType.WARNING);
+			retour = this.showFichePersonne(fiche, request, response);
 		}
 
 		return retour;
@@ -358,9 +365,9 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				|| fiche.getLevelUserConnecteSurcharge().equals(HabilitationSurcharge.level.DROIT_SURCHARGE_ASSISTANCE)) {
 			retour = "surchargeMdp";
 		} else {
-			PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
-			addNotification(pcc, "label.surchargeNonAutorise", NotificationsType.WARNING);
-			retour = showFichePersonne(fiche, request, response);
+			PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
+			this.addNotification(pcc, "label.surchargeNonAutorise", NotificationsType.WARNING);
+			retour = this.showFichePersonne(fiche, request, response);
 		}
 
 		return retour;
@@ -377,19 +384,19 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 			fiche.setAvatar(new Link(res.toString(), true));
 
 		}
-		
+
 		// contournemnt Spring, le textarea et les select n'acceptent pas de value par défaut
 		formUpload.setBio(fiche.getProfilNuxeo().getBio());
 		formUpload.setDepartementCns(fiche.getUserConsulte().getDivcod());
 		formUpload.setTitle(fiche.getUserConsulte().getTitle());
 
 		String retour = "modifFiche";
-		
+
 		return retour;
 	}
 
 	@ActionMapping(params = "action=submit")
-	public void submitModif(@ModelAttribute("formUpload") FormUpload formUpload, BindingResult result, @ModelAttribute("fiche") Fiche fiche, 
+	public void submitModif(@ModelAttribute("formUpload") FormUpload formUpload, BindingResult result, @ModelAttribute("fiche") Fiche fiche,
 			ActionRequest request, ActionResponse response, SessionStatus status, ModelMap model) throws Exception {
 		// le boolean chargementAvatar permet de savoir si l'utilisateur vient
 		// de demander le chargement d'un avatar, ou si il a demandé
@@ -403,42 +410,42 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 			this.uploadFile(fiche, formUpload, result, request, response);
 		} else {
 			// enregistrement des modifications
-			modifyValidator.validate(formUpload, result);
+			this.modifyValidator.validate(formUpload, result);
 
 			if (result.hasErrors()) {
-				PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+				PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 				//List<FieldError> tmp = result.getFieldErrors("nouveauEmail");
 				List<FieldError> tmp = result.getFieldErrors();
 				int i = tmp.size();
 				for(FieldError err : tmp){
-					addNotification(pcc, err.getCode(), NotificationsType.ERROR);
+					this.addNotification(pcc, err.getCode(), NotificationsType.ERROR);
 				}
 				// mémorisation des informations saisies par l'utilisateur pour
 				// affichage
-				mergeProperties(fiche.getUserConsulte(), formUpload);
+				this.mergeProperties(fiche.getUserConsulte(), formUpload);
 				BeanUtils.copyProperties(fiche.getProfilNuxeo(), formUpload);
-						
+
 				response.setRenderParameter("action", "modify");
 			}else{
 				DirectoryPerson personConnect = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
 				Person userConnecte = null;
-				userConnecte = personne.findUtilisateur(personConnect.getUid());
+				userConnecte = this.personne.findUtilisateur(personConnect.getUid());
 				this.updatefichePersonne(fiche, userConnecte, formUpload, result, request, response, status, model);
 
-				
+
 			}
 		}
 	}
 
 	private void uploadFile(Fiche fiche, FormUpload formUpload, BindingResult result, ActionRequest request, ActionResponse response) throws Exception {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
 		MultipartFile file = formUpload.getFile();
 
 		if (!file.getContentType().split("/")[0].equals("image")) {
 
-			addNotification(pcc, "label.noImageFile", NotificationsType.ERROR);
+			this.addNotification(pcc, "label.noImageFile", NotificationsType.ERROR);
 		} else {
 
 			InputStream inputStream = file.getInputStream();
@@ -451,8 +458,9 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 			byte[] buf = new byte[8192];
 			while (true) {
 				int length = inputStream.read(buf);
-				if (length < 0)
-					break;
+				if (length < 0) {
+                    break;
+                }
 				fos.write(buf, 0, length);
 			}
 
@@ -468,7 +476,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		// l'utilisateur
 		BeanUtils.copyProperties(fiche.getProfilNuxeo(), formUpload);
 
-		mergeProperties(fiche.getUserConsulte(), formUpload);
+		this.mergeProperties(fiche.getUserConsulte(), formUpload);
 
 		response.setRenderParameter("action", "modify");
 
@@ -477,19 +485,19 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	private void updatefichePersonne(Fiche fiche, Person userConnecte, FormUpload formUpload, BindingResult result, ActionRequest request, ActionResponse response,
 			SessionStatus status, ModelMap model) throws ToutaticeAnnuaireException, NamingException {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
-	
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
+
 
 			if (fiche == null) {
 				response.setRenderParameter("action,", "fichePersonne");
-				addNotification(pcc, "label.erreurUpdate", NotificationsType.ERROR);
+				this.addNotification(pcc, "label.erreurUpdate", NotificationsType.ERROR);
 			} else {
 				//
 				try {
 					// MAJ Annuaire
-					Person p = personne.findUtilisateur(fiche.getUserConsulte().getUid());
+					Person p = this.personne.findUtilisateur(fiche.getUserConsulte().getUid());
 
-					mergeProperties(p, formUpload);
+					this.mergeProperties(p, formUpload);
 
 					p.update();
 
@@ -501,20 +509,20 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 					// "l1n3bR3aKK");
 					// String s2 = Jsoup.clean(s, Whitelist.none());
 					// String bio = s2.replaceAll(" l1n3bR3aKK", "\n");
-					
+
 					BeanUtils.copyProperties(fiche.getProfilNuxeo(), formUpload);
-					
-					NuxeoController nuxeoCtl = new NuxeoController(request, response, portletContext);
-					
+
+					NuxeoController nuxeoCtl = new NuxeoController(request, response, this.portletContext);
+
 					//Si modification par un admin, passage en mode SuperUser
-					if(fiche.getLevelUserConnecteModifFiche()==Level.DROITMODIF && !(fiche.getUserConsulte().getUid().equalsIgnoreCase(userConnecte.getUid()))){
+					if((fiche.getLevelUserConnecteModifFiche()==Level.DROITMODIF) && !(fiche.getUserConsulte().getUid().equalsIgnoreCase(userConnecte.getUid()))){
 						nuxeoCtl.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
 					}
-					
+
 					Document doc = this.loadFiche(fiche.getUserConsulte(), request, response, fiche.getProfilNuxeo().getPathUserWorkspace());
 					String pathNx = doc.getPath();
 					File tmp = null;
-					if (fiche.getTmpFile() == null || !fiche.getTmpFile().trim().isEmpty()) {
+					if ((fiche.getTmpFile() == null) || !fiche.getTmpFile().trim().isEmpty()) {
 						tmp = new File(fiche.getTmpFile());
 
 					}
@@ -529,14 +537,14 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 					request.setAttribute("osivia.updateContents", "true");
 
 					status.setComplete();
-					
+
 					// Contournement Spring pour s'assurer que le model n'a plus de trace de l'ancienne fiche
 					model.remove("fiche");
 
 					response.setRenderParameter("action", "fichePersonne");
 					response.setRenderParameter("uidFichePersonne", p.getUid());
 
-					addNotification(pcc, "label.updateOk", NotificationsType.SUCCESS);
+					this.addNotification(pcc, "label.updateOk", NotificationsType.SUCCESS);
 
 					// ========= maj user connecte
 
@@ -548,13 +556,13 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				} catch (Exception e) {
 					response.setRenderParameter("action", "modify");
 
-					addNotification(pcc, "label.erreurUpdate", NotificationsType.ERROR);
+					this.addNotification(pcc, "label.erreurUpdate", NotificationsType.ERROR);
 					logger.error("impossible de mettre a jour la fiche", e);
 				}
 
 			}
 
-		
+
 	}
 
 	private Person mergeProperties(Person p, FormUpload formUpload) {
@@ -574,13 +582,13 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		if (formUpload.getGivenName() != null) {
 			p.setGivenName(formUpload.getGivenName());
 		}
-		if(formUpload.getSn() != null && formUpload.getGivenName() != null) {
+		if((formUpload.getSn() != null) && (formUpload.getGivenName() != null)) {
 			String fullName = formUpload.getGivenName() + " " + formUpload.getSn();
 			p.setCn(fullName);
 			p.setDisplayName(fullName);
 		}
-		
-		
+
+
 		if (formUpload.getDepartementCns() != null) {
 			p.setDivcod(formUpload.getDepartementCns());
 		}
@@ -589,10 +597,10 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	}
 
 	private Document loadFiche(Person p, PortletRequest request, PortletResponse response, String pathUserWorkspace) {
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 		Document doc = null;
 
-		NuxeoController nuxeoCtl = new NuxeoController(request, response, portletContext);
+		NuxeoController nuxeoCtl = new NuxeoController(request, response, this.portletContext);
 
 		try {
 			// recherche du document profil du user
@@ -615,7 +623,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				}
 				if (doc == null) {
 
-					addNotification(pcc, "label.noNuxeoProfil", NotificationsType.ERROR);
+					this.addNotification(pcc, "label.noNuxeoProfil", NotificationsType.ERROR);
 				}
 			}
 		} catch (Exception e) {
@@ -626,7 +634,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	}
 
 	private ProfilNuxeo initProfilNuxeo(Person userConnecte, Person p, PortletRequest request, PortletResponse response) throws CMSException {
-		NuxeoController nuxeoCtl = new NuxeoController(request, response, portletContext);
+		NuxeoController nuxeoCtl = new NuxeoController(request, response, this.portletContext);
 		ProfilNuxeo profilNuxeo = new ProfilNuxeo();
 		Document userProfile = null;
 
@@ -639,7 +647,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 		if (userProfile != null) {
 			profilNuxeo.setBio(userProfile.getString("userprofile:bio"));
-			
+
 			// Spécifique CNS
 			profilNuxeo.setTelFixe(userProfile.getString("cnsprofile:tel_fixe"));
 			profilNuxeo.setTelMobile(userProfile.getString("cnsprofile:tel_mobile"));
@@ -658,7 +666,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 	private Document loadUserWorkspace(Person p, ModelMap model, PortletRequest request, PortletResponse response) {
 		Document userWorkspace = null;
-		NuxeoController nuxeoCtl = new NuxeoController(request, response, portletContext);
+		NuxeoController nuxeoCtl = new NuxeoController(request, response, this.portletContext);
 
 		// Recherche du userworkspace du user
 		nuxeoCtl.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
@@ -677,7 +685,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		// Contournement Spring pour s'assurer que le model n'a plus de trace de l'ancienne fiche
 		model.remove("fiche");
 
-		
+
 		status.setComplete();
 
 		response.setRenderParameter("action", "fichePersonne");
@@ -687,9 +695,9 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	public void updateChgtMdp(@ModelAttribute("fiche") Fiche fiche, @ModelAttribute FormChgtMdp formChgtMdp, BindingResult result, ActionRequest request,
 			ActionResponse response) throws ToutaticeAnnuaireException {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
-		chgtMdpValidator.validate(formChgtMdp, result);
+		this.chgtMdpValidator.validate(formChgtMdp, result);
 
 		if (!result.hasErrors()) {
 
@@ -697,19 +705,20 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				response.setRenderParameter("action,", "fichePersonne");
 				// modelMap.addAttribute("messageErreur",this.messages.getMessage("label.erreurUpdateMdp",
 				// null,null));
-				addNotification(pcc, "label.erreurUpdateMdp", NotificationsType.ERROR);
+				this.addNotification(pcc, "label.erreurUpdateMdp", NotificationsType.ERROR);
 			} else {
 
 				if (!fiche.getUserConsulte().verifMdp(formChgtMdp.getMdpActuel())) {
 					// modelMap.put("messageErreur","Mot de passe erroné");
-					addNotification(pcc, "label.mauvaisMdp", NotificationsType.ERROR);
+					this.addNotification(pcc, "label.mauvaisMdp", NotificationsType.ERROR);
 
 					response.setRenderParameter("action", "chgtMdp");
 				} else {
 					// Suppression de la sucharge de mdp si nécessaire
-					if (fiche.getUserConsulte().isUserSurcharged() && config.getDeleteSurchageWhenUpdatePwd()) {
-						if (logger.isDebugEnabled())
-							logger.debug("delete surcharge mot de passe");
+					if (fiche.getUserConsulte().isUserSurcharged() && this.config.getDeleteSurchageWhenUpdatePwd()) {
+						if (logger.isDebugEnabled()) {
+                            logger.debug("delete surcharge mot de passe");
+                        }
 						fiche.getUserConsulte().deleteSurcharge();
 					}
 					// Modification du mot de passe
@@ -718,7 +727,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 					// modelMap.addAttribute("fiche", fiche);
 					// modelMap.addAttribute("messageInfo",this.messages.getMessage("label.updateMdp",
 					// null,null));
-					addNotification(pcc, "label.updateMdp", NotificationsType.SUCCESS);
+					this.addNotification(pcc, "label.updateMdp", NotificationsType.SUCCESS);
 
 					logModifLdap.info("L'utilisateur " + fiche.getUserConsulte().getUid() + " a modifié son mot de passe");
 				}
@@ -734,23 +743,23 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	@ActionMapping(params = "action=razMdp")
 	public void razMdp(@ModelAttribute("fiche") Fiche fiche, ActionRequest request, ActionResponse response) throws ToutaticeAnnuaireException {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
 		DirectoryPerson personConnect = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
 
-		Person userConnecte = personne.findUtilisateur(personConnect.getUid());
+		Person userConnecte = this.personne.findUtilisateur(personConnect.getUid());
 
 		if (fiche == null) {
 			response.setRenderParameter("action,", "fichePersonne");
 			// model.addAttribute("messageErreur",this.messages.getMessage("label.erreurRaz",
 			// null,null));
-			addNotification(pcc, "label.erreurRaz", NotificationsType.ERROR);
+			this.addNotification(pcc, "label.erreurRaz", NotificationsType.ERROR);
 
 		}
 
 		if (fiche.getLevelUserConnecteRazMdp().equals(HabilitationRazMdp.level.DROITRAZ)) {
 			// Suppression de la sucharge de mdp si nécessaire
-			if (fiche.getUserConsulte().isUserSurcharged() && config.getDeleteSurchageWhenUpdatePwd()) {
+			if (fiche.getUserConsulte().isUserSurcharged() && this.config.getDeleteSurchageWhenUpdatePwd()) {
 				logger.debug("delete surcharge mot de passe");
 				fiche.getUserConsulte().deleteSurcharge();
 			}
@@ -759,16 +768,16 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				fiche.getUserConsulte().razMdp();
 				response.setRenderParameter("action", "fichePersonne");
 
-				addNotification(pcc, "label.razOk", NotificationsType.SUCCESS);
+				this.addNotification(pcc, "label.razOk", NotificationsType.SUCCESS);
 
 				logModifLdap.info("L'utilisateur " + userConnecte.getUid() + " a ré-initialisé le mot de passe de l'élève " + fiche.getUserConsulte().getDn());
 			} else {
 
-				addNotification(pcc, "label.razNonAutorise", NotificationsType.ERROR);
+				this.addNotification(pcc, "label.razNonAutorise", NotificationsType.ERROR);
 			}
 		} else {
 
-			addNotification(pcc, "label.razNonAutorise", NotificationsType.ERROR);
+			this.addNotification(pcc, "label.razNonAutorise", NotificationsType.ERROR);
 		}
 
 	}
@@ -777,17 +786,17 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	public void surchargeMdp(@ModelAttribute("fiche") Fiche fiche, @ModelAttribute FormSurchargeMdp formSurchargeMdp, BindingResult result,
 			ActionRequest request, ActionResponse response, ModelMap modelMap, PortletSession session, final ModelMap model) throws ToutaticeAnnuaireException {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
 		if (fiche == null) {
 			response.setRenderParameter("action,", "fichePersonne");
 
-			addNotification(pcc, "label.erreurSurcharge", NotificationsType.ERROR);
+			this.addNotification(pcc, "label.erreurSurcharge", NotificationsType.ERROR);
 
 		} else {
 
 			fiche.setMotifSurcharge(formSurchargeMdp.getMotifSurcharge());
-			surchargeMdpValidator.validate(formSurchargeMdp, result);
+			this.surchargeMdpValidator.validate(formSurchargeMdp, result);
 
 			if (!result.hasErrors()) {
 
@@ -796,17 +805,17 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 					DirectoryPerson personConnect = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
 
-					Person userConnecte = personne.findUtilisateur(personConnect.getUid());
+					Person userConnecte = this.personne.findUtilisateur(personConnect.getUid());
 
 					if (userConnecte.verifMdp(formSurchargeMdp.getMdpUserConnecte())) {
 						String typeSurcharge = "";
-						if (userConnecte.hasRole(config.getRoleAssistance())) {
+						if (userConnecte.hasRole(this.config.getRoleAssistance())) {
 							typeSurcharge = "ASSISTANCE";
 						}
-						if (userConnecte.hasRole(config.getRoleAdministrateur())) {
+						if (userConnecte.hasRole(this.config.getRoleAdministrateur())) {
 							typeSurcharge = "ADMIN";
 						}
-						if (userConnecte.hasRole(config.getRoleSuperAdministrateur())) {
+						if (userConnecte.hasRole(this.config.getRoleSuperAdministrateur())) {
 							typeSurcharge = "SUPERADMIN";
 						}
 
@@ -818,12 +827,12 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 						response.setRenderParameter("action", "fichePersonne");
 						model.addAttribute("fiche", fiche);
 
-						addNotification(pcc, "label.surchargeOk", NotificationsType.SUCCESS);
+						this.addNotification(pcc, "label.surchargeOk", NotificationsType.SUCCESS);
 
 						// En mode assistance, envoi d'un mail d'avertissement à l'utilisateur surchargé
 						// Possibilité de désactiver cet envoi de mail dans les param d'environnement du portail
-						if (fiche.getLevelUserConnecteSurcharge().equals(HabilitationSurcharge.level.DROIT_SURCHARGE_ASSISTANCE) && config.getEnableSendMail()
-								&& fiche.getUserConsulte().getEmail() != null && !fiche.getUserConsulte().getEmail().trim().isEmpty()) {
+						if (fiche.getLevelUserConnecteSurcharge().equals(HabilitationSurcharge.level.DROIT_SURCHARGE_ASSISTANCE) && this.config.getEnableSendMail()
+								&& (fiche.getUserConsulte().getEmail() != null) && !fiche.getUserConsulte().getEmail().trim().isEmpty()) {
 
 							String texteMessage = "Bonjour,<br><br>"
 									+ "Dans le cadre de l'assistance que vous avez demandée au service informatique du Rectorat de l'académie Rennes, un personnel d'assistance a surchargé votre mot de passe de façon provisoire. Cette opération va lui permettre de régler le problème que vous signalez. Cette surcharge sera supprimée automatiquement la nuit prochaine."
@@ -856,12 +865,12 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 					} else {
 						model.addAttribute("messageErreur", "label.mdpInvalide");
-						addNotification(pcc, "label.mdpInvalide", NotificationsType.ERROR);
+						this.addNotification(pcc, "label.mdpInvalide", NotificationsType.ERROR);
 						response.setRenderParameter("action", "surchargeMdp");
 					}
 				} else {
 
-					addNotification(pcc, "label.surchargeNonAutorise", NotificationsType.ERROR);
+					this.addNotification(pcc, "label.surchargeNonAutorise", NotificationsType.ERROR);
 					response.setRenderParameter("action", "fichePersonne");
 				}
 			} else {
@@ -871,7 +880,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		}
 
 	}
-	
+
 	private PersonUrl buildUrlPerson(Person p, PortalControllerContext portalControllerContext) throws Exception{
 
 		Map<String, String> windowProperties = new HashMap<String, String>();
@@ -880,10 +889,10 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		windowProperties.put("osivia.hideTitle", "1");
 		windowProperties.put("uidFichePersonne", p.getUid());
 
-		String url = getPortalUrlFactory().getStartPortletUrl(portalControllerContext, "toutatice-identite-fichepersonne-portailPortletInstance",
+		String url = this.getPortalUrlFactory().getStartPortletUrl(portalControllerContext, "toutatice-identite-fichepersonne-portailPortletInstance",
 				windowProperties, false);
 
-		return new PersonUrl(p,url);	
+		return new PersonUrl(p,url);
 	}
 
 	private void setListeProfilUrlModel(List<String> listeProfils, PortalControllerContext portalControllerContext) throws PortalException {
@@ -892,7 +901,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 		for (String dnProfil : listeProfils) {
 			Profil p;
-			p = profil.findProfilByDn(dnProfil);
+			p = this.profil.findProfilByDn(dnProfil);
 			if (p != null) {
 
 				Map<String, String> windowProperties = new HashMap<String, String>();
@@ -902,7 +911,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				windowProperties.put("osivia.hideTitle", "1");
 				windowProperties.put("cnProfil", p.getCn());
 
-				String url = getPortalUrlFactory().getStartPortletUrl(portalControllerContext, DirectoryPortlets.ficheProfil.getInstanceName(),
+				String url = this.getPortalUrlFactory().getStartPortletUrl(portalControllerContext, DirectoryPortlets.ficheProfil.getInstanceName(),
 						windowProperties, false);
 				liste.add(new ProfilUrl(p, url));
 			}
@@ -926,7 +935,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 			resourceResponse.setProperty("Cache-Control", "max-age=" + resourceResponse.getCacheControl().getExpirationTime());
 
-			resourceResponse.setProperty("Last-Modified", formatResourceLastModified());
+			resourceResponse.setProperty("Last-Modified", this.formatResourceLastModified());
 
 			return;
 
@@ -938,7 +947,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 	@Override
 	public void setPortletContext(PortletContext ctx) {
-		portletContext = ctx;
+		this.portletContext = ctx;
 
 	}
 

@@ -20,7 +20,7 @@
 
 	<div class="form-group">
 		<form:label path="mdpActuel" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.pwd.current" />
+			<op:translate  key="label.pwd.current" />
 		</form:label>	
 	
 		<div class="col-md-10"><form:input path="mdpActuel" type="password" cssClass="form-control"/>
@@ -30,7 +30,7 @@
 	
 	<div class="form-group">
 		<form:label path="nouveauMdp" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.pwd.new" />
+			<op:translate  key="label.pwd.new" />
 		</form:label>	
 	
 		<div class="col-md-10"><form:input path="nouveauMdp" type="password" cssClass="form-control password"/>
@@ -40,7 +40,7 @@
 	
 	<div class="form-group">
 		<form:label path="confirmMdp" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.pwd.confirm" />
+			<op:translate  key="label.pwd.confirm" />
 		</form:label>	
 	
 		<div class="col-md-10"><form:input path="confirmMdp" type="password" cssClass="form-control"/>
@@ -53,11 +53,11 @@
 		<div class="col-md-10">
 			<button class="btn btn-primary" onclick="form.submit"> 
 				<i class="glyphicons ok_2"></i>
-				<span><is:getProperty key="label.btn.ok" /></span>
+				<span><op:translate  key="label.btn.ok" /></span>
 			</button>
 			
 			<a class="btn btn-default" id="annuler" href="${retourFiche}">
-				<is:getProperty key="label.btn.back" />
+				<op:translate  key="label.btn.back" />
 			</a>
 				
 		</div>

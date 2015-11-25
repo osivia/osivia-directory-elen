@@ -17,12 +17,12 @@
 	<div class="form-group">
 		<c:if test="${fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE'}">
 			<form:label path="motifSurcharge" cssClass="col-md-2 control-label">
-				<is:getProperty key="label.motifSurcharge" />
+				<op:translate  key="label.motifSurcharge" />
 			</form:label>
 		</c:if>
 		<c:if test="${fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE_ASSISTANCE'}">
 			<form:label path="motifSurcharge" cssClass="col-md-2 control-label">
-				<is:getProperty key="label.refTicket" />
+				<op:translate  key="label.refTicket" />
 			</form:label>
 		</c:if>
 	
@@ -35,7 +35,7 @@
 
 	<div class="form-group">
 		<form:label path="mdpSurcharge" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.mdpSurcharge" />
+			<op:translate  key="label.mdpSurcharge" />
 		</form:label>
 	
 		<div class="col-md-10"><form:input path="mdpSurcharge" type="password" cssClass="form-control"/>
@@ -46,7 +46,7 @@
 	
 	<div class="form-group">
 		<form:label path="mdpUserConnecte" cssClass="col-md-2 control-label">
-			<is:getProperty key="label.mdpUserConnecte" />
+			<op:translate  key="label.mdpUserConnecte" />
 		</form:label>
 	
 		<div class="col-md-10"><form:input path="mdpUserConnecte" type="password" cssClass="form-control"/>
@@ -59,11 +59,11 @@
 		<div class="col-md-offset-2 col-md-10">
 			<button class="btn btn-primary" onclick="form.submit"> 
 				<i class="glyphicons ok_2"></i>
-				<span><is:getProperty key="label.btn.ok" /></span>
+				<span><op:translate  key="label.btn.ok" /></span>
 			</button>
 			
 			<a class="btn btn-default" id="annuler" href="${retourFiche}">
-				<is:getProperty key="label.btn.back" />
+				<op:translate  key="label.btn.back" />
 			</a>
 				
 		</div>

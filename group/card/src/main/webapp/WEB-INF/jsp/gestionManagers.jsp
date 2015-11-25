@@ -147,7 +147,7 @@
 						<div class="form-group">
 							<form:label path="filtreManager"
 								cssClass="col-md-4 control-label">
-								<is:getProperty key="label.filtreManager" />
+								<op:translate  key="label.filtreManager" />
 							</form:label>
 							<div class="col-md-8">
 								<form:input id="filtreManager" path="filtreManager" size="15"
@@ -159,7 +159,7 @@
 
 						<div class="form-group">
 							<form:label path="filtreRne" cssClass="col-md-4 control-label">
-								<is:getProperty key="label.filtreRne" />
+								<op:translate  key="label.filtreRne" />
 							</form:label>
 							<div class="col-md-8">
 								<form:select id="filtreRne" path="filtreRne"
@@ -173,7 +173,7 @@
 
 						<div class="form-group">
 							<form:label path="typeManager" cssClass="col-md-4 control-label">
-								<is:getProperty key="label.typeManager" />
+								<op:translate  key="label.typeManager" />
 							</form:label>
 							<div class="col-md-8">
 								<div class="radio">
@@ -202,7 +202,7 @@
 
 							<div class="form-group">
 								<form:label path="macroProfil" cssClass="col-md-4 control-label">
-									<is:getProperty key="label.macroProfil" />
+									<op:translate  key="label.macroProfil" />
 								</form:label>
 								<div class="col-md-8">
 									<form:select id="macroProfil" path="macroProfil"
@@ -222,7 +222,7 @@
 							<div class="col-md-4"></div>
 							<div class="col-md-8">
 								<button class="btn btn-default" type="submit">
-									<i class="glyphicons search"></i> <span><is:getProperty
+									<i class="glyphicons search"></i> <span><op:translate 
 											key="btn.search" /></span>
 								</button>
 

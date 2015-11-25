@@ -24,10 +24,10 @@
 			<div class="btn-toolbar">
 				<button class="btn btn-primary" onclick="form.submit"> 
 					<i class="glyphicons user_add"></i>
-					<span><is:getProperty key="label.btn.ok" /></span>
+					<span><op:translate  key="label.btn.ok" /></span>
 				</button>
 				
-				<input class="btn btn-default" type="reset" id="Effacer" value="<is:getProperty key="label.btn.clear" />"  />
+				<input class="btn btn-default" type="reset" id="Effacer" value="<op:translate  key="label.btn.clear" />"  />
 			</div>		
 		</div>
 	

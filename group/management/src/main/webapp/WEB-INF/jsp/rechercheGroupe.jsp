@@ -17,7 +17,7 @@
 		<div class="col-sm-8 col-sm-offset-2">
 						
 				<div class="input-group">
-				      <input type="text" name="filtre" id="filtre" class="form-control" value="${formulaire.filtre}" placeholder="<is:getProperty key="label.filtre" />">
+				      <input type="text" name="filtre" id="filtre" class="form-control" value="${formulaire.filtre}" placeholder="<op:translate  key="label.filtre" />">
 				      <span class="input-group-btn">
 				      	<button class="btn btn-default" type="submit"><i class="glyphicons search"></i></button>
 				      </span>

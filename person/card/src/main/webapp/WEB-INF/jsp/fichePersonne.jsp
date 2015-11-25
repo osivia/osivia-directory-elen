@@ -49,7 +49,7 @@
 
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.title" />
+			<op:translate  key="label.title" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.userConsulte.title}</p>
@@ -57,7 +57,7 @@
 	</div>
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.sn" />
+			<op:translate  key="label.sn" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.userConsulte.sn}</p>
@@ -65,7 +65,7 @@
 	</div>
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.givenName" />
+			<op:translate  key="label.givenName" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.userConsulte.givenName}</p>
@@ -75,7 +75,7 @@
 	<c:if test="${fiche.levelConsultation.showBio}">
 		<div class="form-group">
 			<label class="col-md-2 control-label">
-				<is:getProperty key="label.bio" />
+				<op:translate  key="label.bio" />
 						
 			</label>
 			<div class="col-md-10">
@@ -86,7 +86,7 @@
 
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.departementCns" />
+			<op:translate  key="label.departementCns" />
 			
 		
 		</label>
@@ -96,7 +96,7 @@
 	</div>		
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.entiteAdm" />
+			<op:translate  key="label.entiteAdm" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.profilNuxeo.entiteAdm}</p>
@@ -106,7 +106,7 @@
 
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.telFixe" />
+			<op:translate  key="label.telFixe" />
 			
 		</label>
 		<div class="col-md-10">
@@ -115,7 +115,7 @@
 	</div>
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.telMobile" />
+			<op:translate  key="label.telMobile" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.profilNuxeo.telMobile}</p>
@@ -124,7 +124,7 @@
 	<c:if test="${fiche.levelConsultation.showMail}">
 		<div class="form-group">
 			<label class="col-md-2 control-label">
-				<is:getProperty key="label.mail" />
+				<op:translate  key="label.mail" />
 			</label>
 			<div class="col-md-10"><p class="form-control-static">${fiche.userConsulte.email}</p></div>
 		</div>
@@ -133,7 +133,7 @@
 
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.mailGenerique" />
+			<op:translate  key="label.mailGenerique" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.profilNuxeo.mailGenerique}</p>
@@ -141,7 +141,7 @@
 	</div>
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<is:getProperty key="label.referent" />
+			<op:translate  key="label.referent" />
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.profilNuxeo.referent}</p>
@@ -152,14 +152,14 @@
 		test="${fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE' || fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE_ASSISTANCE' || fiche.levelUserConnecteSurcharge == 'NON_SURCHARGEABLE'}">
 		<div class="form-group">
 			<label class="col-md-2 control-label">
-				<is:getProperty key="label.profile" />
+				<op:translate  key="label.profile" />
 				(
 				<c:out value="${fn:length(fiche.userConsulte.listeProfils)}" />
 				)
 
 				<i class="glyphicons glyphicons-life-preserver" 
-					data-toggle="tooltip" data-container="body" data-original-title="<is:getProperty key="label.security.help" />"
-					title="<is:getProperty key="label.security.help" />"></i>
+					data-toggle="tooltip" data-container="body" data-original-title="<op:translate  key="label.security.help" />"
+					title="<op:translate  key="label.security.help" />"></i>
 				
 			</label>
 			<div class="col-md-10 no-ajax-link">
@@ -190,7 +190,7 @@
 				test="${fiche.self || fiche.levelUserConnecteModifFiche == 'DROITMODIF'}">
 
 				<a class="btn btn-primary" href="${modify}"> <i
-					class="glyphicons pencil"></i> <span><is:getProperty
+					class="glyphicons pencil"></i> <span><op:translate 
 							key="label.btn.edit" /></span>
 				</a>
 
@@ -198,7 +198,7 @@
 <!--
 			<c:if test="${fiche.levelUserConnecteModifPwdMail == 'DROITMODIF'}">
 				<a class="btn btn-default" href="${chgtMdp}"> <i
-					class="glyphicons keys"></i> <span><is:getProperty
+					class="glyphicons keys"></i> <span><op:translate 
 							key="label.btn.chgpwd" /></span>
 				</a>
 			</c:if>
@@ -206,7 +206,7 @@
 
 			<c:if test="${(fiche.levelUserConnecteRazMdp == 'DROITRAZ')}">
 				<a class="btn btn-default fancybox_inline no-ajax-link"
-					href="#razMdpDiv"> <span><is:getProperty
+					href="#razMdpDiv"> <span><op:translate 
 							key="label.btn.razMdp" /></span>
 				</a>
 			</c:if>
@@ -222,7 +222,7 @@
 					<c:when
 						test="${fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE'}">
 						<a class="btn btn-primary" href="${surcharge}"> <i
-							class="glyphicons keys"></i> <span><is:getProperty
+							class="glyphicons keys"></i> <span><op:translate 
 									key="label.btn.surcharge" /></span>
 						</a>
 					</c:when>
@@ -231,7 +231,7 @@
 						test="${fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE_ASSISTANCE'}">
 						<a class="btn btn-primary fancybox_inline no-ajax-link"
 							href="#assistanceSurchargeDiv"> <i class="glyphicons keys"></i>
-							<span><is:getProperty key="label.btn.surcharge" /></span>
+							<span><op:translate  key="label.btn.surcharge" /></span>
 						</a>
 					</c:when>
 
@@ -252,17 +252,17 @@
 		<div class="container-fluid text-center" id="assistanceSurcharge">
 
 			<p>
-				<is:getProperty key="confirm.surcharge" />
+				<op:translate  key="confirm.surcharge" />
 			</p>
 
 			<a id="assistanceSurchargeConfirmedBtn"
 				class="btn btn-default btn-warning" href="${surcharge}"> <i
 				class="glyphicons halflings warning-sign"></i> <span
-				class="hidden-xs"><is:getProperty key="YES" /></span>
+				class="hidden-xs"><op:translate  key="YES" /></span>
 			</a>
 			<button class="btn btn-default" type="button"
 				onclick="closeFancybox()">
-				<is:getProperty key="NO" />
+				<op:translate  key="NO" />
 			</button>
 		</div>
 	</div>
@@ -272,16 +272,16 @@
 		<div class="container-fluid text-center" id="razMdp">
 
 			<p>
-				<is:getProperty key="confirm.razMdp" />
+				<op:translate  key="confirm.razMdp" />
 			</p>
 
 			<a id="razMdpConfirmBtn" class="btn btn-default btn-warning"
 				href="${razMdp}"> <i class="glyphicons halflings warning-sign"></i>
-				<span class="hidden-xs"><is:getProperty key="YES" /></span>
+				<span class="hidden-xs"><op:translate  key="YES" /></span>
 			</a>
 			<button class="btn btn-default" type="button"
 				onclick="closeFancybox()">
-				<is:getProperty key="NO" />
+				<op:translate  key="NO" />
 			</button>
 		</div>
 	</div>

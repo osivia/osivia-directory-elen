@@ -8,14 +8,12 @@
     
     <display-name>Directory - Group card</display-name>
 
-
-	<!-- Servlet de rendu -->
+    <!-- Spring MVC servlet -->
     <servlet>
         <servlet-name>ViewRendererServlet</servlet-name>
         <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
-
-	<!-- Mapping du rendu -->
     <servlet-mapping>
         <servlet-name>ViewRendererServlet</servlet-name>
         <url-pattern>/WEB-INF/servlet/view</url-pattern>

@@ -18,7 +18,7 @@
 
 				<div class="form-group">
 					<form:label path="filtreOrga" cssClass="col-md-4 control-label">
-						<is:getProperty key="label.filtreOrga" />
+						<op:translate  key="label.filtreOrga" />
 					</form:label>
 
 					<div class="col-md-8">

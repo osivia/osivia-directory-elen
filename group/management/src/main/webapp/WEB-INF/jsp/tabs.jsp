@@ -8,11 +8,11 @@
 
 				<c:choose>
 					<c:when test="${currentTab == 'groupesGeres'}">
-						<li class="active"><a href="#"><is:getProperty key="tabs.groupesGeres" /></a></li>
+						<li class="active"><a href="#"><op:translate  key="tabs.groupesGeres" /></a></li>
 					</c:when>
 					<c:otherwise>
 						<li><a href="<portlet:renderURL><portlet:param name="action" value="groupesGeres" /></portlet:renderURL>">
-								<is:getProperty key="tabs.groupesGeres" /></a></li>
+								<op:translate  key="tabs.groupesGeres" /></a></li>
 					</c:otherwise>
 				</c:choose>
 
@@ -24,20 +24,20 @@
 
 				<c:choose>
 					<c:when test="${currentTab == 'mesGroupes'}">
-						<li class="active"><a href="#"><is:getProperty key="tabs.mesGroupes" /></a></li>
+						<li class="active"><a href="#"><op:translate  key="tabs.mesGroupes" /></a></li>
 					</c:when>
 					<c:otherwise>
-						<li><a href="<portlet:renderURL><portlet:param name="action" value="mesGroupes" /></portlet:renderURL>"><is:getProperty key="tabs.mesGroupes" /></a></li>
+						<li><a href="<portlet:renderURL><portlet:param name="action" value="mesGroupes" /></portlet:renderURL>"><op:translate  key="tabs.mesGroupes" /></a></li>
 					</c:otherwise>
 				</c:choose>
 
 
 				<c:choose>
 					<c:when test="${currentTab == 'rechercheGroupe'}">
-						<li class="active"><a href="#"><is:getProperty key="tabs.rechercheGroupe" /></a></li>
+						<li class="active"><a href="#"><op:translate  key="tabs.rechercheGroupe" /></a></li>
 					</c:when>
 					<c:otherwise>
-						<li><a href="<portlet:renderURL><portlet:param name="action" value="rechercheAvancee" /></portlet:renderURL>"><is:getProperty key="tabs.rechercheGroupe" /></a></li>
+						<li><a href="<portlet:renderURL><portlet:param name="action" value="rechercheAvancee" /></portlet:renderURL>"><op:translate  key="tabs.rechercheGroupe" /></a></li>
 					</c:otherwise>
 				</c:choose>
 			</c:if>

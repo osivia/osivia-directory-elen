@@ -1,20 +1,13 @@
-<!DOCTYPE portlet-app PUBLIC
-   "-//JBoss Portal//DTD JBoss Portlet 2.6//EN"
-   "http://www.jboss.org/portal/dtd/jboss-portlet_2_6.dtd">
-
-
+<!DOCTYPE portlet-app PUBLIC "-//JBoss Portal//DTD JBoss Portlet 2.6//EN" "http://www.jboss.org/portal/dtd/jboss-portlet_2_6.dtd">
 
 <portlet-app>
+
     <portlet>
-        <portlet-name>osivia-services-directoryPortlet</portlet-name>
+        <portlet-name>directory-services</portlet-name>
 
         <transaction>
             <trans-attribute>Required</trans-attribute>
         </transaction>
-        <header-content>
-
-        </header-content>
-
     </portlet>
 
     <service>
@@ -24,5 +17,3 @@
     </service>
 
 </portlet-app>
-
-	

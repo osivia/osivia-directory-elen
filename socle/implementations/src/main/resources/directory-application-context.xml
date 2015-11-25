@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:cache="http://www.springframework.org/schema/cache"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+   		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd
+   		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <cache:annotation-driven />
+    
+    <context:annotation-config />
+
+    <context:component-scan base-package="fr.toutatice.outils.ldap.entity" />
+    
+    <context:property-placeholder location="classpath:/toutatice_annuaire_mapping.properties"></context:property-placeholder>
+
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager">
+            <ref local="ehcache" />
+        </property>
+    </bean>
+
+    <bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="classpath:ehcache-ldap.xml" />
+
+    <bean id="contextSourceLecture" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="${ldap.urlLecture}" />
+        <property name="base" value="${ldap.base}" />
+        <property name="userDn" value="${ldap.manager.dn}" />
+        <property name="password" value="${ldap.manager.pswd}" />
+        <property name="pooled" value="true" />
+        <property name="baseEnvironmentProperties">
+            <map>
+                <entry key="com.sun.jndi.ldap.connect.timeout" value="${ldap.timeout}" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contextSourceLectureNonPoolee" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="${ldap.urlLecture}" />
+        <property name="base" value="${ldap.base}" />
+        <property name="userDn" value="${ldap.manager.dn}" />
+        <property name="password" value="${ldap.manager.pswd}" />
+        <property name="pooled" value="false" />
+        <property name="baseEnvironmentProperties">
+            <map>
+                <entry key="com.sun.jndi.ldap.connect.timeout" value="${ldap.timeout}" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="contextSourceEcriture" class="org.springframework.ldap.core.support.LdapContextSource">
+        <property name="url" value="${ldap.urlEcriture}" />
+        <property name="base" value="${ldap.base}" />
+        <property name="userDn" value="${ldap.manager.dn}" />
+        <property name="password" value="${ldap.manager.pswd}" />
+        <property name="pooled" value="true" />
+        <property name="baseEnvironmentProperties">
+            <map>
+                <entry key="com.sun.jndi.ldap.connect.timeout" value="${ldap.timeout}" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="ldapTemplateEcriture" class="org.springframework.ldap.core.LdapTemplate">
+        <qualifier value="ldapTemplateEcriture" />
+        <constructor-arg ref="contextSourceEcriture" />
+    </bean>
+
+    <bean id="ldapTemplateLecture" class="org.springframework.ldap.core.LdapTemplate">
+        <qualifier value="ldapTemplateLecture" />
+        <constructor-arg ref="contextSourceLecture" />
+    </bean>
+
+    <bean id="ldapTemplateLectureNonPoolee" class="org.springframework.ldap.core.LdapTemplate">
+        <qualifier value="ldapTemplateLectureNonPoolee" />
+        <constructor-arg ref="contextSourceLectureNonPoolee" />
+    </bean>
+
+    <bean id="personDao" class="fr.toutatice.outils.ldap.dao.PersonDaoImpl">
+        <property name="prenom" value="${personDao.prenom}" />
+        <property name="prenomNom" value="${personDao.prenomNom}" />
+        <property name="nom" value="${personDao.nom}" />
+        <property name="nomPrenom" value="${personDao.nomPrenom}" />
+        <property name="id" value="${personDao.id}" />
+        <property name="alias" value="${personDao.alias}" />
+        <property name="sexe" value="${personDao.sexe}" />
+        <property name="rne" value="${personDao.rne}" />
+        <property name="password" value="${personDao.password}" />
+        <property name="profils" value="${personDao.profils}" />
+        <property name="idsurcharge" value="${personDao.idSurcharge}" />
+        <property name="categorie" value="${personDao.categorie}" />
+        <property name="classeObjet" value="${personDao.classObjet}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+        <property name="title" value="${personDao.title}" />
+        <property name="email" value="${personDao.email}" />
+        <property name="divcod" value="${personDao.divcod}" />
+        <property name="dateNaissance" value="${personDao.dateNaissance}" />
+        <property name="manager" value="${personDao.manager}" />
+        <property name="explicitManager" value="${personDao.explicitManager}" />
+        <property name="sourceSI" value="${personDao.sourceSI}" />
+        <property name="elevesConcernes" value="${personDao.elevesConcernes}" />
+        <property name="idSiecle" value="${personDao.idSiecle}" />
+        <property name="personJointure" value="${personDao.personJointure}" />
+        <property name="nationalProfil" value="${personDao.nationalProfil}" />
+        <property name="personalTitle" value="${personDao.personalTitle}" />
+        <property name="disciplinePoste" value="${personDao.disciplinePoste}" />
+    </bean>
+    
+    <bean id="applicationDao" class="fr.toutatice.outils.ldap.dao.ApplicationDao">
+        <property name="categorieLDAP" value="${applicationDao.categorieLDAP}" />
+        <property name="id" value="${applicationDao.id}" />
+        <property name="nom" value="${applicationDao.nom}" />
+        <property name="description" value="${applicationDao.description}" />
+        <property name="typeApplication" value="${applicationDao.typeApplication}" />
+        <property name="profils" value="${applicationDao.profils}" />
+        <property name="categories" value="${applicationDao.categories}" />
+        <property name="rolesapplicatifs" value="${applicationDao.rolesApplicatifs}" />
+        <property name="url" value="${applicationDao.urlAppli}" />
+        <property name="passwords" value="${applicationDao.passwords}" />
+        <property name="objectClass" value="${applicationDao.classObjet}" />
+        <property name="urlLogout" value="${applicationDao.urlLogout}" />
+        <property name="derMaj" value="${applicationDao.derMaj}" />
+        <property name="proprietaire" value="${applicationDao.proprietaire}" />
+        <property name="dbUri" value="${applicationDao.dbUri}" />
+        <property name="modAuth" value="${applicationDao.modAuth}" />
+        <property name="proprietes" value="${applicationDao.proprietes}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+        <property name="manager" value="${applicationDao.manager}" />
+        <property name="explicitManager" value="${applicationDao.explicitManager}" />
+        <property name="cdcCatego" value="${applicationDao.cdcCatego}" />
+        <property name="cdcRne" value="${applicationDao.cdcRne}" />
+        <property name="appliOrganisation" value="${applicationDao.appliOrganisation}" />
+        <property name="nature" value="${applicationDao.nature}" />
+        <property name="contexte" value="${applicationDao.contexte}" />
+    </bean>
+
+    <bean id="applicationMereDao" class="fr.toutatice.outils.ldap.dao.ApplicationMereDao">
+        <property name="objectClassMere" value="${applicationMereDao.classObjet}" />
+        <property name="droitInscription" value="${applicationMereDao.droitInscription}" />
+    </bean>
+
+    <bean id="applicationFilleDao" class="fr.toutatice.outils.ldap.dao.ApplicationFilleDao">
+        <property name="objectClassFille" value="${applicationFilleDao.classObjet}" />
+        <property name="proprietaire" value="${applicationFilleDao.proprietaire}" />
+        <property name="applicationMere" value="${applicationFilleDao.applicationMere}" />
+    </bean>
+
+    <bean id="profilDao" class="fr.toutatice.outils.ldap.dao.ProfilDao">
+        <property name="cn" value="${profil.nom}" />
+        <property name="objectClass" value="${profil.classObjet}" />
+        <property name="objectClassClasse" value="${profil.objectClassClasse}" />
+        <property name="owner" value="${profil.proprietaire}" />
+        <property name="member" value="${profil.membres}" />
+        <property name="explicitMember" value="${profil.membresExplicites}" />
+        <property name="description" value="${profil.description}" />
+        <property name="categorie" value="${profil.categorie}" />
+        <property name="sousCategorie" value="${profil.sousCategorie}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+        <property name="manager" value="${profil.manager}" />
+        <property name="explicitManager" value="${profil.explicitManager}" />
+        <property name="displayName" value="${profil.displayName}" />
+        <property name="filtreRecherche" value="${profil.filtreRecherche}" />
+        <property name="type" value="${profil.type}" />
+        <property name="peuplement" value="${profil.peuplement}" />
+    </bean>
+
+    <bean id="roleApplicatifDao" class="fr.toutatice.outils.ldap.dao.RoleApplicatifDao">
+        <property name="nom" value="${roleApplicatif.nom}" />
+        <property name="description" value="${roleApplicatif.description}" />
+        <property name="type" value="${roleApplicatif.type}" />
+        <property name="membres" value="${roleApplicatif.membres}" />
+        <property name="profilsApplicatifs" value="${roleApplicatif.profilsApplicatifs}" />
+        <property name="owner" value="${roleApplicatif.proprietaire}" />
+        <property name="categorie" value="${roleApplicatif.categorie}" />
+        <property name="sousCategorie" value="${roleApplicatif.sousCategorie}" />
+        <property name="classeObjet" value="${roleApplicatif.classObjet}" />
+        <property name="memberURL" value="${roleApplicatif.memberURL}" />
+        <property name="manager" value="${roleApplicatif.manager}" />
+        <property name="explicitManager" value="${roleApplicatif.explicitManager}" />
+        <property name="displayName" value="${roleApplicatif.displayName}" />
+        <property name="filtreRecherche" value="${roleApplicatif.filtreRecherche}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+    </bean>
+
+    <bean id="organisationDao" class="fr.toutatice.outils.ldap.dao.OrganisationDaoImpl">
+        <property name="categorieLDAP" value="${organisationDao.categorieLDAP}" />
+        <property name="id" value="${organisationDao.id}" />
+        <property name="description" value="${organisationDao.description}" />
+        <property name="displayName" value="${organisationDao.displayName}" />
+        <property name="localisation" value="${organisationDao.localisation}" />
+        <property name="postalCode" value="${organisationDao.postalCode}" />
+        <property name="street" value="${organisationDao.street}" />
+        <property name="telephoneNumber" value="${organisationDao.telephoneNumber}" />
+        <property name="faxNumber" value="${organisationDao.faxNumber}" />
+        <property name="classeObjet" value="${organisationDao.classObjet}" />
+        <property name="seeAlso" value="${organisationDao.seeAlso}" />
+        <property name="profils" value="${organisationDao.profils}" />
+        <property name="manager" value="${organisationDao.manager}" />
+        <property name="explicitManager" value="${organisationDao.explicitManager}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+    </bean>
+
+    <bean id="structureDao" class="fr.toutatice.outils.ldap.dao.StructureDaoImpl">
+        <property name="categorieLDAP" value="${structureDao.categorieLDAP}" />
+        <property name="classeObjetStructure" value="${structureDao.classObjetStructure}" />
+        <property name="noRecepisseCnil" value="${structureDao.noRecepisseCnil}" />
+        <property name="typeStructure" value="${structureDao.typeStructure}" />
+        <property name="responsable" value="${structureDao.responsable}" />
+        <property name="siren" value="${structureDao.siren}" />
+        <property name="email" value="${structureDao.email}" />
+        <property name="siteweb" value="${structureDao.siteweb}" />
+        <property name="contactENT" value="${structureDao.contactENT}" />
+        <property name="numeroUAI" value="${structureDao.numeroUAI}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+        <property name="geoLoc" value="${structureDao.geoLoc}" />
+        <property name="resentice" value="${structureDao.resentice}" />
+        <property name="daip" value="${structureDao.daip}"></property>
+    </bean>
+
+    <bean id="etablissementDao" class="fr.toutatice.outils.ldap.dao.EtablissementDaoImpl">
+        <property name="categorieLDAP" value="${etablissementDao.categorieLDAP}" />
+        <property name="classeObjetEtablissement" value="${etablissementDao.classObjetStructure}" />
+        <property name="ministereTutelle" value="${etablissementDao.ministereTutelle}" />
+        <property name="contrat" value="${etablissementDao.contrat}" />
+        <property name="bassin" value="${etablissementDao.bassin}" />
+        <property name="classes" value="${etablissementDao.classes}" />
+        <property name="groupes" value="${etablissementDao.groupes}" />
+    </bean>
+
+    <bean id="groupesApplicationsDao" class="fr.toutatice.outils.ldap.dao.GroupesApplicationsDao">
+        <property name="nomGroupe" value="${groupesApplications.nom}" />
+        <property name="nomComplet" value="${groupesApplications.nomComplet}" />
+        <property name="memberUrl" value="${groupesApplications.memberUrl}" />
+        <property name="categorie" value="${groupesApplications.categorie}" />
+        <property name="sousCategorie" value="${groupesApplications.sousCategorie}" />
+        <property name="classeObjet" value="${groupesApplications.classObjet}" />
+        <property name="profil" value="${groupesApplications.profil}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+    </bean>
+
+    <bean id="organizationalUnitDao" class="fr.toutatice.outils.ldap.dao.OrganizationalUnitDao">
+        <property name="nom" value="${organizationalUnit.nom}" />
+        <property name="classeObjet" value="${organizationalUnit.classObjet}" />
+        <property name="BASE_DN" value="${ldap.base}" />
+    </bean>
+
+    <bean id="chargementCdcIdEtab" class="fr.toutatice.outils.ldap.util.ChargementCdcIdEtab" factory-method="setInstance" scope="singleton">
+        <constructor-arg type="java.lang.String" value="file:///${JBOSS_HOME}/../custom/params/cdcIdEtab.properties" />
+    </bean>
+
+    <bean id="annuaireConfig" class="fr.toutatice.outils.ldap.util.ToutaticeAnnuaireConfig" />
+
+</beans>

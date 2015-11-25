@@ -16,7 +16,7 @@
 
 	<div class="form-group">
 		<form:label path="filtreNom" cssClass="col-md-4 control-label">
-			<is:getProperty key="label.filtreNom" />
+			<op:translate  key="label.filtreNom" />
 		</form:label>
 
 		<div class="col-md-8">
@@ -27,7 +27,7 @@
 
 	<div class="form-group">
 		<form:label path="filtreDptCns" cssClass="col-md-4 control-label">
-			<is:getProperty key="label.filtreDptCns" />
+			<op:translate  key="label.filtreDptCns" />
 		</form:label>
 
 		<div class="col-md-8">
@@ -44,7 +44,7 @@
 		<div class="col-md-8">
 			<div class="btn-toolbar">
 				<button class="btn btn-primary" onclick="form.submit">
-					<i class="glyphicons search"></i> <span><is:getProperty
+					<i class="glyphicons search"></i> <span><op:translate 
 							key="btn.submit" /></span>
 				</button>
 			</div>
@@ -95,7 +95,7 @@
 
 			<c:if test='${config.enableCreation}'>
 				<a href="${urlCreation}" class="btn  btn-primary  no-ajax-link">
-					<i class="glyphicons user_add"></i> <span><is:getProperty
+					<i class="glyphicons user_add"></i> <span><op:translate 
 							key="btn.useradd" /></span>
 				</a>
 			</c:if>
@@ -108,16 +108,16 @@
 		<div class="container-fluid text-center" id="delete_user">
 
 			<p>
-				<is:getProperty key="confirm.delete" />
+				<op:translate  key="confirm.delete" />
 			</p>
 
 			<a id="deleteUserConfirmedBtn" class="btn btn-default btn-warning"
 				href=""> <i class="glyphicons halflings warning-sign"></i> <span
-				class="hidden-xs"><is:getProperty key="YES" /></span>
+				class="hidden-xs"><op:translate  key="YES" /></span>
 			</a>
 			<button class="btn btn-default" type="button"
 				onclick="closeFancybox()">
-				<is:getProperty key="NO" />
+				<op:translate  key="NO" />
 			</button>
 		</div>
 	</div>

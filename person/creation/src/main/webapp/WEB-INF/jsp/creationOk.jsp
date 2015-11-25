@@ -12,12 +12,12 @@
 				<a class="btn btn-default" href="${creerPersonne}">
 					<i class="glyphicons user_add"></i>
 					
-					<span><is:getProperty key="label.btn.create" /></span>
+					<span><op:translate  key="label.btn.create" /></span>
 				</a>
 				
 				<a class="btn btn-primary" href="${urlFichePersonne}">
 					<i class="glyphicons user"></i>
-					<span><is:getProperty key="label.btn.edit" /></span>
+					<span><op:translate  key="label.btn.edit" /></span>
 				</a>				
 			</div>
 		

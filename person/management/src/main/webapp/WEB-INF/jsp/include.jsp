@@ -11,7 +11,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<%@ taglib prefix="is" uri="internationalization" %>
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 

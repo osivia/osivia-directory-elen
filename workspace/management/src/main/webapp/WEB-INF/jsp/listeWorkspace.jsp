@@ -61,7 +61,7 @@
 	
      <a href="${demandeCreation}" class="btn btn-primary">
 		<i class="glyphicons halflings plus"></i>
-		<span><is:getProperty key="label.creerEspace" /></span>
+		<span><op:translate  key="label.creerEspace" /></span>
 	</a>
 		
 </c:if>

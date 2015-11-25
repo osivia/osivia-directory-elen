@@ -65,7 +65,7 @@
 			<i class="glyphicons glyphicons-more"> </i>
 			
 			<span>
-				<is:getProperty key="SHOW_MEMBERS" />
+				<op:translate  key="SHOW_MEMBERS" />
 			</span>
 		</a>
 	</p>

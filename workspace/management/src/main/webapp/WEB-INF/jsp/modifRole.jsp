@@ -26,7 +26,7 @@
 <h3>${workspace.nom} (${workspace.shortname})</h3>
 	
 
-<h4>Modification du rôle : <is:getProperty key="label.${nomRole}" /> </h4>
+<h4>Modification du rôle : <op:translate  key="label.${nomRole}" /> </h4>
 
 	
 <div class="row">
@@ -100,7 +100,7 @@
 				class="form-horizontal">
 				
 				<div class="form-group">
-					<form:label class="control-label col-sm-4" path="cnGroupe"><is:getProperty key="label.selectGroup" /></form:label>
+					<form:label class="control-label col-sm-4" path="cnGroupe"><op:translate  key="label.selectGroup" /></form:label>
 					<div class="col-sm-8">
 						<div class="input-group">
 							<form:select class="form-control" id="filtreAjoutGroupe" path="cnGroupe">
@@ -215,8 +215,8 @@
 
 
 <p class="no-ajax-link">			
-	<a href="${valider}" class="btn btn-primary"><i class="glyphicons ok"></i> <span><is:getProperty key="label.btn.valider"/></span> </a>
-	<a href="${annuler}" class="btn btn-default"><i class="glyphicons ban"></i> <span><is:getProperty key="label.btn.annuler"/></span> </a>
+	<a href="${valider}" class="btn btn-primary"><i class="glyphicons ok"></i> <span><op:translate  key="label.btn.valider"/></span> </a>
+	<a href="${annuler}" class="btn btn-default"><i class="glyphicons ban"></i> <span><op:translate  key="label.btn.annuler"/></span> </a>
 </p>	
 	
 

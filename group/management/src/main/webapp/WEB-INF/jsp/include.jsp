@@ -9,6 +9,6 @@
 
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<%@ taglib prefix="is" uri="internationalization" %>
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 
 <%@ taglib prefix="display" uri="http://displaytag.sf.net" %>

@@ -58,37 +58,4 @@
         </plugins>    
     </build>
 
-
-    <profiles>
-        <profile>
-            <activation>
-                <property>
-                    <name>deploy.osivia.dir</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>copy-jar</id>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <copy file="${basedir}/target/${project.build.finalName}.war" todir="${deploy.osivia.dir}" />
-                                    </tasks>
-                                </configuration>
-                                <phase>package</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
 </project>

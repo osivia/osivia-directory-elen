@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
-version="1.0">
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    version="2.0">
 
 	<portlet>
-		<description>Portlet Toutatice Création Personnes</description>
-		<portlet-name>toutatice-identite-creationpersonnes-portailPortlet</portlet-name>
-        <display-name>Toutatice - Création Personnes</display-name>
+		<portlet-name>directory-person-creation</portlet-name>
 		<portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
 
-		<!--  Fichier de configuration Spring de l'application --> 
 		<init-param>
 			<name>contextConfigLocation</name>
-			<value>
-				classpath:annuaire-beans.xml
-				/WEB-INF/applicationContext.xml</value>
+			<value> classpath:directory-beans.xml /WEB-INF/directory-person-creation-portlet.xml</value>
 		</init-param>
         
         <supports>
@@ -26,9 +20,8 @@ version="1.0">
         </supports>
         
 		<portlet-info>
-			<title>Toutatice - Création Personnes</title>
+			<title>Person creation</title>
 		</portlet-info>
 	</portlet>
-	
 	
 </portlet-app>

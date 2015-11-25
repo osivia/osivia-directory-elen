@@ -16,7 +16,7 @@
 	<p>L'espace de travail que vous allez créer aura les caractéristiques suivantes :</p>		
 		
 	<div class="form-group">
-		<label class="col-sm-4 control-label"><is:getProperty key="label.nomEspace" /></label>
+		<label class="col-sm-4 control-label"><op:translate  key="label.nomEspace" /></label>
 		<div class="col-sm-8">
 			<p class="form-control-static">${workspace.nom}
 			</p>	
@@ -25,7 +25,7 @@
 	</div>
 	
 	<div class="form-group">
-		<label class="col-sm-4 control-label"><is:getProperty key="label.codeEspace" /></label>
+		<label class="col-sm-4 control-label"><op:translate  key="label.codeEspace" /></label>
 		<div class="col-sm-8">
 			<p class="form-control-static">${workspace.shortname}
 			</p>	
@@ -35,7 +35,7 @@
 
 	
 	<div class="form-group">
-		<label class="col-sm-4 control-label"><is:getProperty key="label.descriptionEspace" /></label>
+		<label class="col-sm-4 control-label"><op:translate  key="label.descriptionEspace" /></label>
 		<div class="col-sm-8">
 			<p class="form-control-static">${workspace.description}
 			</p>	
@@ -46,9 +46,9 @@
 
 	<div class="form-group">
 				<div class="col-sm-8 col-sm-offset-4">
-					<button class="btn btn-primary" type="submit"><i class="glyphicons halflings ok"></i><span><is:getProperty key="label.btn.valider" /></span></button>
-					<a href="${retour}" class="btn btn-default"><i class="glyphicons halflings step-backward"></i> <span><is:getProperty key="label.btn.previous"/></span> </a>
-		      		<a href="${annuler}" class="btn btn-default"><i class="glyphicons ban"></i> <span><is:getProperty key="label.btn.annuler"/></span> </a>
+					<button class="btn btn-primary" type="submit"><i class="glyphicons halflings ok"></i><span><op:translate  key="label.btn.valider" /></span></button>
+					<a href="${retour}" class="btn btn-default"><i class="glyphicons halflings step-backward"></i> <span><op:translate  key="label.btn.previous"/></span> </a>
+		      		<a href="${annuler}" class="btn btn-default"><i class="glyphicons ban"></i> <span><op:translate  key="label.btn.annuler"/></span> </a>
 		
 				</div>		
 	</div>	
