@@ -12,13 +12,12 @@ public class ProfilNuxeo {
 
 	private String telFixe;
 	private String telMobile;
-	private String entiteAdm;
-	private String mailGenerique;
-	private String referent;
+
+    private String profession;
 
 
 	public String getBio() {
-		return bio;
+		return this.bio;
 	}
 	public void setBio(String bio) {
 		this.bio = bio;
@@ -26,13 +25,13 @@ public class ProfilNuxeo {
 
 
 	public String getPathUserWorkspace() {
-		return pathUserWorkspace;
+		return this.pathUserWorkspace;
 	}
 	public void setPathUserWorkspace(String pathUserWorkspace) {
 		this.pathUserWorkspace = pathUserWorkspace;
 	}
 	public Documents getListeBlogs() {
-		return listeBlogs;
+		return this.listeBlogs;
 	}
 	public void setListeBlogs(Documents listeBlogs) {
 		this.listeBlogs = listeBlogs;
@@ -41,7 +40,7 @@ public class ProfilNuxeo {
 	 * @return the telFixe
 	 */
 	public String getTelFixe() {
-		return telFixe;
+		return this.telFixe;
 	}
 	/**
 	 * @param telFixe the telFixe to set
@@ -53,7 +52,7 @@ public class ProfilNuxeo {
 	 * @return the telMobile
 	 */
 	public String getTelMobile() {
-		return telMobile;
+		return this.telMobile;
 	}
 	/**
 	 * @param telMobile the telMobile to set
@@ -62,45 +61,22 @@ public class ProfilNuxeo {
 		this.telMobile = telMobile;
 	}
 
-	/**
-	 * @return the entiteAdm
-	 */
-	public String getEntiteAdm() {
-		return entiteAdm;
-	}
-	/**
-	 * @param entiteAdm the entiteAdm to set
-	 */
-	public void setEntiteAdm(String entiteAdm) {
-		this.entiteAdm = entiteAdm;
-	}
-	/**
-	 * @return the mailGenerique
-	 */
-	public String getMailGenerique() {
-		return mailGenerique;
-	}
-	/**
-	 * @param mailGenerique the mailGenerique to set
-	 */
-	public void setMailGenerique(String mailGenerique) {
-		this.mailGenerique = mailGenerique;
-	}
-	/**
-	 * @return the referent
-	 */
-	public String getReferent() {
-		return referent;
-	}
-	/**
-	 * @param referent the referent to set
-	 */
-	public void setReferent(String referent) {
-		this.referent = referent;
-	}
-	
-	
-	
-	
-	
+    /**
+     * Getter for profession.
+     * 
+     * @return the profession
+     */
+    public String getProfession() {
+        return this.profession;
+    }
+
+    /**
+     * Setter for profession.
+     * 
+     * @param profession the profession to set
+     */
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
 }

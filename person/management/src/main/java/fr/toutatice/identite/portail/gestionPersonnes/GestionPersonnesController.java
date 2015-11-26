@@ -17,6 +17,7 @@ import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osivia.portal.api.Constants;
@@ -44,6 +45,7 @@ import fr.toutatice.outils.ldap.entity.Person;
 import fr.toutatice.outils.ldap.exception.ToutaticeAnnuaireException;
 import fr.toutatice.portail.cms.nuxeo.api.CMSPortlet;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoException;
 import fr.toutatice.portail.cms.nuxeo.api.VocabularyEntry;
 import fr.toutatice.portail.cms.nuxeo.api.VocabularyHelper;
 
@@ -54,7 +56,7 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 	protected static final Log logger = LogFactory.getLog("fr.toutatice.services.identite");
 	private PortletContext portletContext;
-	
+
 	private PortletConfig portletConfig;
 
 	@Autowired
@@ -65,14 +67,14 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 	@Autowired
 	private HabilitationSurcharge habilitationSurcharge;
-		
+
 
 	@PostConstruct
 	public void initNuxeoService() throws Exception {
 		super.init();
-		if (portletContext != null && portletContext.getAttribute("nuxeoService") == null) {
+		if ((this.portletContext != null) && (this.portletContext.getAttribute("nuxeoService") == null)) {
 
-			this.init(portletConfig);
+			this.init(this.portletConfig);
 		}
 
 	}
@@ -81,44 +83,52 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 	public Formulaire init(PortletRequest request, PortletResponse response) throws ToutaticeAnnuaireException, PortalException {
 
 		DirectoryPerson person = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
-		Person userConnecte = personneInstance.findUtilisateur(person.getUid());
+		Person userConnecte = this.personneInstance.findUtilisateur(person.getUid());
 
 		Formulaire formulaire = new Formulaire();
-		level findRoleUser = habilitationSurcharge.findRoleUser(userConnecte);
+		level findRoleUser = this.habilitationSurcharge.findRoleUser(userConnecte);
 		formulaire.setLevelSurchargeUserConnecte(findRoleUser);
 
-		if (config.getMinCarsSearch() == 0) {
-			List<Person> liste = personneInstance.getPersonByCriteres("", "", "", "", "","sn");
-			PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
+		if (this.config.getMinCarsSearch() == 0) {
+			List<Person> liste = this.personneInstance.getPersonByCriteres("", "", "", "", "","sn");
+			PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 			List<PersonUrl> listeUrl = this.getListePersonnesUrl(liste, portalControllerContext, request, response);
 			formulaire.setListePersonnesRecherchees(listeUrl);
 		}
 
-		if (findRoleUser != HabilitationSurcharge.level.NONHABILITE) {
-			PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
-			List<Person> listeMesSurcharges = personneInstance.rechercherSurchargeParUtilisateur(userConnecte.getUid(), "sn");
-			List<PersonUrl> listeUrl = this.getListePersonnesUrl(listeMesSurcharges, portalControllerContext, request, response);
+        if (BooleanUtils.isTrue(this.config.getEnableOverload())) {
+            if (findRoleUser != HabilitationSurcharge.level.NONHABILITE) {
+                PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+                List<Person> listeMesSurcharges = this.personneInstance.rechercherSurchargeParUtilisateur(userConnecte.getUid(), "sn");
+                List<PersonUrl> listeUrl = this.getListePersonnesUrl(listeMesSurcharges, portalControllerContext, request, response);
 
-			formulaire.setListeMesSurcharges(listeUrl);
+                formulaire.setListeMesSurcharges(listeUrl);
 
+            }
+
+            if ((findRoleUser == HabilitationSurcharge.level.ADMINISTRATEUR) || (findRoleUser == HabilitationSurcharge.level.SUPERADMINISTRATEUR)) {
+                PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+                List<Person> listeSurcharges = this.personneInstance.rechercherSurcharge("sn");
+                List<PersonUrl> listeUrl = this.getListePersonnesUrl(listeSurcharges, portalControllerContext, request, response);
+
+                formulaire.setListePersonnesSurchargees(listeUrl);
+            }
 		}
 
-		if (findRoleUser == HabilitationSurcharge.level.ADMINISTRATEUR || findRoleUser == HabilitationSurcharge.level.SUPERADMINISTRATEUR) {
-			PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
-			List<Person> listeSurcharges = personneInstance.rechercherSurcharge("sn");
-			List<PersonUrl> listeUrl = this.getListePersonnesUrl(listeSurcharges, portalControllerContext, request, response);
 
-			formulaire.setListePersonnesSurchargees(listeUrl);
-		}
-		
-		
 		// Traduction entité
-		NuxeoController nuxeoController = new NuxeoController(request, response, portletContext);
-		VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "[CNS] Entité");
-		
-		Map<String, VocabularyEntry> children = vocabularyEntry.getChildren();
+		NuxeoController nuxeoController = new NuxeoController(request, response, this.portletContext);
+        Map<String, VocabularyEntry> children;
+        try {
+            VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "organization");
+            children = vocabularyEntry.getChildren();
+        } catch (NuxeoException e) {
+            logger.error(e.getMessage(), e);
+            children = new HashMap<String, VocabularyEntry>(0);
+        }
+
 		Map<String, String> listeDptCns = new LinkedHashMap<String, String>();
-		
+
 		for(Map.Entry<String, VocabularyEntry>  entry : children.entrySet()) {
 			listeDptCns.put(entry.getValue().getId(), entry.getValue().getLabel());
 		}
@@ -134,7 +144,7 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 		request.setAttribute("currentTab", "recherchePersonne");
 
-		getUrlCreation(request, response);
+		this.getUrlCreation(request, response);
 
 		return "recherchePersonne";
 
@@ -148,8 +158,8 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 		String retour;
 
-		if (formulaire.getLevelSurchargeUserConnecte() == HabilitationSurcharge.level.ADMINISTRATEUR
-				|| formulaire.getLevelSurchargeUserConnecte() == HabilitationSurcharge.level.SUPERADMINISTRATEUR) {
+		if ((formulaire.getLevelSurchargeUserConnecte() == HabilitationSurcharge.level.ADMINISTRATEUR)
+				|| (formulaire.getLevelSurchargeUserConnecte() == HabilitationSurcharge.level.SUPERADMINISTRATEUR)) {
 
 			retour = "personnesSurchargees";
 		} else {
@@ -188,22 +198,22 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 	public void recherchePersonne(@ModelAttribute Formulaire formulaire, BindingResult result, ActionRequest request, ActionResponse response)
 			throws PortalException {
 
-		Integer minCarsSearch = config.getMinCarsSearch();
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		Integer minCarsSearch = this.config.getMinCarsSearch();
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
-		if (formulaire.getFiltreNom().length() >= minCarsSearch || formulaire.getFiltreDptCns().length() >= minCarsSearch) {
-			List<Person> liste = personneInstance.getPersonByCriteres(formulaire.getFiltreNom(), "", "", "", formulaire.getFiltreDptCns(), "sn");
+		if ((formulaire.getFiltreNom().length() >= minCarsSearch) || (formulaire.getFiltreDptCns().length() >= minCarsSearch)) {
+			List<Person> liste = this.personneInstance.getPersonByCriteres(formulaire.getFiltreNom(), "", "", "", formulaire.getFiltreDptCns(), "sn");
 
-			List<PersonUrl> personnesUrl = getListePersonnesUrl(liste, pcc, request,null);
+			List<PersonUrl> personnesUrl = this.getListePersonnesUrl(liste, pcc, request,null);
 
 			formulaire.setListePersonnesRecherchees(personnesUrl);
 
 			if (liste.size() < 1) {
-				addNotification(pcc, "label.noresult", NotificationsType.INFO);
+				this.addNotification(pcc, "label.noresult", NotificationsType.INFO);
 			}
 
 		} else {
-			addNotification(pcc, "label.3charmin", NotificationsType.WARNING);
+			this.addNotification(pcc, "label.3charmin", NotificationsType.WARNING);
 
 		}
 
@@ -215,9 +225,9 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 	public void deleteMaSurcharge(@ModelAttribute("formulaire") Formulaire formulaire, @RequestParam String uid, ActionRequest request,
 			ActionResponse response, SessionStatus status) {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
-		Person personneADeSurcharger = personneInstance.findUtilisateur(uid);
+		Person personneADeSurcharger = this.personneInstance.findUtilisateur(uid);
 		try {
 			personneADeSurcharger.deleteSurcharge();
 		} catch (ToutaticeAnnuaireException e) {
@@ -225,11 +235,11 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 			DirectoryPerson person = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
 
 			logger.error("Erreur lors de la suppression de la surcharge de la personne " + uid + " par l'utilisateur " + person.getUid());
-			addNotification(pcc, "label.erreurDeleteMaSurcharge", NotificationsType.ERROR, uid, person.getUid());
+			this.addNotification(pcc, "label.erreurDeleteMaSurcharge", NotificationsType.ERROR, uid, person.getUid());
 
 		}
 
-		addNotification(pcc, "label.succesDeleteSurcharge", NotificationsType.SUCCESS, uid);
+		this.addNotification(pcc, "label.succesDeleteSurcharge", NotificationsType.SUCCESS, uid);
 
 		status.setComplete();
 		response.setRenderParameter("action", "mesSurcharges");
@@ -240,9 +250,9 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 	public void deleteSurcharge(@ModelAttribute("formulaire") Formulaire formulaire, @RequestParam String uid, ActionRequest request, ActionResponse response,
 			SessionStatus status) {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
-		Person personneADeSurcharger = personneInstance.findUtilisateur(uid);
+		Person personneADeSurcharger = this.personneInstance.findUtilisateur(uid);
 		try {
 			personneADeSurcharger.deleteSurcharge();
 		} catch (ToutaticeAnnuaireException e) {
@@ -251,10 +261,10 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 			logger.error("Erreur lors de la suppression de la surcharge de la personne " + uid + " par l'utilisateur " + person.getUid());
 
-			addNotification(pcc, "label.erreurDeleteSurcharge", NotificationsType.ERROR, uid, person.getUid());
+			this.addNotification(pcc, "label.erreurDeleteSurcharge", NotificationsType.ERROR, uid, person.getUid());
 		}
 
-		addNotification(pcc, "label.succesDeleteSurcharge", NotificationsType.SUCCESS, uid);
+		this.addNotification(pcc, "label.succesDeleteSurcharge", NotificationsType.SUCCESS, uid);
 
 		status.setComplete();
 		response.setRenderParameter("action", "personnesSurchargees");
@@ -263,7 +273,7 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 	private List<PersonUrl> getListePersonnesUrl(List<Person> listePersonnes, PortalControllerContext portalControllerContext, PortletRequest request, PortletResponse response) throws PortalException {
 		List<PersonUrl> liste = new LinkedList<PersonUrl>();
-		NuxeoController nuxeoController = new NuxeoController(request, response, portletContext);
+		NuxeoController nuxeoController = new NuxeoController(request, response, this.portletContext);
 
 		for (Person p : listePersonnes) {
 			String url = "";
@@ -277,18 +287,18 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 			windowProperties.put("uidFichePersonne", p.getUid());
 
-			url = getPortalUrlFactory().getStartPortletUrl(portalControllerContext, DirectoryPortlets.fichePersonne.getInstanceName(), windowProperties, false);
-			
+			url = this.getPortalUrlFactory().getStartPortletUrl(portalControllerContext, DirectoryPortlets.fichePersonne.getInstanceName(), windowProperties, false);
+
 			PersonUrl pers = new PersonUrl(p, url);
 			try {
 				pers.setAvatar(nuxeoController.getUserAvatar(p.getUid()));
 			} catch (CMSException e) {
 				// do nothing
 			}
-			
+
 			liste.add(pers);
 
-			
+
 		}
 		return liste;
 
@@ -297,21 +307,21 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 	@ActionMapping(params = "action=deleteUser")
 	public void deleteUser(@ModelAttribute Formulaire formulaire, BindingResult result, ActionRequest request, ActionResponse response, SessionStatus status) {
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
 		String uid = request.getParameter("uid");
 
-		Person userToDelete = personneInstance.findUtilisateur(uid);
+		Person userToDelete = this.personneInstance.findUtilisateur(uid);
 
 		try {
 			userToDelete.delete();
-			addNotification(pcc, "label.userDeleted", NotificationsType.SUCCESS);
+			this.addNotification(pcc, "label.userDeleted", NotificationsType.SUCCESS);
 		} catch (ToutaticeAnnuaireException e) {
 			logger.error("impossible de supprimer la personne", e);
-			addNotification(pcc, "label.userNotDeleted", NotificationsType.ERROR);
+			this.addNotification(pcc, "label.userNotDeleted", NotificationsType.ERROR);
 		} catch (NamingException e) {
 			logger.error("impossible de supprimer la personne", e);
-			addNotification(pcc, "label.userNotDeleted", NotificationsType.ERROR);
+			this.addNotification(pcc, "label.userNotDeleted", NotificationsType.ERROR);
 		}
 
 		status.setComplete();
@@ -326,10 +336,10 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 		windowProperties.put("osivia.hideTitle", "1");
 		windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 		String url = "";
 		try {
-			url = getPortalUrlFactory().getStartPortletUrl(pcc, DirectoryPortlets.creationPersonne.getInstanceName(), windowProperties, false);
+			url = this.getPortalUrlFactory().getStartPortletUrl(pcc, DirectoryPortlets.creationPersonne.getInstanceName(), windowProperties, false);
 		} catch (PortalException e) {
 
 			logger.info("Erreur lors de la création de l'url d'accès à la portlet création personne", e);
@@ -349,16 +359,18 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 
 	}
 
-	public void setPortletContext(PortletContext ctx) {
-		portletContext = ctx;
+	@Override
+    public void setPortletContext(PortletContext ctx) {
+		this.portletContext = ctx;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.web.portlet.context.PortletConfigAware#setPortletConfig(javax.portlet.PortletConfig)
 	 */
-	public void setPortletConfig(PortletConfig portletConfig) {
+	@Override
+    public void setPortletConfig(PortletConfig portletConfig) {
 		this.portletConfig  = portletConfig;
-		
+
 	}
 
 }

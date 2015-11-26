@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2014 OSIVIA (http://www.osivia.com) 
+ * (C) Copyright 2014 OSIVIA (http://www.osivia.com)
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Lesser General Public License
@@ -21,10 +21,20 @@ package org.osivia.services.directory.helper;
  */
 public enum DirectoryPortlets {
 
-	fichePersonne("toutatice-identite-fichepersonne-portailPortletInstance"), ficheProfil("toutatice-identite-ficheprofil-portailPortletInstance"), gestionPersonnes(
-			"toutatice-identite-gestionpersonnes-portailPortletInstance"), gestionGroupes("toutatice-identite-gestiongroupes-portailPortletInstance"), creationPersonne(
-			"toutatice-identite-creationpersonnes-portailPortletInstance"),ficheApplication("toutatice-application-ficheapplication-portailPortletInstance"),
-			ficheOrganisation("toutatice-organisation-ficheorganisation-portailPortletInstance"),gestionWorkspaces("toutatice-workspace-gestionworkspace-portailPortletInstance");
+    fichePersonne("directory-person-card-instance"),
+
+    ficheProfil("directory-group-card-instance"),
+
+    gestionPersonnes("directory-person-management-instance"),
+
+    gestionGroupes("directory-group-management-instance"),
+
+    creationPersonne("directory-person-creation-instance"),
+
+    gestionWorkspaces("directory-workspace-management-instance"),
+
+    participantsWorkspace("directory-workspace-participants-instance");
+
 
 	private final String instanceName;
 
@@ -36,7 +46,7 @@ public enum DirectoryPortlets {
 	 * @return the instanceName
 	 */
 	public String getInstanceName() {
-		return instanceName;
+		return this.instanceName;
 	}
 
 }

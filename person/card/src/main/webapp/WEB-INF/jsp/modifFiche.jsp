@@ -51,8 +51,8 @@
 			<form:select path="title" name="title" value="${fiche.userConsulte.title}" cssClass="form-control">
 				<form:option value=""></form:option>
 				<form:option value="M.">M.</form:option>
-				<form:option value="Mme.">Mme.</form:option>
-				<form:option value="Mlle.">Mlle.</form:option>
+				<form:option value="Mme">Mme</form:option>
+				<form:option value="Mlle">Mlle</form:option>
 			</form:select>
 				
 		</div>
@@ -99,21 +99,6 @@
 	
 	</div>
 
-	<div class="form-group">
-		<form:label path="bio" cssClass="col-md-2 control-label">
-			<op:translate  key="label.bio" />
-			
-		
-		</form:label>	
-	
-		<div class="col-md-10">
-			<form:textarea path="bio" name="bio" value="${fiche.profilNuxeo.bio}" rows="3" cols="80" cssClass="form-control"/>
-				
-		</div>
-	</div>
-	
-	
-	
 	<div class="form-group"> 	
 		<form:label path="departementCns" cssClass="col-md-2 control-label">
 			<op:translate  key="label.departementCns" />
@@ -126,18 +111,14 @@
 			<font style="color: #C11B17;"><form:errors path="departementCns"/></font>
 		</div>
 	</div>
-	<div class="form-group"> 	
-		<form:label path="entiteAdm" cssClass="col-md-2 control-label">
-			<op:translate  key="label.entiteAdm" />
-			
-	
-		</form:label>
-	
-		<div class="col-md-10">
-			<form:input path="entiteAdm" name="entiteAdm" value="${fiche.profilNuxeo.entiteAdm}" cssClass="form-control"/>
-			<font style="color: #C11B17;"><form:errors path="entiteAdm"/></font>
-		</div>
-	</div>
+
+    <div class="form-group">
+        <form:label path="profession" cssClass="col-md-2 control-label"><op:translate key="label.profession" /></form:label>
+        <div class="col-md-10">
+            <form:input path="profession" value="${fiche.profilNuxeo.profession}" cssClass="form-control" />
+        </div>
+    </div>
+
 	<div class="form-group"> 	
 		<form:label path="telFixe" cssClass="col-md-2 control-label">
 			<op:translate  key="label.telFixe" />
@@ -161,28 +142,6 @@
 			<font style="color: #C11B17;"><form:errors path="telMobile"/></font>
 		</div>
 	</div>
-	<div class="form-group"> 	
-		<form:label path="mailGenerique" cssClass="col-md-2 control-label">
-			<op:translate  key="label.mailGenerique" />
-	
-		</form:label>
-	
-		<div class="col-md-10">
-			<form:input path="mailGenerique" name="mailGenerique" value="${fiche.profilNuxeo.mailGenerique}" cssClass="form-control"/>
-			<font style="color: #C11B17;"><form:errors path="mailGenerique"/></font>
-		</div>
-	</div>				
-	<div class="form-group"> 	
-		<form:label path="referent" cssClass="col-md-2 control-label">
-			<op:translate  key="label.referent" />
-		
-		</form:label>
-	
-		<div class="col-md-10">
-			<form:input path="referent" name="referent" value="${fiche.profilNuxeo.referent}" cssClass="form-control"/>
-			<font style="color: #C11B17;"><form:errors path="referent"/></font>
-		</div>
-	</div>	
 	
 	
 

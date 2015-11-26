@@ -12,6 +12,6 @@
 
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 
-    <bean id="directoryService" class="org.osivia.services.directory.DirectoryService">
+    <bean id="directoryService" class="org.osivia.services.directory.DirectoryService" />
 
 </beans>

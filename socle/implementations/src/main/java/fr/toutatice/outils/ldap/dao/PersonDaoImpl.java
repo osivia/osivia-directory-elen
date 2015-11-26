@@ -50,7 +50,7 @@ import fr.toutatice.outils.ldap.util.ToutaticeAnnuaireConfig;
 
 
 /**
- * Classe permettant d'accéder à l'annuaire LDAP, de consulter 
+ * Classe permettant d'accéder à l'annuaire LDAP, de consulter
  * et mettre à jour les informations de personnes.
  * Les attributs de cette classe sont les libellés des champs dans l'annuaire LDAP
  * Ils sont à renseigner dans un fichier properties et injectés dans cette classe via SPRING
@@ -63,7 +63,7 @@ import fr.toutatice.outils.ldap.util.ToutaticeAnnuaireConfig;
 @Scope("singleton")
 public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 
-	
+
 	protected static final Log logger = LogFactory.getLog("fr.toutatice.outils.ldap");
 	protected static final Log loggerModif = LogFactory.getLog("fr.toutatice.annuaire.modif");
 	protected static final Log loggerCache = LogFactory.getLog("fr.toutatice.annuaire.cache");
@@ -72,26 +72,26 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 	@Autowired
 	@Qualifier("annuaireConfig")
 	private ToutaticeAnnuaireConfig annuaireConfig;
-	
+
 	@Autowired
 	@Qualifier("ldapTemplateEcriture")
 	private LdapTemplate ldapTemplateEcriture;
-	
+
 	@Autowired
 	@Qualifier("ldapTemplateLecture")
 	private LdapTemplate ldapTemplateLecture;
-	
+
 	@Autowired
 	@Qualifier("ldapTemplateLectureNonPoolee")
 	private LdapTemplate ldapTemplateLectureNonPoolee;
-	
-	
+
+
 	// attributs permettant de paramétrer le nom des champs de la base de données dans le fichier de config Spring
-	
+
 	private static String prenom ="";
 	private static String prenomNom ="";
 	private static String nom ="";
-	private static String nomPrenom =""; 
+	private static String nomPrenom ="";
 	private static String id ="";
 	private static String alias ="";
 	private static String sexe="";
@@ -117,198 +117,231 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 	private static String disciplinePoste;
 
 	// Setters, obligatoires pour instanciation via le fichier de config Spring
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setPrenom(java.lang.String)
 	 */
-	public void setPrenom(String s) {
+	@Override
+    public void setPrenom(String s) {
 		prenom = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setPrenomNom(java.lang.String)
 	 */
-	public void setPrenomNom(String s) {
+	@Override
+    public void setPrenomNom(String s) {
 		prenomNom = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setNomPrenom(java.lang.String)
 	 */
-	public void setNomPrenom(String s) {
+	@Override
+    public void setNomPrenom(String s) {
 		nomPrenom = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setNom(java.lang.String)
 	 */
-	public void setNom(String s) {
+	@Override
+    public void setNom(String s) {
 		nom = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setId(java.lang.String)
 	 */
-	public void setId(String s) {
+	@Override
+    public void setId(String s) {
 		id = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setAlias(java.lang.String)
 	 */
-	public void setAlias(String s) {
+	@Override
+    public void setAlias(String s) {
 		alias = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setSexe(java.lang.String)
 	 */
-	public void setSexe(String s) {
+	@Override
+    public void setSexe(String s) {
 		sexe = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setRne(java.lang.String)
 	 */
-	public void setRne(String s) {
+	@Override
+    public void setRne(String s) {
 		rne = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setPassword(java.lang.String)
 	 */
-	public void setPassword(String s) {
+	@Override
+    public void setPassword(String s) {
 		password = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setIdsurcharge(java.lang.String)
 	 */
-	public void setIdsurcharge(String s) {
+	@Override
+    public void setIdsurcharge(String s) {
 		idsurcharge = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setProfils(java.lang.String)
 	 */
-	public void setProfils(String s) {
+	@Override
+    public void setProfils(String s) {
 		profils = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setCategorie(java.lang.String)
 	 */
-	public void setCategorie(String s) {
+	@Override
+    public void setCategorie(String s) {
 		categorie = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setClasseObjet(java.lang.String)
 	 */
-	public void setClasseObjet(String s) {
+	@Override
+    public void setClasseObjet(String s) {
 		classObjet = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setBASE_DN(java.lang.String)
 	 */
-	public void setBASE_DN(String s) {
+	@Override
+    public void setBASE_DN(String s) {
 		BASE_DN = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setTitle(java.lang.String)
 	 */
-	public void setTitle(String s) {
+	@Override
+    public void setTitle(String s) {
 		title = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setEmail(java.lang.String)
 	 */
-	public void setEmail(String s) {
+	@Override
+    public void setEmail(String s) {
 		email = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setDivcod(java.lang.String)
 	 */
-	public void setDivcod(String s) {
+	@Override
+    public void setDivcod(String s) {
 		divcod = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setDateNaissance(java.lang.String)
 	 */
-	public void setDateNaissance(String s) {
+	@Override
+    public void setDateNaissance(String s) {
 		dateNaissance = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setManager(java.lang.String)
 	 */
-	public void setManager(String s) {
+	@Override
+    public void setManager(String s) {
 		manager = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setExplicitManager(java.lang.String)
 	 */
-	public void setExplicitManager(String m) {
+	@Override
+    public void setExplicitManager(String m) {
 		explicitManager = m;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setSourceSI(java.lang.String)
 	 */
-	public void setSourceSI(String s) {
+	@Override
+    public void setSourceSI(String s) {
 		sourceSI = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setElevesConcernes(java.lang.String)
 	 */
-	public void setElevesConcernes(String s) {
+	@Override
+    public void setElevesConcernes(String s) {
 		elevesConcernes = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setIdSiecle(java.lang.String)
 	 */
-	public void setIdSiecle(String s) {
+	@Override
+    public void setIdSiecle(String s) {
 		idSiecle = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setPersonJointure(java.lang.String)
 	 */
-	public void setPersonJointure(String s) {
+	@Override
+    public void setPersonJointure(String s) {
 		personJointure = s;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setNationalProfil(java.lang.String)
 	 */
-	public void setNationalProfil(String s) {
+	@Override
+    public void setNationalProfil(String s) {
 		nationalProfil = s;
-	}	
-	public void setPersonalTitle(String s) {
+	}
+	@Override
+    public void setPersonalTitle(String s) {
 		personalTitle = s;
 	}
-	public void setDisciplinePoste(String s){
+	@Override
+    public void setDisciplinePoste(String s){
 		disciplinePoste = s;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getLdapTemplateEcriture()
 	 */
-	public LdapTemplate getLdapTemplateEcriture() {
-		return ldapTemplateEcriture;
+	@Override
+    public LdapTemplate getLdapTemplateEcriture() {
+		return this.ldapTemplateEcriture;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setLdapTemplateEcriture(org.springframework.ldap.core.LdapTemplate)
 	 */
-	public void setLdapTemplateEcriture(LdapTemplate ldapTemplateEcriture) {
+	@Override
+    public void setLdapTemplateEcriture(LdapTemplate ldapTemplateEcriture) {
 		this.ldapTemplateEcriture = ldapTemplateEcriture;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getLdapTemplateLecture()
 	 */
-	public LdapTemplate getLdapTemplateLecture() {
-		return ldapTemplateLecture;
+	@Override
+    public LdapTemplate getLdapTemplateLecture() {
+		return this.ldapTemplateLecture;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setLdapTemplateLecture(org.springframework.ldap.core.LdapTemplate)
 	 */
-	public void setLdapTemplateLecture(LdapTemplate ldapTemplateLecture) {
+	@Override
+    public void setLdapTemplateLecture(LdapTemplate ldapTemplateLecture) {
 		this.ldapTemplateLecture = ldapTemplateLecture;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getLdapTemplateLectureNonPoolee()
 	 */
-	public LdapTemplate getLdapTemplateLectureNonPoolee() {
-		return ldapTemplateLectureNonPoolee;
+	@Override
+    public LdapTemplate getLdapTemplateLectureNonPoolee() {
+		return this.ldapTemplateLectureNonPoolee;
 	}
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setLdapTemplateLectureNonPoolee(org.springframework.ldap.core.LdapTemplate)
 	 */
-	public void setLdapTemplateLectureNonPoolee(LdapTemplate ldapTemplateLectureNonPoolee) {
+	@Override
+    public void setLdapTemplateLectureNonPoolee(LdapTemplate ldapTemplateLectureNonPoolee) {
 		this.ldapTemplateLectureNonPoolee = ldapTemplateLectureNonPoolee;
 	}
 
@@ -317,32 +350,33 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 
 	//Classe interne permettant de récupérer un objet Personne depuis l'annuaire
 	private static class PersonAttributMapper implements AttributesMapper {
-		@SuppressWarnings("rawtypes")
+		@Override
+        @SuppressWarnings("rawtypes")
 		public Object mapFromAttributes(Attributes attrs)
 				throws javax.naming.NamingException {
-			
+
 			//instanciation d'un objet Person va Spring (ne pas utiliser le constructeur par défaut !)
 			Person p = (Person) context.getBean("person");
-			
+
 			Attribute attr = attrs.get(id);
 			if (attr != null)
 			{
 				p.setUid(attr.get().toString());
 			}
 			else {logger.error("Erreur d'accès à l'annuaire : recherche de personne");}
-			
+
 			attr = attrs.get(prenom);
 			if (attr != null) {
 				p.setGivenName(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setGivenName("");}
-			
+
 			attr = attrs.get(prenomNom);
 			if (attr != null) {
 				p.setDisplayName(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setDisplayName("");}
 
 			attr = attrs.get(nomPrenom);
@@ -350,41 +384,41 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			{
 				p.setCn(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setCn("");}
-			
+
 			attr = attrs.get(nom);
 			if (attr != null)
 			{
 				p.setSn(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setSn("");}
-			
+
 			attr = attrs.get(personalTitle);
 			if (attr != null)
 			{
 				p.setPersonalTitle(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setPersonalTitle("");}
-			
+
 			attr = attrs.get(disciplinePoste);
 			if (attr != null)
 			{
 				p.setDisciplinePoste(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setDisciplinePoste("");}
-			
+
 			attr = attrs.get(alias);
 			if (attr != null)
 			{
 				p.setAlias(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setAlias("");}
-			
+
 			attr = attrs.get(sexe);
 			if (attr != null)
 			{
@@ -396,18 +430,18 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 					p.setSexe("F");
 				}
 			}
-			else { 
+			else {
 				p.setSexe("");
 				}
-			
+
 			attr = attrs.get(dateNaissance);
 			if (attr != null) {
 				p.setDateNaissance(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setDateNaissance("");}
-			
-			
+
+
 			attr = attrs.get(rne);
 			if (attr != null) {
 				NamingEnumeration m = (attr.getAll());
@@ -415,51 +449,51 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 					p.addRne((String)m.next());
 				}
 			}
-			
+
 			attr = attrs.get(idsurcharge);
 			if (attr != null) {
 				String s = attr.get().toString();
 				String[] tab = s.split("\\|");
-				if(tab.length>0 && tab[0]!=null){
+				if((tab.length>0) && (tab[0]!=null)){
 					p.setIdSurcharge(tab[0]);
 				}
-				if(tab.length>1 && tab[1]!=null){
+				if((tab.length>1) && (tab[1]!=null)){
 					p.setTypeSurcharge(tab[1]);
 				}
-				if(tab.length>2 && tab[2]!=null){
+				if((tab.length>2) && (tab[2]!=null)){
 					p.setMotifSurcharge(tab[2]);
 				}
-				
+
 			}
-			
+
 			attr = attrs.get(email);
 			if (attr != null) {
 				p.setEmail(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setEmail("");}
-			
+
 			attr = attrs.get(title);
 			if (attr != null) {
 				p.setTitle(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setTitle("");}
-			
+
 			attr = attrs.get(sourceSI);
 			if (attr != null) {
 				p.setSourceSI(attr.get().toString());
 			}
-			else { 
+			else {
 				p.setSourceSI("");}
-			
+
 			attr = attrs.get(divcod);
 			if (attr != null) {
 				p.setDivcod(attr.get().toString());
 			}
 			else { if (p.getTitle().toLowerCase().equals("ele")) {
 					p.setDivcod("");}}
-			
+
 			attr = attrs.get(idSiecle);
 			if (attr != null) {
 				p.setIdSiecle(attr.get().toString());
@@ -472,7 +506,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			if (attr != null) {
 				p.setNationalProfil(attr.get().toString());
 			}
-			
+
 			attr = attrs.get(password);
 			if (attr != null) {
 				NamingEnumeration m = (attr.getAll());
@@ -482,9 +516,9 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 					} catch (ToutaticeAnnuaireException e) {
 						e.printStackTrace();
 					}
-				}				
+				}
 			}
-		
+
 			attr = attrs.get(profils);
 			if (attr != null) {
 				NamingEnumeration m = (attr.getAll());
@@ -492,7 +526,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 					p.addProfil((String)m.next());
 				}
 			}
-			
+
 			attr = attrs.get(manager);
 			if (attr != null) {
 				NamingEnumeration m = (attr.getAll());
@@ -500,7 +534,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 					p.addImplicitManager((String)m.next());
 				}
 			}
-			
+
 			attr = attrs.get(explicitManager);
 			if (attr != null) {
 				NamingEnumeration m = (attr.getAll());
@@ -508,27 +542,27 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 					p.addExplicitManager((String) m.next());
 				}
 			}
-			
+
 			attr = attrs.get(elevesConcernes);
 			if (attr != null) {
 				NamingEnumeration m = (attr.getAll());
 				while (m.hasMore()) {
 					String idSiecleEleve = (String)m.next();
 					p.getListeIdSiecleElevesConcernes().add(idSiecleEleve);
-					
+
 					Person eleve = p.findEleveByIdSiecle(idSiecleEleve);
 					if(eleve!=null){
 						p.getListeUidElevesConcernes().add(eleve.getUid());
 					}
-					
+
 				}
 			}
-		
+
 			return p;
 		}
 	}
-	
-	
+
+
 	protected Attributes buildAttributes(Person p) {
 	      Attributes attrs = new BasicAttributes();
 	      BasicAttribute ocattr = new BasicAttribute("objectclass");
@@ -546,16 +580,16 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		    	  ocattr.add("ENTAuxPersRelEleve");
 		      }
 	      }
-	      
+
 	      attrs.put(ocattr);
 	      attrs.put(id, p.getUid());
 	      attrs.put(nom, p.getSn());
 	      attrs.put(prenom,p.getGivenName());
 	      attrs.put(prenomNom,p.getDisplayName());
 	      attrs.put(nomPrenom,p.getCn());
-	      if(p.getAlias()!=null){
-	    	  attrs.put(alias,p.getAlias());
-	      }
+        if (StringUtils.isNotBlank(alias) && (p.getAlias() != null)) {
+            attrs.put(alias, p.getAlias());
+        }
 	      if(p.getPersonalTitle()!=null){
 	    	  attrs.put(personalTitle,p.getPersonalTitle());
 	      }
@@ -584,7 +618,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 	      if(p.getSourceSI()!=null){
 	    	  attrs.put(sourceSI,p.getSourceSI());
 	      }
-	     
+
 	      if(p.getIdSiecle()!=null){
 		      attrs.put(idSiecle,p.getIdSiecle());
 		      }
@@ -602,7 +636,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		      }
 		      attrs.put(ecattr);
 	      }
-	      
+
 	      if(p.getListePasswords().size()>0){
 		      BasicAttribute pwdattr = new BasicAttribute(password);
 		      for (String s : p.getListePasswords())
@@ -611,7 +645,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		      }
 		      attrs.put(pwdattr);
 	      }
-	      
+
 	      if(p.getListeRnes().size()>0){
 		      BasicAttribute rneattr = new BasicAttribute(rne);
 		      for (String s : p.getListeRnes())
@@ -620,7 +654,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		      }
 		      attrs.put(rneattr);
 	      }
-	      
+
 	      if(p.getListeProfils().size()>0){
 		      BasicAttribute profilsattr = new BasicAttribute(profils);
 		      for (String s : p.getListeProfils())
@@ -629,7 +663,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		      }
 		      attrs.put(profilsattr);
 	      }
-	      
+
 	      if(p.getListeImplicitManagers().size()>0){
 		      BasicAttribute managersIattr = new BasicAttribute(manager);
 		      for (String s : p.getListeImplicitManagers())
@@ -638,7 +672,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		      }
 		      attrs.put(managersIattr);
 	      }
-	      
+
 	      if(p.getListeExplicitManagers().size()>0){
 		      BasicAttribute managersEattr = new BasicAttribute(explicitManager);
 		      for (String s : p.getListeExplicitManagers())
@@ -647,18 +681,18 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		      }
 		      attrs.put(managersEattr);
 	      }
-	  
+
 	      return attrs;
 	}
 
-	
+
 	/**
 	 * Construit le DN d'une personne à partir de son id
 	 * @param uid identifiant de la personne dont on veut le DN
 	 * @return DN de la personne (sans la base de l'annuaire LDAP, défini dans le fichier properties)
 	 */
 	private static Name buildDn(String uid) {
-		
+
 		DistinguishedName dn = new DistinguishedName();
 		dn.add("ou", categorie);
 		dn.add(id, uid);
@@ -676,11 +710,12 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		dn.add(id, p.getUid());
 		return dn;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#buildFullDn(java.lang.String)
 	 */
-	public String buildFullDn(String uid)
+	@Override
+    public String buildFullDn(String uid)
 	{
 		if(uid.trim().isEmpty()){
 			return null;
@@ -693,20 +728,21 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#findByPrimaryKey(java.lang.String)
 	 */
-	@Cacheable(key = "#uid", value = { "personByPrimaryKeyCache" })
+	@Override
+    @Cacheable(key = "#uid", value = { "personByPrimaryKeyCache" })
 	public Person findByPrimaryKey(String uid){
 
 		loggerCache.debug("findByPrimaryKey/" + uid);
 
 		Person person = null;
 		if(!uid.trim().isEmpty()){
-			
+
 			Name dn = buildDn(uid);
-			
+
 			try {
 				PersonAttributMapper personAttributMapper = new PersonAttributMapper();
-				person = (Person) ldapTemplateLecture.lookup(dn, personAttributMapper);
-			} 
+				person = (Person) this.ldapTemplateLecture.lookup(dn, personAttributMapper);
+			}
 			catch (NameNotFoundException e) {
 				logger.warn("Recherche d'une personne dans l'annuaire : l'identifiant n'existe pas " + uid);
 			}
@@ -716,40 +752,42 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			}
 		}
 		return person;
-	
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#findByDn(java.lang.String)
 	 */
-	public Person findByDn(String dn) throws ToutaticeAnnuaireException {
+	@Override
+    public Person findByDn(String dn) throws ToutaticeAnnuaireException {
 
 		loggerCache.debug("findByDn/" + dn);
 
 		Person p = (Person) context.getBean("person");
 		try {
 			PersonAttributMapper personAttributMapper = new PersonAttributMapper();
-			DirContext DC = ldapTemplateLecture.getContextSource().getReadOnlyContext();
-			
+			DirContext DC = this.ldapTemplateLecture.getContextSource().getReadOnlyContext();
+
 			int i = dn.lastIndexOf(BASE_DN);
 			String subDn="";
-			if(i>0 && dn.length()>i){
+			if((i>0) && (dn.length()>i)){
 				subDn = dn.substring(0, i-1);
-				p = (Person) ldapTemplateLecture.lookup(new DistinguishedName(subDn), personAttributMapper);
+				p = (Person) this.ldapTemplateLecture.lookup(new DistinguishedName(subDn), personAttributMapper);
 			}else{
 				p=null;
 			}
 		} catch (org.springframework.ldap.NameNotFoundException e) {
 			logger.warn("Recherche d'une personne dans l'annuaire : l'identifiant n'existe pas " + dn);
 			p=null;
-		} 
+		}
 		return p;
 	}
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByUid(java.lang.String)
 	 */
-	public List<Person> getPersonByUid(String uid) {
+	@Override
+    public List<Person> getPersonByUid(String uid) {
 
 		loggerCache.debug("getPersonByUid/" + uid);
 
@@ -758,14 +796,15 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(id, uid+"*"));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByName(java.lang.String)
 	 */
-	public List<Person> getPersonByName(String name) {
+	@Override
+    public List<Person> getPersonByName(String name) {
 
 		loggerCache.debug("getPersonByName/" + name);
 
@@ -774,14 +813,15 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(nom, name+"*"));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByMail(java.lang.String)
 	 */
-	public List<Person> getPersonByMail(String mail) {
+	@Override
+    public List<Person> getPersonByMail(String mail) {
 
 		loggerCache.debug("getPersonByMail/" + mail);
 
@@ -790,14 +830,15 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(email, mail+"*"));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByTitle(java.lang.String)
 	 */
-	public List<Person> getPersonByTitle(String titre) {
+	@Override
+    public List<Person> getPersonByTitle(String titre) {
 
 		loggerCache.debug("getPersonByTitle/" + titre);
 
@@ -806,14 +847,15 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(title, titre+"*"));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		return liste;
 	}
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByRne(java.lang.String)
 	 */
-	public List<Person> getPersonByRne(String noRne) {
+	@Override
+    public List<Person> getPersonByRne(String noRne) {
 
 		loggerCache.debug("getPersonByRne/" + noRne);
 
@@ -823,15 +865,16 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(rne, noRne));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByNomIdRne(java.lang.String, java.lang.String)
 	 */
-	public List<Person> getPersonByNomIdRne(String nomId, String noRne) {
-	
+	@Override
+    public List<Person> getPersonByNomIdRne(String nomId, String noRne) {
+
 		loggerCache.debug("getPersonByNomIdRne/" + nomId + "/" + noRne);
 
 		AndFilter filter = new AndFilter();
@@ -846,22 +889,24 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(filterOr);
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(),personAttributMapper);
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(),personAttributMapper);
 		return liste;
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByCriteres(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public List<Person> getPersonByCriteres(String nomId, String noRne,	String mail, String titre, String critereTri) {
+	@Override
+    public List<Person> getPersonByCriteres(String nomId, String noRne,	String mail, String titre, String critereTri) {
 		return this.getPersonByCriteres(nomId, noRne, mail, titre, null, critereTri);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getPersonByCriteres(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public List<Person> getPersonByCriteres(String nomId, String noRne,	String mail, String titre, String divcod_, String critereTri) {
+	@Override
+    public List<Person> getPersonByCriteres(String nomId, String noRne,	String mail, String titre, String divcod_, String critereTri) {
 
 		loggerCache.debug("getPersonByCriteres/" + nomId + "/" + noRne + "/" + mail
 				+ "/" + titre + "/" + critereTri);
@@ -874,16 +919,16 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			noRne = noRne.concat("*");
 			filter.and(new LikeFilter(rne, noRne));
 		}*/
-		
+
 		if (!(divcod_.trim().isEmpty())) {
 			//divcod = divcod.concat("*");
 			filter.and(new EqualsFilter(divcod, divcod_));
 		}
-		
+
 		if (!(noRne.trim().isEmpty()||noRne.equals("*"))) {
 			filter.and(new LikeFilter(this.profils, "cn="+noRne+"*"));
 		}
-		
+
 		if (!(mail.trim().isEmpty())) {
 			mail = mail.concat("*");
 			filter.and(new LikeFilter(email, mail));
@@ -893,37 +938,38 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			filter.and(new LikeFilter(title, titre));
 		}
 
-		
+
 		OrFilter filterOr = new OrFilter();
 		nomId = nomId.concat("*");
 		filterOr.or(new LikeFilter(id, nomId));
 		filterOr.or(new LikeFilter(nom, nomId));
 		filter.and(filterOr);
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
-		
+
 		List<Person> liste = null;
-		if(annuaireConfig.getSortingEnabled()) {
+		if(this.annuaireConfig.getSortingEnabled()) {
 			AggregateDirContextProcessor processor = new AggregateDirContextProcessor() ;
 		    SortControlDirContextProcessor sorter = new SortControlDirContextProcessor(critereTri) ;
 		    processor.addDirContextProcessor( sorter ) ;
-			
-			liste = ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper, processor);
+
+			liste = this.ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper, processor);
 		}
 		else {
-			liste = ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper);
-			
+			liste = this.ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper);
+
 			Collections.sort(liste, new PersonComparator());
-			
+
 		}
-		
+
 		return liste;
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#findPersonneMultiCriteres(java.lang.String, java.lang.String, java.util.List, java.lang.String, java.lang.String)
 	 */
-	public List<Person> findPersonneMultiCriteres(String nomId, String rne, List<String> listeDnProfils, String filtre, String critereTri){
+	@Override
+    public List<Person> findPersonneMultiCriteres(String nomId, String rne, List<String> listeDnProfils, String filtre, String critereTri){
 
 		loggerCache.debug("findPersonneMultiCriteres/" + nomId + "/" + rne + "/"
 				+ listeDnProfils + "/" + filtre + "/" + critereTri);
@@ -932,7 +978,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 	    SearchControls searchControls = new SearchControls() ;
 	    searchControls.setSearchScope( SearchControls.SUBTREE_SCOPE ) ;
 	    AndFilter filter = new AndFilter();
-	    
+
 	    if(listeDnProfils!=null){
 		    for(String dn:listeDnProfils){
 		    	if(!dn.trim().isEmpty()){
@@ -947,38 +993,39 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			filterOr.or(new LikeFilter(nomPrenom,nomId+"*"));
 			filter.and(filterOr);
 	    }
-		
+
 		String filtreGlobal;
-		if (filtre != null && !filtre.trim().isEmpty()){
+		if ((filtre != null) && !filtre.trim().isEmpty()){
 			filtreGlobal = "(&" + filtre.concat(filter.encode()) + ")";
 		}
 		else{
 			filtreGlobal= filter.encode();
 		}
-		
+
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
-		
+
 
 		List<Person> listeProvisoire = null;
-		if(annuaireConfig.getSortingEnabled()) {
+		if(this.annuaireConfig.getSortingEnabled()) {
 			AggregateDirContextProcessor processor = new AggregateDirContextProcessor() ;
 		    SortControlDirContextProcessor sorter = new SortControlDirContextProcessor(critereTri) ;
 		    processor.addDirContextProcessor( sorter ) ;
-			
-		    listeProvisoire = ldapTemplateLecture.search("", filtreGlobal, searchControls,personAttributMapper, processor);
+
+		    listeProvisoire = this.ldapTemplateLecture.search("", filtreGlobal, searchControls,personAttributMapper, processor);
 		}
 		else {
-			listeProvisoire = ldapTemplateLecture.search("", filtreGlobal, searchControls,personAttributMapper);
-			
-			
+			listeProvisoire = this.ldapTemplateLecture.search("", filtreGlobal, searchControls,personAttributMapper);
+
+
 			Collections.sort(listeProvisoire, new PersonComparator());
 		}
-		
-		
+
+
 		List<Person> liste = new ArrayList<Person>();
 
-        if (rne == null)
+        if (rne == null) {
             rne = "*";
+        }
 
         if (!(rne.trim().isEmpty() || rne.equals("*"))) {
 		    for(Person person:listeProvisoire){
@@ -986,19 +1033,20 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		    		liste.add(person);
 		    	}
 		    }
-		   
-		  } 
+
+		  }
 		 else{
 		    	liste = listeProvisoire;
-		 }	 
-		
+		 }
+
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#findListePersonnesByDnProfil(java.lang.String)
 	 */
-	public List<Person> findListePersonnesByDnProfil(String dnProfil) {
+	@Override
+    public List<Person> findListePersonnesByDnProfil(String dnProfil) {
 
 		loggerCache.debug("findListePersonnesByDnProfil/" + dnProfil);
 
@@ -1007,15 +1055,16 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(profils, dnProfil));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
-		
-		return liste;	
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
+
+		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#findEleveByIdSiecle(java.lang.String)
 	 */
-	public Person findEleveByIdSiecle(String id){
+	@Override
+    public Person findEleveByIdSiecle(String id){
 
 		loggerCache.debug("findEleveByIdSiecle/" + id);
 
@@ -1024,28 +1073,30 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new EqualsFilter(idSiecle, id));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);	
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		if(liste.size()==1){
 			return liste.get(0);
 		}else{
 			return null;
 		}
 	}
-	
-	public List<Person> findParents(String idSiecle){
+
+	@Override
+    public List<Person> findParents(String idSiecle){
 		AndFilter filter = new AndFilter();
 		filter.and(new EqualsFilter("objectclass", "ENTAuxPersRelEleve"));
 		filter.and(new EqualsFilter(elevesConcernes, idSiecle));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		List<Person> liste = ldapTemplateLecture.search("", filter.encode(), personAttributMapper);	
+		List<Person> liste = this.ldapTemplateLecture.search("", filter.encode(), personAttributMapper);
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getSurcharge(java.lang.String)
 	 */
-	public List<Person> getSurcharge(String critereTriResultat) {
+	@Override
+    public List<Person> getSurcharge(String critereTriResultat) {
 
 	    SearchControls searchControls = new SearchControls() ;
 	    searchControls.setSearchScope( SearchControls.SUBTREE_SCOPE ) ;
@@ -1053,10 +1104,10 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new EqualsFilter("objectclass", classObjet));
 		filter.and(new LikeFilter(idsurcharge, "*"));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
-		
+
 		List<Person> liste;
-		if(annuaireConfig.getSortingEnabled()) {
-			
+		if(this.annuaireConfig.getSortingEnabled()) {
+
 			AggregateDirContextProcessor processor = new AggregateDirContextProcessor() ;
 			SortControlDirContextProcessor sorter;
 			if(critereTriResultat.trim().isEmpty()){
@@ -1065,18 +1116,18 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				sorter = new SortControlDirContextProcessor(critereTriResultat) ;
 			}
 		    processor.addDirContextProcessor( sorter ) ;
-			
-			liste = ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper, processor);
+
+			liste = this.ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper, processor);
 		}
 		else {
-			liste = ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper);
-			
+			liste = this.ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper);
+
 			Collections.sort(liste, new PersonComparator());
 		}
-		
-		
+
+
 		List<Person> listeFinale = new ArrayList<Person>();
-		
+
 		for(Person person : liste)
 		{
 			// Cas où le mot de passe n'est plus surchargé mais l'attribut EntPersonSmdp est toujours renseigné
@@ -1094,11 +1145,12 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		}
 		return liste;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getSurchargeParUtilisateur(java.lang.String, java.lang.String)
 	 */
-	public List<Person> getSurchargeParUtilisateur(String uid,String critereTriResultat) {
+	@Override
+    public List<Person> getSurchargeParUtilisateur(String uid,String critereTriResultat) {
 
 	    SearchControls searchControls = new SearchControls() ;
 	    searchControls.setSearchScope( SearchControls.SUBTREE_SCOPE ) ;
@@ -1107,10 +1159,10 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		filter.and(new LikeFilter(idsurcharge, uid+"|*"));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 		@SuppressWarnings("unchecked")
-		
+
 		List<Person> liste;
-		if(annuaireConfig.getSortingEnabled()) {
-			
+		if(this.annuaireConfig.getSortingEnabled()) {
+
 			AggregateDirContextProcessor processor = new AggregateDirContextProcessor() ;
 			SortControlDirContextProcessor sorter;
 			if(critereTriResultat.trim().isEmpty()){
@@ -1119,17 +1171,17 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				sorter = new SortControlDirContextProcessor(critereTriResultat) ;
 			}
 		    processor.addDirContextProcessor( sorter ) ;
-			
-			liste = ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper, processor);	
+
+			liste = this.ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper, processor);
 		}
 		else {
-			liste = ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper);
-			
-			Collections.sort(liste, new PersonComparator());			
+			liste = this.ldapTemplateLecture.search("", filter.encode(), searchControls,personAttributMapper);
+
+			Collections.sort(liste, new PersonComparator());
 		}
-		
-		
-		
+
+
+
 		List<Person> listeFinale = new ArrayList<Person>();
 		for(Person person : liste)
 		{
@@ -1149,64 +1201,65 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		}
 		return listeFinale;
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#update(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	public void update(Person p) throws ToutaticeAnnuaireException, javax.naming.NamingException {
 		try {
 		    List<ModificationItem> modifiedItems = new ArrayList<ModificationItem>();
-			Name dn = buildDn(p);
-			
-            if (prenom != null && p.getGivenName() != null && StringUtils.isNotBlank(p.getGivenName())) {
+			Name dn = this.buildDn(p);
+
+            if ((prenom != null) && (p.getGivenName() != null) && StringUtils.isNotBlank(p.getGivenName())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(prenom, p.getGivenName())));
 
             }
 
-            if (nom != null && p.getSn() != null && StringUtils.isNotBlank(p.getSn())) {
+            if ((nom != null) && (p.getSn() != null) && StringUtils.isNotBlank(p.getSn())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(nom, p.getSn())));
 
             }
 
-            if (nomPrenom != null && p.getCn() != null && StringUtils.isNotBlank(p.getCn())) {
+            if ((nomPrenom != null) && (p.getCn() != null) && StringUtils.isNotBlank(p.getCn())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(nomPrenom, p.getCn())));
 
             }
 
-            if (prenomNom != null && p.getDisplayName() != null && StringUtils.isNotBlank(p.getDisplayName())) {
+            if ((prenomNom != null) && (p.getDisplayName() != null) && StringUtils.isNotBlank(p.getDisplayName())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(prenomNom, p.getDisplayName())));
 
             }
 
-            if (alias != null && p.getAlias() != null && StringUtils.isNotBlank(p.getAlias())) {
+            if ((alias != null) && (p.getAlias() != null) && StringUtils.isNotBlank(p.getAlias())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(alias, p.getAlias())));
 
             }
 
-            if (dateNaissance != null && p.getDateNaissance() != null && StringUtils.isNotBlank(p.getDateNaissance())) {
+            if ((dateNaissance != null) && (p.getDateNaissance() != null) && StringUtils.isNotBlank(p.getDateNaissance())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(dateNaissance, p.getDateNaissance())));
 
             }
 
-            if (title != null && p.getTitle() != null && StringUtils.isNotBlank(p.getTitle())) {
+            if ((title != null) && (p.getTitle() != null) && StringUtils.isNotBlank(p.getTitle())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(title, p.getTitle())));
 
             }
 
-            if (divcod != null && p.getDivcod() != null && StringUtils.isNotBlank(p.getDivcod())) {
+            if ((divcod != null) && (p.getDivcod() != null) && StringUtils.isNotBlank(p.getDivcod())) {
                 modifiedItems.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(divcod, p.getDivcod())));
 
             }
-            
-			
+
+
 			this.updateEmail(p);
-			this.updateRne(p);			
+			this.updateRne(p);
 			this.updateProfil(p);
 			this.updateExplicitManagers(p);
-			
-            ldapTemplateEcriture.modifyAttributes(dn, modifiedItems.toArray(new ModificationItem[]{}));
+
+            this.ldapTemplateEcriture.modifyAttributes(dn, modifiedItems.toArray(new ModificationItem[]{}));
 			loggerModif.info("La personne "+p.getUid()+" a été modifiée");
 		}
 		catch(NamingException e)
@@ -1214,16 +1267,17 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			logger.error(e.toString());
 			throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour de la fiche de la personne "+p.getCn());
 		}
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#ajoutProfilViaMajProfil(java.lang.String, java.lang.String)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
 	public void ajoutProfilViaMajProfil(Person personMaj, String dnProfil) throws ToutaticeAnnuaireException {
 		// Person personMaj = this.findByDn(dnMembre);
-		
+
 		//elimination des doublons
 		boolean existe = false;
 		for(String dn : personMaj.getListeProfils()) {
@@ -1234,9 +1288,9 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		if(!existe) {
 			personMaj.addProfil(dnProfil);
 		}
-		
-		Name dn = buildDn(personMaj);
-		if(personMaj.getListeProfils().size() > 0) 
+
+		Name dn = this.buildDn(personMaj);
+		if(personMaj.getListeProfils().size() > 0)
 		{
 			Object[] listeProfils = new Object[personMaj.getListeProfils().size()];
 			int i = 0;
@@ -1245,38 +1299,39 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				i++;
 			}
 			try {
-			DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+			DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 				context.setAttributeValues(this.profils, listeProfils);
-			ldapTemplateEcriture.modifyAttributes(context);
+			this.ldapTemplateEcriture.modifyAttributes(context);
 			} catch (NamingException e) {
 				logger.error("Impossible de mettre à jour les profils de la personne "+personMaj.getUid());
 				logger.error(e.toString());
 				throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour des profils de la personne "+personMaj.getUid()+" dans l'annuaire");
-			} 
+			}
 		} else
 		// Si il n'y a aucun membre on supprime l'attribut
 		{
-			if(personMaj.getListeProfils().size() > 0) 
+			if(personMaj.getListeProfils().size() > 0)
 		 	{
 				BasicAttribute attrMembers = new BasicAttribute(this.profils,
 						false);
 				attrMembers.add(null);
 				ModificationItem item = new ModificationItem(
 						DirContext.REMOVE_ATTRIBUTE, attrMembers);
-				ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
+				this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
 		 	}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#supprimerProfilViaMajProfil(java.lang.String, java.lang.String)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
 	public void supprimerProfilViaMajProfil(Person personMaj, String dnProfil) throws ToutaticeAnnuaireException {
 		// Person personMaj = this.findByDn(dnMembre);
 		personMaj.removeProfil(dnProfil);
-		Name dn = buildDn(personMaj);
-	
+		Name dn = this.buildDn(personMaj);
+
 		if (personMaj.getListeProfils().size() > 0)
 		{
 			Object[] listeProfils = new Object[personMaj.getListeProfils().size()];
@@ -1286,49 +1341,50 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				i++;
 			}
 			try {
-			DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+			DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 				context.setAttributeValues(this.profils, listeProfils);
-			ldapTemplateEcriture.modifyAttributes(context);
+			this.ldapTemplateEcriture.modifyAttributes(context);
 			} catch (NamingException e) {
 				logger.error("Impossible de mettre à jour les profils de la personne "+personMaj.getUid());
 				logger.error(e.toString());
 				throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour des profils de la personne "+personMaj.getUid()+" dans l'annuaire");
-			} 
+			}
 		} else
 			// Si il n'y a aucun membre on supprime l'attribut
 			{
-//				if(personMaj.getListeProfils().size() > 0) 
+//				if(personMaj.getListeProfils().size() > 0)
 //			 	{
 				BasicAttribute attrMembers = new BasicAttribute(this.profils,
 						false);
 					attrMembers.add(null);
 					ModificationItem item = new ModificationItem(
 							DirContext.REMOVE_ATTRIBUTE, attrMembers);
-					ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
+					this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
 //			 	}
 			}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#updateProfil(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
 	public void updateProfil(Person personMaj) throws ToutaticeAnnuaireException, javax.naming.NamingException
 	{
 		ProfilDao profilDao = (ProfilDao) context.getBean("profilDao");
-		
+
 		//elimination des doublons
 		personMaj.setListeProfils(Helper.supprimerDoublonsCaseNonSensitive(personMaj.getListeProfils()));
-		
-		
+
+
 		//mise à jour des objets profils liés à la personne dans l'annuaire
 		Person personLDAP = this.findByPrimaryKey(personMaj.getUid());
-		
+
 		//Comparaison du profil à mettre à jour avec le profil dans LDAP pour identifier les membres ajoutés et supprimés
 		//test non case-sensitive
 		List<String> profilsSupprimes = new ArrayList<String>();
 		List<String> profilsAjoutes = new ArrayList<String>();
-		
+
 		List<String> listeProfilsMaj = new ArrayList<String>();
 		List<String> listeProfilsLDAP = new ArrayList<String>();
 		for(String s : personMaj.getListeProfils()) {
@@ -1337,7 +1393,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		for(String s : personLDAP.getListeProfils()){
 			listeProfilsLDAP.add(s.toLowerCase());
 		}
-		
+
 		for(String profil:personLDAP.getListeProfils()) {
 			if(! listeProfilsMaj.contains(profil.toLowerCase())) {
 				profilsSupprimes.add(profil);
@@ -1348,7 +1404,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				profilsAjoutes.add(profil);
 			}
 		}
-		
+
 		// Mise à jour des profils impactées
 		for(String profil : profilsSupprimes) {
 			profilDao.supprimerMembreViaMajMembre(profil, personLDAP.getDn());
@@ -1356,10 +1412,10 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		for(String profil : profilsAjoutes) {
 			profilDao.ajoutMembreViaMajMembre(profil, personLDAP.getDn());
 		}
-		
+
 		// maj de la personne
-		Name dn = buildDn(personMaj);
-		if(personMaj.getListeProfils().size() > 0) 
+		Name dn = this.buildDn(personMaj);
+		if(personMaj.getListeProfils().size() > 0)
 		{
 			Object[] listeProfils = new Object[personMaj.getListeProfils().size()];
 			int i = 0;
@@ -1368,36 +1424,37 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				i++;
 			}
 			try {
-			DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+			DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 				context.setAttributeValues(this.profils, listeProfils);
-			ldapTemplateEcriture.modifyAttributes(context);
+			this.ldapTemplateEcriture.modifyAttributes(context);
 			loggerModif.info("La personne "+personMaj.getUid()+" a été modifiée");
 			} catch (NamingException e) {
 				logger.error("Impossible de mettre à jour les profils de la personne "+personMaj.getUid());
 				logger.error(e.toString());
 				throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour des profils de la personne "+personMaj.getUid()+" dans l'annuaire");
-			} 
+			}
 		} else
 			// Si il n'y a aucun profils on supprime l'attribut
 			{
-				if(personMaj.getListeProfils().size() > 0) 
+				if(personMaj.getListeProfils().size() > 0)
 			 	{
 				BasicAttribute attrMembers = new BasicAttribute(this.profils,
 						false);
 					attrMembers.add(null);
 					ModificationItem item = new ModificationItem(
 							DirContext.REMOVE_ATTRIBUTE, attrMembers);
-					ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
+					this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
 					loggerModif.info("La personne "+personMaj.getUid()+" a été modifiée");
 			 	}
 			}
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#updateImplicitManagers(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
 	public void updateImplicitManagers(Person personMaj) throws ToutaticeAnnuaireException {
 		//elimination des doublons
 		personMaj.setListeImplicitManagers(Helper.supprimerDoublonsCaseNonSensitive(personMaj.getListeImplicitManagers()));
@@ -1410,30 +1467,31 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				managers[i] = o;
 				i++;
 			}
-			DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+			DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 			context.setAttributeValues(manager, managers);
-			ldapTemplateEcriture.modifyAttributes(context);
+			this.ldapTemplateEcriture.modifyAttributes(context);
 			loggerModif.info("La personne "+personMaj.getUid()+" a été modifiée");
-		} else 
+		} else
 		// Si il n'y a aucun membre on supprime l'attribut
 		{
 			Person personLDAP = this.findByPrimaryKey(personMaj.getUid());
-			 if(personLDAP.getListeImplicitManagers().size() > 0) 
+			 if(personLDAP.getListeImplicitManagers().size() > 0)
 			 	{
 					BasicAttribute attrMembers = new BasicAttribute(manager, false);
 					attrMembers.add(null);
 					ModificationItem item = new ModificationItem(
 							DirContext.REMOVE_ATTRIBUTE, attrMembers);
-					ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
+					this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
 					loggerModif.info("La personne "+personMaj.getUid()+" a été modifiée");
 			 	}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#updateExplicitManagers(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#personMaj.uid")
 	public void updateExplicitManagers(Person personMaj) throws ToutaticeAnnuaireException {
 		//elimination des doublons
 		personMaj.setListeExplicitManagers(Helper.supprimerDoublonsCaseNonSensitive(personMaj.getListeExplicitManagers()));
@@ -1446,37 +1504,38 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				explicitManagers[i] = o;
 				i++;
 			}
-			DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+			DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 			context.setAttributeValues(explicitManager, explicitManagers);
-			ldapTemplateEcriture.modifyAttributes(context);
+			this.ldapTemplateEcriture.modifyAttributes(context);
 			loggerModif.info("La personne "+personMaj.getUid()+" a été modifiée");
-		} else 
+		} else
 		// Si il n'y a aucun membre on supprime l'attribut
 		{
 			Person personLDAP = this.findByPrimaryKey(personMaj.getUid());
-			 if(personLDAP.getListeExplicitManagers().size() > 0) 
+			 if(personLDAP.getListeExplicitManagers().size() > 0)
 			 	{
 					BasicAttribute attrMembers = new BasicAttribute(explicitManager, false);
 					attrMembers.add(null);
 					ModificationItem item = new ModificationItem(
 							DirContext.REMOVE_ATTRIBUTE, attrMembers);
-					ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
+					this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
 					loggerModif.info("La personne "+personMaj.getUid()+" a été modifiée");
 			 	}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#updateRne(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	public void updateRne(Person p) throws ToutaticeAnnuaireException
 	{
 		//elimination des doublons
 		p.setListeRnes(Helper.supprimerDoublonsCaseNonSensitive(p.getListeRnes()));
-		
-		
-		Name dn = buildDn(p);
+
+
+		Name dn = this.buildDn(p);
 		Object[] listeRne = new Object[p.getListeRnes().size()];
 		int i = 0;
 		for (Object o : p.getListeRnes()) {
@@ -1484,26 +1543,27 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			i++;
 		}
 		try {
-		DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+		DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 			context.setAttributeValues(this.rne, listeRne);
-		ldapTemplateEcriture.modifyAttributes(context);
+		this.ldapTemplateEcriture.modifyAttributes(context);
 		loggerModif.info("La personne "+p.getUid()+" a été modifiée");
 		} catch (NamingException e) {
 			logger.error("Impossible de mettre à jour les rne de la personne "+p.getUid());
 			logger.error(e.toString());
 			throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour des rne de la personne "+p.getUid()+" dans l'annuaire");
-		} 
+		}
 	}
 
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#updatePassword(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	public void updatePassword(Person p) throws ToutaticeAnnuaireException {
-		Name dn = buildDn(p);
+		Name dn = this.buildDn(p);
 		if (p.getListePasswords().size() > 1)
-		{		
+		{
 			List<byte[]> listeMdpByte = new ArrayList<byte[]>();
 			for(String s:p.getListePasswords())
 			{
@@ -1514,11 +1574,11 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			for (Object o : listeMdpByte) {
 				pwd[i] = o;
 				i++;
-			}		
+			}
 			try{
-			DirContextOperations context = ldapTemplateEcriture.lookupContext(dn);
+			DirContextOperations context = this.ldapTemplateEcriture.lookupContext(dn);
 			context.setAttributeValues(password, pwd);
-			ldapTemplateEcriture.modifyAttributes(context);
+			this.ldapTemplateEcriture.modifyAttributes(context);
 			loggerModif.info("La personne "+p.getUid()+" a été modifiée");
 			} catch (NamingException e) {
 				logger.error("Impossible de mettre le mot de passe à jour pour l'utilisateur "+p.getCn());
@@ -1526,42 +1586,44 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 				throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour du mot de passe pour la personne "+p.getCn());
 			}
 		}
-		
+
 		else
 		{
 			try {
 			Attribute attr = new BasicAttribute(password, p.getListePasswords().get(0));
 			ModificationItem item = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
-			ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] {item});
+			this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] {item});
 			loggerModif.info("La personne "+p.getUid()+" a été modifiée");
 			} catch (NamingException e) {
 				logger.error("Impossible de mettre le mot de passe à jour pour l'utilisateur "+p.getCn());
-				logger.error(e.toString()); 
+				logger.error(e.toString());
 				throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour du mot de passe pour la personne "+p.getCn()); }
 			}
-		
-	}	
-	
-	
+
+	}
+
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#authenticate(java.lang.String, java.lang.String)
 	 */
-	public boolean authenticate(String uid, String mdpNonCode){
+	@Override
+    public boolean authenticate(String uid, String mdpNonCode){
 		AndFilter filter = new AndFilter();
 		filter.and(new EqualsFilter("objectclass", classObjet));
 		filter.and(new EqualsFilter(id, uid));
 		return this.getLdapTemplateLectureNonPoolee().authenticate("", filter.toString(), mdpNonCode);
 	}
-	
+
 
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#addPersonSmdp(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	public void addPersonSmdp(Person p) throws ToutaticeAnnuaireException {
 		try {
-			Name dn = buildDn(p);
+			Name dn = this.buildDn(p);
 			String s = "";
 			if(p.getIdSurcharge()!=null){
 				s=p.getIdSurcharge();
@@ -1574,7 +1636,7 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 			}
 			Attribute attr = new BasicAttribute(idsurcharge,s);
 			ModificationItem item = new ModificationItem(DirContext.ADD_ATTRIBUTE, attr);
-			ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] {item});
+			this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] {item});
 		}
 		catch(NamingException e) {
 			logger.error("Impossible de mettre à jour l'attribut "+idsurcharge+" pour l'utilisateur "+p.getCn());
@@ -1583,19 +1645,20 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		}
 
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#deletePersonSmdp(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	public void deletePersonSmdp(Person p) throws ToutaticeAnnuaireException {
-		Name dn = buildDn(p);
+		Name dn = this.buildDn(p);
 		BasicAttribute battr = new BasicAttribute(idsurcharge, false);
 		battr.add(null);
 		ModificationItem item = new ModificationItem(
 				DirContext.REMOVE_ATTRIBUTE, battr);
 		try {
-			ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
+			this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] { item });
 			loggerModif.info("La personne "+p.getUid()+" a été modifiée");
 		}catch(NoSuchAttributeException e) {
 			logger.warn("la personne "+p.getDisplayName()+" était surchargée sans entpersonSmdp de renseignée");
@@ -1610,13 +1673,14 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#updateEmail(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	public void updateEmail(Person p) throws ToutaticeAnnuaireException {
 		try {
-			Name dn = buildDn(p);
+			Name dn = this.buildDn(p);
 			Attribute attr = new BasicAttribute(email,p.getEmail());
 			ModificationItem item = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
-			ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] {item});
+			this.ldapTemplateEcriture.modifyAttributes(dn, new ModificationItem[] {item});
 			loggerModif.info("La personne "+p.getUid()+" a été modifiée");
 		}
 		catch(NamingException e)
@@ -1625,18 +1689,19 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		throw new ToutaticeAnnuaireException("Erreur lors de la mise à jour de l'adresse email de la personne "+p.getCn());
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#personHasRole(fr.toutatice.outils.ldap.entity.Person, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public boolean personHasRole(Person user,String cnRole) {
 		ProfilDao profilDao = (ProfilDao) context.getBean("profilDao");
 		RoleApplicatifDao roleApplicatifDao = (RoleApplicatifDao) context.getBean("roleApplicatifDao");
 		boolean reponse = false;
 		RoleApplicatif role = null;
 		try {
-		role = roleApplicatifDao.findByCn(cnRole); 
+		role = roleApplicatifDao.findByCn(cnRole);
 		if(role!=null){
 			//recherche par filtre
 			for(String filtre : role.getListeMemberURL()) {
@@ -1645,8 +1710,8 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 						String filtre1 = filtre.replace("#{organisation}", rne);
 						String filtreGlobal = "(&" + filtre1.concat(new EqualsFilter(id, user.getUid()).encode()) + ")";
 						PersonAttributMapper personAttributMapper = new PersonAttributMapper();
-						List<Person> liste = ldapTemplateLecture.search("", filtreGlobal, personAttributMapper);
-						if (liste.size() == 1) 
+						List<Person> liste = this.ldapTemplateLecture.search("", filtreGlobal, personAttributMapper);
+						if (liste.size() == 1)
 						{reponse = true;}
 					}
 				}
@@ -1659,10 +1724,10 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 						if(profilR.isMember(user.getDn())){
 								reponse = true;
 							}
-					} 
+					}
 				}
 			}
-			
+
 			//recherche par uid
 			if(!reponse) {
 				if(role.isMemberExplicit(user.getDn())){
@@ -1672,18 +1737,19 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		}else{
 			reponse=false;
 		}
-		
+
 		} catch (ToutaticeAnnuaireException e) {
 			reponse = false;
 		}
 
 		return reponse;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#personHasStructure(fr.toutatice.outils.ldap.entity.Person, java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
+    @SuppressWarnings("unchecked")
 	public boolean personHasStructure(Person user,String rne) {
 		Organisation organisation = (Organisation) context.getBean("organisation");
 		boolean reponse = false;
@@ -1706,79 +1772,83 @@ public class PersonDaoImpl implements ApplicationContextAware, PersonDao{
 		}
 		return reponse;
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#getListePersonnesAyantProfilTrie(java.lang.String, java.lang.String)
 	 */
-	@SuppressWarnings("static-access")
+	@Override
+    @SuppressWarnings("static-access")
 	public List<Person> getListePersonnesAyantProfilTrie(String dnProfil, String critereTri) {
-		
+
 
 	     SearchControls searchControls = new SearchControls() ;
 	     searchControls.setSearchScope( SearchControls.SUBTREE_SCOPE ) ;
-	        
+
 		AndFilter filter = new AndFilter();
 		filter.and(new EqualsFilter("objectclass", classObjet));
 		filter.and(new EqualsFilter(this.profils, dnProfil));
 		PersonAttributMapper personAttributMapper = new PersonAttributMapper();
 
 		List<Person> liste = null;
-		if (annuaireConfig.getSortingEnabled()) {
+		if (this.annuaireConfig.getSortingEnabled()) {
 			AggregateDirContextProcessor processor = new AggregateDirContextProcessor();
 			SortControlDirContextProcessor sorter = new SortControlDirContextProcessor(critereTri);
 			processor.addDirContextProcessor(sorter);
 
-			liste = ldapTemplateLecture.search("", filter.encode(),	searchControls, personAttributMapper, processor);
+			liste = this.ldapTemplateLecture.search("", filter.encode(),	searchControls, personAttributMapper, processor);
 		} else {
-			liste = ldapTemplateLecture.search("", filter.encode(),	searchControls, personAttributMapper);
-			
+			liste = this.ldapTemplateLecture.search("", filter.encode(),	searchControls, personAttributMapper);
+
 			Collections.sort(liste, new PersonComparator());
 		}
-		
+
 		return liste;
 	}
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#create(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	 @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	 @Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	 public void create(Person p) throws ToutaticeAnnuaireException {
-		  Name dn = buildDn(p);
+		  Name dn = this.buildDn(p);
 		  try {
-			  Attributes attr = buildAttributes(p);
-			  ldapTemplateEcriture.bind(dn, null, attr);
+			  Attributes attr = this.buildAttributes(p);
+			  this.ldapTemplateEcriture.bind(dn, null, attr);
 		  } catch (NamingException e) {
 				logger.error("Impossible de créér la personne "+ p.getUid());
 				e.printStackTrace();
 				throw new ToutaticeAnnuaireException("Erreur lors de la création de la personne "+p.getUid()+" dans l'annuaire");
-			} 
+			}
 	   }
-	 
+
 	 /* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#delete(fr.toutatice.outils.ldap.entity.Person)
 	 */
-	@CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
+	@Override
+    @CacheEvict(value = "personByPrimaryKeyCache", key = "#p.uid")
 	   public void delete(Person p) throws ToutaticeAnnuaireException {
 		   try {
-	      ldapTemplateEcriture.unbind(buildDn(p));
-		   } 		
+	      this.ldapTemplateEcriture.unbind(this.buildDn(p));
+		   }
 			catch (NamingException e) {
 				logger.error("La suppression de la personne "+p.getUid()+ " a échoué");
 				throw new ToutaticeAnnuaireException("Erreur lors de la suppression de la personne "+p.getUid());
 			}
 	   }
-	
-	
-	
+
+
+
 	/* (non-Javadoc)
 	 * @see fr.toutatice.outils.ldap.dao.PersonDao#setApplicationContext(org.springframework.context.ApplicationContext)
 	 */
-	public void setApplicationContext(ApplicationContext arg0)
+	@Override
+    public void setApplicationContext(ApplicationContext arg0)
 			throws BeansException {
 		this.context = arg0;
 	}
-	
-	
+
+
 
 }

@@ -13,11 +13,12 @@ public class FormUpload {
 
     private String sn;
     private String givenName;
-    
+
     private String title;
 	private String bio;
 	private String telFixe;
 	private String telMobile;
+    private String profession;
 	private String departementCns;
 	private String entiteAdm;
 	private String mailGenerique;
@@ -28,21 +29,21 @@ public class FormUpload {
     }
 
     public MultipartFile getFile() {
-        return file;
+        return this.file;
     }
 
 	public String getAlias() {
-		return alias;
+		return this.alias;
 	}
 
 	public void setAlias(String alias) {
 		this.alias = alias;
 	}
 
-	
+
 
 	public String getNouveauEmail() {
-		return nouveauEmail;
+		return this.nouveauEmail;
 	}
 
 	public void setNouveauEmail(String nouveauEmail) {
@@ -50,7 +51,7 @@ public class FormUpload {
 	}
 
 	public String getBio() {
-		return bio;
+		return this.bio;
 	}
 
 	public void setBio(String bio) {
@@ -58,7 +59,7 @@ public class FormUpload {
 	}
 
 	public boolean isChargementAvatar() {
-		return chargementAvatar;
+		return this.chargementAvatar;
 	}
 
 	public void setChargementAvatar(boolean chargementAvatar) {
@@ -69,7 +70,7 @@ public class FormUpload {
      * @return the sn
      */
     public String getSn() {
-        return sn;
+        return this.sn;
     }
 
 
@@ -79,12 +80,12 @@ public class FormUpload {
     public void setSn(String sn) {
         this.sn = sn;
     }
-    
+
 	/**
 	 * @return the givenName
 	 */
 	public String getGivenName() {
-		return givenName;
+		return this.givenName;
 	}
 
 	/**
@@ -98,7 +99,7 @@ public class FormUpload {
 	 * @return the title
 	 */
 	public String getTitle() {
-		return title;
+		return this.title;
 	}
 
 	/**
@@ -112,7 +113,7 @@ public class FormUpload {
 	 * @return the telFixe
 	 */
 	public String getTelFixe() {
-		return telFixe;
+		return this.telFixe;
 	}
 	/**
 	 * @param telFixe the telFixe to set
@@ -124,7 +125,7 @@ public class FormUpload {
 	 * @return the telMobile
 	 */
 	public String getTelMobile() {
-		return telMobile;
+		return this.telMobile;
 	}
 	/**
 	 * @param telMobile the telMobile to set
@@ -132,11 +133,30 @@ public class FormUpload {
 	public void setTelMobile(String telMobile) {
 		this.telMobile = telMobile;
 	}
+
+    /**
+     * Getter for profession.
+     * 
+     * @return the profession
+     */
+    public String getProfession() {
+        return this.profession;
+    }
+
+    /**
+     * Setter for profession.
+     * 
+     * @param profession the profession to set
+     */
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
 	/**
 	 * @return the departementCns
 	 */
 	public String getDepartementCns() {
-		return departementCns;
+		return this.departementCns;
 	}
 	/**
 	 * @param departementCns the departementCns to set
@@ -148,7 +168,7 @@ public class FormUpload {
 	 * @return the entiteAdm
 	 */
 	public String getEntiteAdm() {
-		return entiteAdm;
+		return this.entiteAdm;
 	}
 	/**
 	 * @param entiteAdm the entiteAdm to set
@@ -160,7 +180,7 @@ public class FormUpload {
 	 * @return the mailGenerique
 	 */
 	public String getMailGenerique() {
-		return mailGenerique;
+		return this.mailGenerique;
 	}
 	/**
 	 * @param mailGenerique the mailGenerique to set
@@ -172,7 +192,7 @@ public class FormUpload {
 	 * @return the referent
 	 */
 	public String getReferent() {
-		return referent;
+		return this.referent;
 	}
 	/**
 	 * @param referent the referent to set
@@ -180,8 +200,5 @@ public class FormUpload {
 	public void setReferent(String referent) {
 		this.referent = referent;
 	}
-	
-	
 
-	
 }

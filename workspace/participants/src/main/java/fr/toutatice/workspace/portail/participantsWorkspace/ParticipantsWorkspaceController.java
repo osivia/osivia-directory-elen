@@ -360,7 +360,7 @@ public class ParticipantsWorkspaceController extends CMSPortlet implements Portl
 		windowProperties.put("osivia.title", "Participants à "+wks.getNom());
 		windowProperties.put("allMembers", "true");
 		
-		return getPortalUrlFactory().getStartPortletUrl(portalControllerContext, "toutatice-workspace-participantsworkspace-portailPortletInstance", windowProperties, false);
+		return getPortalUrlFactory().getStartPortletUrl(portalControllerContext, DirectoryPortlets.participantsWorkspace.getInstanceName(), windowProperties, false);
 	}
 	
 	

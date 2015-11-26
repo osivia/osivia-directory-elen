@@ -1,7 +1,5 @@
 package fr.toutatice.identite.portail.fichePersonne;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +27,7 @@ public class HabilitationRazMdp {
 	private level role;
 
 	public level getRole() {
-		return role;
+		return this.role;
 	}
 
 	public void setRole(level role) {
@@ -37,7 +35,7 @@ public class HabilitationRazMdp {
 	}
 
 	public Organisation getOrganisation() {
-		return organisation;
+		return this.organisation;
 	}
 
 	public void setOrganisation(Organisation organisation) {
@@ -48,36 +46,15 @@ public class HabilitationRazMdp {
 
 		level role = level.NONHABILITE;
 
-		if (userConsulte.getTitle().equalsIgnoreCase("ELE") && userConnecte != null) {
+        if (userConnecte != null) {
 
-			if (userConnecte.hasRole(config.getRoleSuperAdministrateur())) {
+			if (userConnecte.hasRole(this.config.getRoleSuperAdministrateur())) {
 				role = level.DROITRAZ;
 			} else {
-				if (userConnecte.hasRole(config.getRoleAdministrateur())) {
+				if (userConnecte.hasRole(this.config.getRoleAdministrateur())) {
 					role = level.DROITRAZ;
 				} else {
-
-					// pour le role raz mot de passe,on vérifie que le userconnecte
-					// a le droit sur un des rne de la personne consultée
-					// (il peut être habilité sur d'autres Rne mais pas sur celui du
-					// user consulte
-					// pour le role raz mot de passe,on vérifie que le userconnecte
-					// a le droit sur un des rne de la personne consultée
-					// (il peut être habilité sur d'autres Rne mais pas sur celui du
-					// user consulte
-					if (userConnecte.hasRole(config.getRoleRazMdp())) {
-						boolean memeRne = false;
-						List<Organisation> listeRneUserConnecte = organisation.findOrganisationPersonneByProfil(userConnecte);
-						List<Organisation> listeRneUserConsulte = organisation.findOrganisationPersonneByProfil(userConsulte);
-						for (Organisation org : listeRneUserConnecte) {
-							for (Organisation org1 : listeRneUserConsulte) {
-								if (org.getId().equalsIgnoreCase(org1.getId())) {
-									memeRne = true;
-									break;
-								}
-							}
-						}
-
+					if (userConnecte.hasRole(this.config.getRoleRazMdp())) {
 						role = level.DROITRAZ;
 					}
 				}

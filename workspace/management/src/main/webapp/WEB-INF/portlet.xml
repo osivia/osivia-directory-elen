@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
-version="1.0">
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+    version="2.0">
 
 	<portlet>
-		<description>Portlet Toutatice - Gestion des espaces de travail</description>
-		<portlet-name>toutatice-workspace-gestionworkspace-portailPortlet</portlet-name>
-        <display-name>Toutatice - Gestion des espaces de travail</display-name>
+		<portlet-name>directory-workspace-management</portlet-name>
 		<portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
 
-		<!--  Fichier de configuration Spring de l'application --> 
 		<init-param>
 			<name>contextConfigLocation</name>
-			<value>
-			classpath:directory-beans.xml
-			/WEB-INF/applicationContext.xml</value>
+			<value>classpath:directory-beans.xml /WEB-INF/directory-workspace-management-portlet.xml</value>
 		</init-param>
 		
 		<supports>
 			<mime-type>text/html</mime-type>
-			<portlet-mode>View</portlet-mode>
-			<portlet-mode>Admin</portlet-mode>
+			<portlet-mode>view</portlet-mode>
+			<portlet-mode>admin</portlet-mode>
 		</supports>
 		
 		<portlet-info>
-			<title>Toutatice - Gestion des Espaces de Travail</title>
+			<title>Workspace management</title>
 		</portlet-info>
 	</portlet>
 	
 	<portlet>
-		<portlet-name>toutatice-workspace-gestionworkspace-plugin</portlet-name>
+		<portlet-name>directory-workspace-management-plugin</portlet-name>
 		<portlet-class>fr.toutatice.workspace.portail.gestionWorkspace.plugin.GestionWorkspacePlugin</portlet-class>
+        
 		<expiration-cache>180</expiration-cache>
 
 		<supports>
@@ -40,9 +35,8 @@ version="1.0">
 		</supports>
 
 		<portlet-info>
-			<title>Plugin gestion de workspaces</title>
+			<title>Workspace management plugin</title>
 		</portlet-info>
 	</portlet>    
-    	
-	
+
 </portlet-app>

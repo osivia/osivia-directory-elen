@@ -75,7 +75,7 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 		// Map<String, Object> userDatas = (Map<String, Object>)
 		// request.getAttribute("osivia.userDatas");
 		DirectoryPerson person = (DirectoryPerson) request.getAttribute(Constants.ATTR_LOGGED_PERSON);
-		Person userConnecte = personne.findUtilisateur(person.getUid());
+		Person userConnecte = this.personne.findUtilisateur(person.getUid());
 
 		return userConnecte;
 	}
@@ -87,7 +87,7 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 
 		Person userConnecte = (Person) session.getAttribute("userConnecte");
 		if (userConnecte == null) {
-			userConnecte = initUserConnecte(model, request);
+			userConnecte = this.initUserConnecte(model, request);
 		}
 
 		if (userConnecte == null) {
@@ -108,7 +108,7 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 	@RenderMapping(params = "action=creationOk")
 	public String renderCreationOk(RenderRequest request, RenderResponse response, ModelMap model) {
 
-		String urlFichePersonne = buildUrlFichePersonne(request, response, request.getParameter("uidFichePersonne"));
+		String urlFichePersonne = this.buildUrlFichePersonne(request, response, request.getParameter("uidFichePersonne"));
 
 		model.addAttribute("urlFichePersonne", urlFichePersonne);
 
@@ -121,22 +121,21 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 
 		// TODO gestion des droits
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, response);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
 
 		// FicheCreation fiche = (FicheCreation) session.getAttribute("fiche");
-		creationValidator.validate(formCreation, result);
+		this.creationValidator.validate(formCreation, result);
 
 		if (!result.hasErrors()) {
 
 			try {
 				// MAJ Annuaire
-				Person newPerson = context.getBean(Person.class);
+				Person newPerson = this.context.getBean(Person.class);
 
 				PropertyUtils.copyProperties(newPerson, formCreation);
 
 				// calculés
-				newPerson.setTitle("ELE");
 				newPerson.setCn(newPerson.getGivenName() + " " + newPerson.getSn());
 				newPerson.setDisplayName(newPerson.getGivenName() + " " + newPerson.getSn());
 				newPerson.setAlias(newPerson.getGivenName() + " " + newPerson.getSn());
@@ -150,13 +149,13 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 				response.setRenderParameter("action", "creationOk");
 				response.setRenderParameter("uidFichePersonne", newPerson.getUid());
 
-				addNotification(pcc, "label.creationOK", NotificationsType.SUCCESS);
+				this.addNotification(pcc, "label.creationOK", NotificationsType.SUCCESS);
 
 
 			} catch (Exception e) {
 				response.setRenderParameter("action", "modify");
 
-				addNotification(pcc, "label.errorCreation", NotificationsType.ERROR);
+				this.addNotification(pcc, "label.errorCreation", NotificationsType.ERROR);
 
 				logger.error("création impossible", e);
 			}
@@ -178,9 +177,9 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 
 		String url = null;
 
-		PortalControllerContext pcc = new PortalControllerContext(portletContext, request, null);
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, null);
 		try {
-			url = getPortalUrlFactory().getStartPortletUrl(pcc, DirectoryPortlets.fichePersonne.getInstanceName(), windowProperties, false);
+			url = this.getPortalUrlFactory().getStartPortletUrl(pcc, DirectoryPortlets.fichePersonne.getInstanceName(), windowProperties, false);
 		} catch (PortalException e) {
 			logger.info("erreur de création de l'url", e);
 		}
@@ -189,12 +188,14 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 
 	}
 
-	public void setPortletContext(PortletContext ctx) {
-		portletContext = ctx;
+	@Override
+    public void setPortletContext(PortletContext ctx) {
+		this.portletContext = ctx;
 
 	}
 
-	public void setPortletConfig(PortletConfig portletConfig) {
+	@Override
+    public void setPortletConfig(PortletConfig portletConfig) {
 		this.portletConfig = portletConfig;
 	}
 

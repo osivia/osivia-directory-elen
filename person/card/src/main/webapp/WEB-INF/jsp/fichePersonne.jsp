@@ -72,37 +72,21 @@
 		</div>
 	</div>
 
-	<c:if test="${fiche.levelConsultation.showBio}">
-		<div class="form-group">
-			<label class="col-md-2 control-label">
-				<op:translate  key="label.bio" />
-						
-			</label>
-			<div class="col-md-10">
-				<p class="form-control-static">${fiche.profilNuxeo.bio}</p>
-			</div>
-		</div>
-	</c:if>
-
 	<div class="form-group">
 		<label class="col-md-2 control-label">
-			<op:translate  key="label.departementCns" />
-			
-		
+			<op:translate  key="label.departementCns" />		
 		</label>
 		<div class="col-md-10">
 			<p class="form-control-static">${fiche.departementCns}</p>
 		</div>
 	</div>		
-	<div class="form-group">
-		<label class="col-md-2 control-label">
-			<op:translate  key="label.entiteAdm" />
-		</label>
-		<div class="col-md-10">
-			<p class="form-control-static">${fiche.profilNuxeo.entiteAdm}</p>
-		</div>
-	</div>
-	
+    
+    <div class="form-group">
+        <label class="col-md-2 control-label"><op:translate key="label.profession" /></label>
+        <div class="col-md-10">
+            <p class="form-control-static">${fiche.profilNuxeo.profession}</p>
+        </div>
+    </div>
 
 	<div class="form-group">
 		<label class="col-md-2 control-label">
@@ -131,22 +115,6 @@
 	</c:if>	
 
 
-	<div class="form-group">
-		<label class="col-md-2 control-label">
-			<op:translate  key="label.mailGenerique" />
-		</label>
-		<div class="col-md-10">
-			<p class="form-control-static">${fiche.profilNuxeo.mailGenerique}</p>
-		</div>
-	</div>
-	<div class="form-group">
-		<label class="col-md-2 control-label">
-			<op:translate  key="label.referent" />
-		</label>
-		<div class="col-md-10">
-			<p class="form-control-static">${fiche.profilNuxeo.referent}</p>
-		</div>
-	</div>
 
 	<c:if
 		test="${fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE' || fiche.levelUserConnecteSurcharge == 'DROIT_SURCHARGE_ASSISTANCE' || fiche.levelUserConnecteSurcharge == 'NON_SURCHARGEABLE'}">

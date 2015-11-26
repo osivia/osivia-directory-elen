@@ -1,10 +1,8 @@
-<%@tag
-	description="Extended input tag to allow for sophisticated errors"
-	pageEncoding="UTF-8"%>
+<%@tag description="Extended input tag to allow for sophisticated errors" pageEncoding="UTF-8"%>
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@taglib prefix="is" uri="internationalization"%>
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 <%@attribute name="path" required="true" type="java.lang.String"%>
 
 
@@ -16,7 +14,7 @@
 
 	<div class="form-group ${formGroupClass}">
 		<form:label path="${path}" cssClass="col-md-4 control-label">
-			<is:getProperty key="label.${path}" />
+            <op:translate key="label.${path}"/>
 		</form:label>
 
 		<div class="col-md-8">

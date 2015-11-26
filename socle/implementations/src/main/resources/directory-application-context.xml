@@ -15,7 +15,7 @@
 
     <context:component-scan base-package="fr.toutatice.outils.ldap.entity" />
     
-    <context:property-placeholder location="classpath:/toutatice_annuaire_mapping.properties"></context:property-placeholder>
+    <context:property-placeholder location="classpath:/directory-mapping.properties"></context:property-placeholder>
 
     <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager">

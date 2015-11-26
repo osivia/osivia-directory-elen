@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package fr.toutatice.workspace.portail.gestionWorkspace.plugin;
 
@@ -24,6 +24,7 @@ import org.osivia.portal.core.cms.CMSItem;
 import org.osivia.portal.core.cms.CMSPublicationInfos;
 import org.osivia.portal.core.cms.CMSServiceCtx;
 import org.osivia.portal.core.cms.ICMSService;
+import org.osivia.services.directory.helper.DirectoryPortlets;
 
 import fr.toutatice.portail.cms.nuxeo.api.ContextualizationHelper;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
@@ -50,53 +51,54 @@ public class GestionWorkspacePlugin extends AbstractPluginPortlet implements IMe
 	 */
 	@Override
 	protected void customizeCMSProperties(String arg0, CustomizationContext ctx) {
-		
-		List<IMenubarModule> menubars = getMenubars(ctx);
-		
+
+		List<IMenubarModule> menubars = this.getMenubars(ctx);
+
 		menubars.add(this);
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see fr.toutatice.portail.cms.nuxeo.api.domain.IMenubarModule#adaptContentMenuBar(org.osivia.portal.core.cms.CMSServiceCtx, java.util.List)
 	 */
-	public void adaptContentMenuBar(CMSServiceCtx ctx, List<MenubarItem> menuBar, CMSPublicationInfos pubInfos, CMSExtendedDocumentInfos extendedDocumentInfos) {
-		
+	@Override
+    public void adaptContentMenuBar(CMSServiceCtx ctx, List<MenubarItem> menuBar, CMSPublicationInfos pubInfos, CMSExtendedDocumentInfos extendedDocumentInfos) {
+
 		if(ctx.getDoc() != null) {
-			
+
 	        // Current document
 	        Document document = (Document) ctx.getDoc();
-	        
+
 	        if(document.getType().equals("Workspace")) {
 
-	
-	            try {		        
-			        if(!isUserWorkspace(ctx, document) && pubInfos.isManageableByUser() && ContextualizationHelper.isCurrentDocContextualized(ctx)) {
+
+	            try {
+			        if(!this.isUserWorkspace(ctx, document) && pubInfos.isManageableByUser() && ContextualizationHelper.isCurrentDocContextualized(ctx)) {
 
 		            	// --------- EDIT LDAP MEMBERS
-		
+
 		        		Map<String, String> windowProperties = new HashMap<String, String>();
 		        		windowProperties.put("osivia.ajaxLink", "1");
 		        		windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
 		        		windowProperties.put("action", "consulterRole");
-		        		
-		        		
-		        		PortalControllerContext pcc = new PortalControllerContext(getPortletContext(), ctx.getRequest(), ctx.getResponse());
-		        		
-						windowProperties.put("osivia.title", getMessage(pcc ,"MANAGE_MEMBERS_ACTION"));
+
+
+		        		PortalControllerContext pcc = new PortalControllerContext(this.getPortletContext(), ctx.getRequest(), ctx.getResponse());
+
+						windowProperties.put("osivia.title", this.getMessage(pcc ,"MANAGE_MEMBERS_ACTION"));
 		        		//windowProperties.put("osivia.hideTitle", "1");
 		        		windowProperties.put("workspacePath", document.getPath());
-		
-		        		String urlEditMembers = this.getPortalUrlFactory().getStartPortletUrl(pcc, "toutatice-workspace-gestionworkspace-portailPortletInstance", windowProperties, false);
-		
-		        		MenubarDropdown parent = this.getOtherOptionsDropdown(pcc, getBundleFactory().getBundle(ctx.getRequest().getLocale()));
-		
-		                MenubarItem manageMembersItem = new MenubarItem("MANAGE_MEMBERS", getMessage(pcc, "MANAGE_MEMBERS_ACTION"), "glyphicons glyphicons-group",
+
+		        		String urlEditMembers = this.getPortalUrlFactory().getStartPortletUrl(pcc, DirectoryPortlets.gestionWorkspaces.getInstanceName(), windowProperties, false);
+
+		        		MenubarDropdown parent = this.getOtherOptionsDropdown(pcc, this.getBundleFactory().getBundle(ctx.getRequest().getLocale()));
+
+		                MenubarItem manageMembersItem = new MenubarItem("MANAGE_MEMBERS", this.getMessage(pcc, "MANAGE_MEMBERS_ACTION"), "glyphicons glyphicons-group",
 		                        parent, 22, urlEditMembers, null, null, null);
 			            manageMembersItem.setAjaxDisabled(true);
-		
+
 			            menuBar.add(manageMembersItem);
-				        
+
 				     }
 			    }
 		        catch(PortalException ex) {
@@ -108,25 +110,25 @@ public class GestionWorkspacePlugin extends AbstractPluginPortlet implements IMe
 
 		}
 
-		
+
 	}
-	
+
     /**
 	 * Is document a user workspace ?
-	 * @param document 
-     * @param ctx 
+	 * @param document
+     * @param ctx
      * @return true if is it
-     * @throws CMSException 
+     * @throws CMSException
 	 */
 	private boolean isUserWorkspace(CMSServiceCtx ctx, Document document) throws CMSException {
-        
+
         ICMSService cmsService = NuxeoController.getCMSService();
 
         String path = document.getPath() + "/";
-        
+
         // Check if current item is not in user workspaces
         boolean userWorkspace = false;
-		
+
 		List<CMSItem> userWorkspaces = cmsService.getWorkspaces(ctx, true, false);
         for (CMSItem cmsItem : userWorkspaces) {
             if (StringUtils.startsWith(path, cmsItem.getPath() + "/")) {
@@ -134,7 +136,7 @@ public class GestionWorkspacePlugin extends AbstractPluginPortlet implements IMe
                 break;
             }
         }
-        
+
         return userWorkspace;
 	}
 

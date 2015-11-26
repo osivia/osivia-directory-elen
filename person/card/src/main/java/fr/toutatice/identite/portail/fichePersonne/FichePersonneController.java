@@ -251,7 +251,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
         Map<String, VocabularyEntry> children;
         try {
-            VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "[CNS] Entité");
+            VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "Organization");
             children = vocabularyEntry.getChildren();
         } catch (NuxeoException e) {
             logger.error(e.getMessage(), e);
@@ -646,14 +646,10 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		userProfile = (Document) nuxeoCtl.executeNuxeoCommand(new FetchDocumentCommand(nuxeoCtl, userProfile.getPath()));
 
 		if (userProfile != null) {
-			profilNuxeo.setBio(userProfile.getString("userprofile:bio"));
-
-			// Spécifique CNS
-			profilNuxeo.setTelFixe(userProfile.getString("cnsprofile:tel_fixe"));
-			profilNuxeo.setTelMobile(userProfile.getString("cnsprofile:tel_mobile"));
-			profilNuxeo.setEntiteAdm(userProfile.getString("cnsprofile:entite_adm"));
-			profilNuxeo.setMailGenerique(userProfile.getString("cnsprofile:mail_generique"));
-			profilNuxeo.setReferent(userProfile.getString("cnsprofile:referent"));
+            profilNuxeo.setBio(userProfile.getString("ttc_userprofile:bio"));
+            profilNuxeo.setTelFixe(userProfile.getString("userprofile:phonenumber"));
+            profilNuxeo.setTelMobile(userProfile.getString("ttc_userprofile:mobile"));
+            profilNuxeo.setProfession(userProfile.getString("ttc_userprofile:profession"));
 
 			String requete = "ecm:isProxy=0 and ecm:primaryType='BlogSite' and ecm:currentLifeCycleState <> 'deleted' and ecm:path STARTSWITH'"
 					+ profilNuxeo.getPathUserWorkspace() + "'";
@@ -889,7 +885,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		windowProperties.put("osivia.hideTitle", "1");
 		windowProperties.put("uidFichePersonne", p.getUid());
 
-		String url = this.getPortalUrlFactory().getStartPortletUrl(portalControllerContext, "toutatice-identite-fichepersonne-portailPortletInstance",
+		String url = this.getPortalUrlFactory().getStartPortletUrl(portalControllerContext, DirectoryPortlets.fichePersonne.getInstanceName(),
 				windowProperties, false);
 
 		return new PersonUrl(p,url);

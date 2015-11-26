@@ -38,7 +38,7 @@
 
 	<div class="form-group">
 			<div class="col-sm-8 col-sm-offset-4">
-				<button class="btn btn-primary" type="submit"><i class="glyphicons halflings ok"></i><span><op:translate  key="label.btn.valider" /></span></button>
+				<button class="btn btn-primary" type="submit"><i class="glyphicons halflings ok"></i> <span><op:translate  key="label.btn.valider" /></span></button>
 				<c:if test="${provenance=='consulterEspace'}">
 					<a href="${retourEspace}" class="btn btn-default"><i class="glyphicons ban"></i> <span><op:translate  key="label.btn.annuler"/></span> </a>
 	      		</c:if>
