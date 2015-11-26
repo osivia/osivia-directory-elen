@@ -251,7 +251,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
         Map<String, VocabularyEntry> children;
         try {
-            VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "Organization");
+            VocabularyEntry vocabularyEntry = VocabularyHelper.getVocabularyEntry(nuxeoController, "organization");
             children = vocabularyEntry.getChildren();
         } catch (NuxeoException e) {
             logger.error(e.getMessage(), e);
