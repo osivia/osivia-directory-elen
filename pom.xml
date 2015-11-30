@@ -14,7 +14,7 @@
     
     
     <properties>
-        <toutatice.version>4.2.0-SNAPSHOT</toutatice.version>
+        <toutatice.version>4.2.0-RC1</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
