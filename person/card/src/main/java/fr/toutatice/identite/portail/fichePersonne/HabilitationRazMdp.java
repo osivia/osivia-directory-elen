@@ -46,21 +46,22 @@ public class HabilitationRazMdp {
 
 		level role = level.NONHABILITE;
 
-        if (userConnecte != null) {
-
-			if (userConnecte.hasRole(this.config.getRoleSuperAdministrateur())) {
-				role = level.DROITRAZ;
-			} else {
-				if (userConnecte.hasRole(this.config.getRoleAdministrateur())) {
-					role = level.DROITRAZ;
-				} else {
-					if (userConnecte.hasRole(this.config.getRoleRazMdp())) {
-						role = level.DROITRAZ;
-					}
-				}
-
-			}
-		}
+		// TODO Non implémenté dans cette version
+//        if (userConnecte != null) {
+//
+//			if (userConnecte.hasRole(this.config.getRoleSuperAdministrateur())) {
+//				role = level.DROITRAZ;
+//			} else {
+//				if (userConnecte.hasRole(this.config.getRoleAdministrateur())) {
+//					role = level.DROITRAZ;
+//				} else {
+//					if (userConnecte.hasRole(this.config.getRoleRazMdp())) {
+//						role = level.DROITRAZ;
+//					}
+//				}
+//
+//			}
+//		}
 
 		return role;
 	}

@@ -163,14 +163,13 @@
 				</a>
 
 			</c:if>
-<!--
+
 			<c:if test="${fiche.levelUserConnecteModifPwdMail == 'DROITMODIF'}">
 				<a class="btn btn-default" href="${chgtMdp}"> <i
 					class="glyphicons keys"></i> <span><op:translate 
 							key="label.btn.chgpwd" /></span>
 				</a>
 			</c:if>
--->
 
 			<c:if test="${(fiche.levelUserConnecteRazMdp == 'DROITRAZ')}">
 				<a class="btn btn-default fancybox_inline no-ajax-link"

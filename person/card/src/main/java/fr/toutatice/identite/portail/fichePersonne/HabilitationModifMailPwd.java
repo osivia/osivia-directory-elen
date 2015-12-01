@@ -26,19 +26,24 @@ public class HabilitationModifMailPwd {
 		Level role = Level.NONHABILITE;
 
 		if (userConnecte != null) {
-			if (config.getEnableModeENT()) {
-				if (userConsulte.getTitle().equalsIgnoreCase("ele")
-						|| userConsulte.getSourceSI()
-								.equalsIgnoreCase("EXTACA")) {
-					if (userConnecte.getUid().equals(userConsulte.getUid())) {
-						role = Level.DROITMODIF;
-					}
-				}
-			} else {
+//			if (config.getEnableModeENT()) {
+//				if (userConsulte.getTitle().equalsIgnoreCase("ele")
+//						|| userConsulte.getSourceSI()
+//								.equalsIgnoreCase("EXTACA")) {
+//					if (userConnecte.getUid().equals(userConsulte.getUid())) {
+//						role = Level.DROITMODIF;
+//					}
+//				}
+//			} else {
 				if (userConnecte.getUid().equals(userConsulte.getUid())) {
 					role = Level.DROITMODIF;
 				}
-			}
+				else if (userConnecte.hasRole(config.getRoleSuperAdministrateur())
+						|| userConnecte.hasRole(config.getRoleAdministrateur())) {
+					role = Level.DROITMODIF;
+				}
+				
+//			}
 		}
 
 		return role;

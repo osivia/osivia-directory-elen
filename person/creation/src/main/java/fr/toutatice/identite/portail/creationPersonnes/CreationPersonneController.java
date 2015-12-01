@@ -78,8 +78,8 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 		Person userConnecte = this.personne.findUtilisateur(person.getUid());
 
 		return userConnecte;
+	
 	}
-
 
 
 	@RenderMapping
