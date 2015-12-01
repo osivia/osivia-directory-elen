@@ -9,7 +9,7 @@
 		</transaction>
 		
 		<header-content>
-			<link rel="stylesheet" href="/css/participants.css" />
+			<link rel="stylesheet" href="/css/participants.min.css" />
 		</header-content>
 	</portlet>
 </portlet-app>

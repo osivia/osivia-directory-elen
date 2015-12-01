@@ -1,0 +1,46 @@
+@height: 40px;
+@border-color: #eee;
+
+.workspace-participants {
+    .pull-left {
+        margin-right: 20px;
+    }
+
+    a {
+        display: inline-block;
+        vertical-align: middle;
+        height: @height;
+        width: @height;
+        
+        padding: 2px;
+        
+        background-color: #fff;
+        
+        border-style: solid;
+        border-width: 1px;
+        border-color: @border-color;
+        border-radius: 50%;
+        
+        text-decoration: none;
+        
+        &:hover , &:focus {
+            border-color: darken(@border-color, 6.5%);
+        }
+
+        span {
+            display: block;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            
+            border-radius: 50%;
+            
+            text-align: center;
+            
+            img {
+                max-height: 100%;
+                max-width: 100%;
+            }
+        }
+    }
+}

@@ -1,74 +1,53 @@
-<%@ include file="/WEB-INF/jsp/include.jsp"%>
-<%@ page contentType="text/plain; charset=UTF-8"%>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+
+<%@ page language="java" pageEncoding="UTF-8" isELIgnored="false" %>
+
+
 <portlet:defineObjects />
 
 
-<portlet:renderURL windowState="maximized" var="maximizedURL" />
+<c:set var="administrators" value="${workspace.membresGroupeAnimateurs}" />
+<c:set var="members" value="${workspace.membresGroupeContributeurs}" />
 
 
-<div class="row">
+<div class="workspace-participants clearfix">
+    <!-- Administrators -->
+    <c:if test="${not empty administrators}">
+        <p class="pull-left">
+            <span class="text-muted">
+                <c:choose>
+                    <c:when test="${fn:length(administrators) eq 1}"><op:translate key="WORKSPACE_PARTICIPANTS_ONE_ADMINISTRATOR" /></c:when>
+                    <c:otherwise><op:translate key="WORKSPACE_PARTICIPANTS_ADMINISTRATORS" args="${fn:length(administrators)}" /></c:otherwise>
+                </c:choose>
+            </span>
+            
+            <c:forEach var="administrator" items="${administrators}">
+                <a href="${administrator.url}" class="no-ajax-link" title="${administrator.nom}" data-toggle="tooltip" data-placement="bottom">
+                    <span>
+                        <img src="${administrator.avatar.url}" alt="${administrator.nom}">
+                    </span>
+                </a>
+            </c:forEach>
+        </p>
+    </c:if>
 
-	<c:forEach items="${workspace.membresGroupeAnimateurs}" var="prsAnimateur" varStatus="vs">
-		<div class="col-sm-${sm} col-md-${md}">
-			
-			<a href="${prsAnimateur.url}" class="thumbnail no-ajax-link">
-			
-				<img src="${prsAnimateur.avatar.url}" alt="${prsAnimateur.nom}">
-				
-				<span class="text-overflow text-muted admins-icon" style="">
-					<i class="glyphicons glyphicons-sheriffs-star"> </i>
-				</span>
-				
-				<span class="thumbnail-legend text-overflow small" title="${prsAnimateur.nom}" data-toggle="tooltip" data-placement="bottom">
-					${prsAnimateur.nom}
-				</span>
-			
-			
-			</a>
-		</div>
-		
-		<c:if test="${(vs.count % thumbnailPerLine) == 0}">
-			 <div class="clearfix"></div>
-		</c:if>
-
-	</c:forEach>
-
+    <!-- Members -->
+    <c:if test="${not empty members}">
+        <p class="pull-left">
+            <span class="text-muted">
+                <c:choose>
+                    <c:when test="${fn:length(members) eq 1}"><op:translate key="WORKSPACE_PARTICIPANTS_ONE_MEMBER" /></c:when>
+                    <c:otherwise><op:translate key="WORKSPACE_PARTICIPANTS_MEMBERS" args="${fn:length(members)}" /></c:otherwise>
+                </c:choose>
+            </span>
+            
+            <c:forEach var="member" items="${members}">
+                <a href="${member.url}" class="no-ajax-link" title="${member.nom}" data-toggle="tooltip" data-placement="bottom">
+                    <span>
+                        <img src="${member.avatar.url}" alt="${member.nom}">
+                    </span>
+                </a>
+            </c:forEach>
+        </p>
+    </c:if>
 </div>
-
-<div class="row">
-
-	<c:forEach items="${workspace.membresGroupeContributeurs}" var="prsContributeur" varStatus="vs">
-		<div class="col-sm-${sm} col-md-${md}">
-			
-			<a href="${prsContributeur.url}" class="thumbnail no-ajax-link">
-			
-				<img src="${prsContributeur.avatar.url}" alt="${prsContributeur.nom}">
-
-				<span class="thumbnail-legend text-overflow small" title="${prsContributeur.nom}" data-toggle="tooltip" data-placement="bottom">
-					${prsContributeur.nom}
-				</span>
-			
-			</a>
-		</div>
-		
-		<c:if test="${(vs.count % thumbnailPerLine) == 0}">
-			 <div class="clearfix"></div>
-		</c:if>
-
-	</c:forEach>
-</div>
-
-<c:if test="${allMembers == false}"> 
-	<p>
-		<a href="${allMembersURL}" class="btn btn-default">
-		
-			<i class="glyphicons glyphicons-more"> </i>
-			
-			<span>
-				<op:translate  key="SHOW_MEMBERS" />
-			</span>
-		</a>
-	</p>
-</c:if>
-
-
