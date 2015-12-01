@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.osivia.services.directory.workspace</groupId>
         <artifactId>osivia-services-directory-workspace-parent</artifactId>
-        <version>4.2.0-RC2</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>osivia-services-directory-workspace-management</artifactId>
