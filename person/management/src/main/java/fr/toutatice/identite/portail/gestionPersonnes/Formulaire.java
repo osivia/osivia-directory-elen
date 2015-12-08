@@ -27,6 +27,8 @@ public class Formulaire {
 	private List<PersonUrl> listePersonnesSurchargees = new ArrayList<PersonUrl>();
 	
 	private HabilitationSurcharge.level levelSurchargeUserConnecte;
+	
+	private HabilitationCreation.LevelCreation levelCreation;
 
 	public String getFiltreNom() {
 		return filtreNom;
@@ -117,6 +119,22 @@ public class Formulaire {
 	public void setLevelSurchargeUserConnecte(HabilitationSurcharge.level levelSurchargeUserConnecte) {
 		this.levelSurchargeUserConnecte = levelSurchargeUserConnecte;
 	}
+	
+	
+
+	/**
+	 * @return the levelCreation
+	 */
+	public HabilitationCreation.LevelCreation getLevelCreation() {
+		return levelCreation;
+	}
+	/**
+	 * @param levelCreation the levelCreation to set
+	 */
+	public void setLevelCreation(HabilitationCreation.LevelCreation levelCreation) {
+		this.levelCreation = levelCreation;
+	}
+	
 	public void cleanFiltre(){
 		this.filtreNom="";
 		this.filtreDptCns="";

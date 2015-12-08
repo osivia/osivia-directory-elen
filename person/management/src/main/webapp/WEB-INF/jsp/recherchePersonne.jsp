@@ -67,7 +67,7 @@
 				</display:column>
 
 
-				<c:if test="${config.enableDeletion}">
+				<c:if test="${(formulaire.levelCreation == 'HABILITE')}">
 					<display:column>
 
 						<portlet:actionURL var="deletion">
@@ -89,11 +89,10 @@
 			</display:table>
 		</div>
 	</div>
-
 	<div class="row">
 		<div class="col-md-12">
 
-			<c:if test='${config.enableCreation}'>
+			<c:if test="${(formulaire.levelCreation == 'HABILITE')}">
 				<a href="${urlCreation}" class="btn  btn-primary  no-ajax-link">
 					<i class="glyphicons user_add"></i> <span><op:translate 
 							key="btn.useradd" /></span>
@@ -103,24 +102,26 @@
 		</div>
 	</div>
 
-	<div id="deleteUserDiv" style="display: none">
-
-		<div class="container-fluid text-center" id="delete_user">
-
-			<p>
-				<op:translate  key="confirm.delete" />
-			</p>
-
-			<a id="deleteUserConfirmedBtn" class="btn btn-default btn-warning"
-				href=""> <i class="glyphicons halflings warning-sign"></i> <span
-				class="hidden-xs"><op:translate  key="YES" /></span>
-			</a>
-			<button class="btn btn-default" type="button"
-				onclick="closeFancybox()">
-				<op:translate  key="NO" />
-			</button>
+	<c:if test="${(formulaire.levelCreation == 'HABILITE')}">
+		<div id="deleteUserDiv" style="display: none">
+	
+			<div class="container-fluid text-center" id="delete_user">
+	
+				<p>
+					<op:translate  key="confirm.delete" />
+				</p>
+	
+				<a id="deleteUserConfirmedBtn" class="btn btn-default btn-warning"
+					href=""> <i class="glyphicons halflings warning-sign"></i> <span
+					class="hidden-xs"><op:translate  key="YES" /></span>
+				</a>
+				<button class="btn btn-default" type="button"
+					onclick="closeFancybox()">
+					<op:translate  key="NO" />
+				</button>
+			</div>
 		</div>
-	</div>
+	</c:if>
 </form:form>
 
 

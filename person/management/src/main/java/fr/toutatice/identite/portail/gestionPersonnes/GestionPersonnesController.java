@@ -40,6 +40,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.context.PortletConfigAware;
 import org.springframework.web.portlet.context.PortletContextAware;
 
+import fr.toutatice.identite.portail.gestionPersonnes.HabilitationCreation.LevelCreation;
 import fr.toutatice.identite.portail.gestionPersonnes.HabilitationSurcharge.level;
 import fr.toutatice.outils.ldap.entity.Person;
 import fr.toutatice.outils.ldap.exception.ToutaticeAnnuaireException;
@@ -68,6 +69,8 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 	@Autowired
 	private HabilitationSurcharge habilitationSurcharge;
 
+	@Autowired
+	private HabilitationCreation habilitationCreation;
 
 	@PostConstruct
 	public void initNuxeoService() throws Exception {
@@ -88,6 +91,10 @@ public class GestionPersonnesController extends CMSPortlet implements PortletCon
 		Formulaire formulaire = new Formulaire();
 		level findRoleUser = this.habilitationSurcharge.findRoleUser(userConnecte);
 		formulaire.setLevelSurchargeUserConnecte(findRoleUser);
+		
+		LevelCreation findRoleCreation = this.habilitationCreation.findRoleUser(userConnecte);
+		formulaire.setLevelCreation(findRoleCreation);
+		
 
 		if (this.config.getMinCarsSearch() == 0) {
 			List<Person> liste = this.personneInstance.getPersonByCriteres("", "", "", "", "","sn");

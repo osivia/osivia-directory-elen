@@ -52,7 +52,6 @@
 				<form:option value=""></form:option>
 				<form:option value="M.">M.</form:option>
 				<form:option value="Mme">Mme</form:option>
-				<form:option value="Mlle">Mlle</form:option>
 			</form:select>
 				
 		</div>

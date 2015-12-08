@@ -343,6 +343,9 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	public String showChgtMdp(@ModelAttribute("fiche") Fiche fiche, RenderRequest request, RenderResponse response, PortletSession session)
 			throws ToutaticeAnnuaireException, PortalException, CMSException {
 
+		
+		response.setTitle("Modifier le mot de passe");
+		
 		String retour = null;
 
 		if (fiche.getLevelUserConnecteModifPwdMail().equals(HabilitationModifMailPwd.Level.DROITMODIF)) {
@@ -376,6 +379,8 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	@RenderMapping(params = "action=modify")
 	public String showUpdateFiche(@ModelAttribute("fiche") Fiche fiche, @ModelAttribute("formUpload") FormUpload formUpload, RenderRequest request, RenderResponse response) throws ToutaticeAnnuaireException,
 			CMSException {
+		
+		response.setTitle("Modifier "+fiche.getUserConsulte().getCn());
 
 		// si chargement d'une nouvelle photo de profil non encore enregistrée
 		if (!fiche.getTmpFile().trim().isEmpty()) {
