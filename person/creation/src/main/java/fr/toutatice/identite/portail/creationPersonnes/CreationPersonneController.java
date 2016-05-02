@@ -141,6 +141,10 @@ public class CreationPersonneController extends PortalGenericPortlet implements 
 				newPerson.setAlias(newPerson.getGivenName() + " " + newPerson.getSn());
 
 				newPerson.create();
+				
+				newPerson.updatePassword(formCreation.getNouveauMdp());
+				
+				
 				logModifLdap.debug("L'utilisateur " + newPerson.getUid() + " a été créé ");
 
 				// model.remove("fiche");

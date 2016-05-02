@@ -38,6 +38,17 @@ public class CreationValidator implements Validator {
 			errors.rejectValue("email", "Email.Invalide");
 		}
 		
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "nouveauMdp", "NotEmpty.field");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmMdp", "NotEmpty.field");
+		
+		if(form.getNouveauMdp().length() < 8) {
+			errors.rejectValue("nouveauMdp", "Mdp.Trop.Court");
+		}
+	
+		if(!form.getNouveauMdp().equals(form.getConfirmMdp())) {
+			errors.rejectValue("confirmMdp", "Not.Same.Mdp");
+		}		
+		
 	}
 	
 }
