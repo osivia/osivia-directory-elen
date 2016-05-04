@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.osivia.services.directory</groupId>
         <artifactId>osivia-services-directory-parent</artifactId>
-        <version>4.2.8-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     
     <artifactId>osivia-services-directory-ear</artifactId>
@@ -49,37 +49,43 @@
         </dependency>
         
         <!-- Group card -->
+        <!-- 
         <dependency>
             <groupId>org.osivia.services.directory.group</groupId>
             <artifactId>osivia-services-directory-group-card</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+         -->
         <!-- Group management -->
+        <!-- 
         <dependency>
             <groupId>org.osivia.services.directory.group</groupId>
             <artifactId>osivia-services-directory-group-management</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+         -->
         <!-- Workspace management -->
+        
+        <!-- 
         <dependency>
             <groupId>org.osivia.services.directory.workspace</groupId>
             <artifactId>osivia-services-directory-workspace-management</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
+         -->
         
         <!-- Workspace participants -->
+        <!-- 
         <dependency>
             <groupId>org.osivia.services.directory.workspace</groupId>
             <artifactId>osivia-services-directory-workspace-participants</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+         -->
     </dependencies>
     
     
@@ -113,6 +119,7 @@
                             <artifactId>osivia-services-directory-person-creation</artifactId>
                             <contextRoot>/osivia-services-directory-person-creation</contextRoot>
                         </webModule>
+                        <!-- 
                         <webModule>
                             <groupId>org.osivia.services.directory.group</groupId>
                             <artifactId>osivia-services-directory-group-card</artifactId>
@@ -133,6 +140,7 @@
                             <artifactId>osivia-services-directory-workspace-participants</artifactId>
                             <contextRoot>/osivia-services-directory-workspace-participants</contextRoot>
                         </webModule>
+                         -->
                     </modules>
                 </configuration>
             </plugin>

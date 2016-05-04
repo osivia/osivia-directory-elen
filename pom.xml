@@ -4,7 +4,7 @@
     
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.2.8-SNAPSHOT</version>
+    <version>4.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
@@ -20,8 +20,8 @@
     <modules>
         <module>socle</module>
         <module>person</module>
-        <module>group</module>
-        <module>workspace</module>
+        <!-- <module>group</module>
+        <module>workspace</module>  -->
         
         <module>ear</module>
     </modules>
