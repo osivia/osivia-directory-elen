@@ -11,7 +11,7 @@
     
     
     <properties>
-        <toutatice.version>4.2.7</toutatice.version>
+        <toutatice.version>4.4.0-SNAPSHOT</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
@@ -20,8 +20,7 @@
     <modules>
         <module>socle</module>
         <module>person</module>
-        <!-- <module>group</module>
-        <module>workspace</module>  -->
+        <module>workspace</module>
         
         <module>ear</module>
     </modules>
