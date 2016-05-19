@@ -160,6 +160,7 @@
                     <configuration>
                         <downloadJavadocs>true</downloadJavadocs>
                         <downloadSources>true</downloadSources>
+                        <wtpversion>2.0</wtpversion>
                     </configuration>
                 </plugin>
 

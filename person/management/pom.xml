@@ -13,26 +13,4 @@
     
     <name>OSIVIA Services - Directory - Person management</name>
 
-
-    <build>
-        <plugins>
-        
-            <!-- WAR -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-            </plugin>
-            
-            <!-- Eclipse -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <configuration>
-                    <wtpversion>2.0</wtpversion>
-                </configuration>
-            </plugin>
-        
-        </plugins>    
-    </build>
-
 </project>

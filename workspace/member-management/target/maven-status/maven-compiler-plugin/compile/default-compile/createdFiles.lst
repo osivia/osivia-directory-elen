@@ -1,0 +1,8 @@
+org/osivia/services/directory/workspace/model/MemberComparator.class
+org/osivia/services/directory/workspace/controller/ViewMemberManagementController.class
+org/osivia/services/directory/workspace/service/impl/MemberManagementServiceImpl.class
+org/osivia/services/directory/workspace/model/Member.class
+org/osivia/services/directory/workspace/model/AddForm.class
+org/osivia/services/directory/workspace/model/MembersContainer.class
+org/osivia/services/directory/workspace/service/MemberManagementService.class
+org/osivia/services/directory/workspace/model/Role.class

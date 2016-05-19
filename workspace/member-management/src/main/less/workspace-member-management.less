@@ -1,0 +1,91 @@
+//
+// Workspace member management
+// --------------------------------------------------
+
+
+@screen-sm-min: 768px;
+@screen-xs-max: (@screen-sm-min - 1);
+
+@avatar-size: 36px;
+
+
+// Select2 result
+.workspace-member-result {
+    @avatar-size: 36px;
+    
+    .media-left {
+        .media-object {
+            width: @avatar-size;
+            
+            img {
+                max-height: @avatar-size;
+                max-width: 100%;
+            }
+        }  
+    }
+    
+    
+    @media screen and (max-width: @screen-xs-max) {
+        .table & {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+
+// Select2 selection
+.workspace-member-selection {
+    @avatar-size: 20px;
+    
+    img {
+        height: @avatar-size;
+        margin-right: 3px;
+        vertical-align: top;
+    }
+}
+
+
+// Table
+.workspace-member-management {
+    .table {
+        @table-padding: 8px;
+        @table-border-color: #ddd;
+        
+        .row {
+            margin: 0;
+            
+            > * {
+                padding: 0;
+            }
+        }
+        
+        .table-row {
+            padding: @table-padding 0;
+            
+            border-bottom-style: solid;
+            border-width: 1px;
+            border-color: @table-border-color;
+        }
+        
+        .table-cell {
+            padding: 0 @table-padding;
+        }
+        
+        .table-header {
+            &.table-row {
+                border-width: 2px;
+            }
+            
+            .table-cell {
+                font-weight: bold;
+            }
+        }
+    }
+
+
+    @media screen and (max-width: @screen-xs-max) {
+        .select2 {
+            margin-bottom: 5px;
+        }
+    }
+}

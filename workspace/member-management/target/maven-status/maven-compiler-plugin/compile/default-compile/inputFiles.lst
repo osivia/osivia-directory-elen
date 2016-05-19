@@ -1,0 +1,8 @@
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/controller/ViewMemberManagementController.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/service/MemberManagementService.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/model/MemberComparator.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/model/Member.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/model/Role.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/model/MembersContainer.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/model/AddForm.java
+/home/ckrommenhoek/Workspaces/trunk/osivia-services-directory/workspace/member-management/src/main/java/org/osivia/services/directory/workspace/service/impl/MemberManagementServiceImpl.java

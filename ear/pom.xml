@@ -48,6 +48,14 @@
             <type>war</type>
         </dependency>
         
+        <!-- Workspace member management -->
+        <!-- <dependency>
+            <groupId>org.osivia.services.directory.workspace</groupId>
+            <artifactId>osivia-services-directory-workspace-member-management</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency> -->
+        
     </dependencies>
     
     
@@ -81,6 +89,11 @@
                             <artifactId>osivia-services-directory-person-creation</artifactId>
                             <contextRoot>/osivia-services-directory-person-creation</contextRoot>
                         </webModule>
+                        <!-- <webModule>
+                            <groupId>org.osivia.services.directory.workspace</groupId>
+                            <artifactId>osivia-services-directory-workspace-member-management</artifactId>
+                            <contextRoot>/osivia-services-directory-workspace-member-management</contextRoot>
+                        </webModule> -->
                     </modules>
                 </configuration>
             </plugin>
