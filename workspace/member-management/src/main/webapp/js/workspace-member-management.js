@@ -4,7 +4,7 @@ $JQry(function() {
 		var $element = $JQry(element),
 			url = $element.data("url"),
  			options = {
-//					minimumInputLength : 1,
+					minimumInputLength : 3,
 					theme : "bootstrap"
 				};
 		
@@ -157,15 +157,44 @@ $JQry(function() {
 	});
 	
 	
-	$JQry(".workspace-member-management .table select").each(function(index, element) {
-		var $element = $JQry(element);
+//	$JQry(".workspace-member-management form").each(function(index, element) {
+//		var $element = $JQry(element);
+//		
+//		$element.change(function(event) {
+//			var $collapse = $element.find(".collapse");
+//			
+//			$collapse.collapse('show');
+//		});
+//	});
+	$JQry(".workspace-member-management select").change(function(event) {
+		var $target = $JQry(event.target),
+			$form = $target.closest("form"),
+			$collapse = $form.find(".collapse");
 		
-		$element.change(function(event) {
-			var $form = $element.closest("form"),
-				$collapse = $form.find(".collapse");
-			
-			$collapse.collapse('show');
-		});
+		$collapse.collapse("show");
+	});
+
+	
+	$JQry(".workspace-member-management button.delete").click(function(event) {
+		var $target = $JQry(event.target),
+			$fieldset = $target.closest("fieldset"),
+			$row = $fieldset.closest(".table-row"),
+			$hidden = $row.find("input[type=hidden]"),
+			$form = $fieldset.closest("form"),
+			$collapse = $form.find(".collapse");
+		
+		$hidden.val(true);
+		$fieldset.prop("disabled", true);
+		$collapse.collapse('show');
+	});
+	
+	
+	$JQry(".workspace-member-management button[type=reset]").click(function(event) {
+		var $target = $JQry(event.target),
+			$form = $target.closest("form");
+		
+		$form.find("fieldset[disabled]").prop("disabled", false);
+		$form.find("input[type=hidden][value=true]").val(false);
 	});
 	
 });

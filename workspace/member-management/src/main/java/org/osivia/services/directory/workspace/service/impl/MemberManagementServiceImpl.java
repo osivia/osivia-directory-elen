@@ -1,6 +1,7 @@
 package org.osivia.services.directory.workspace.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,15 @@ public class MemberManagementServiceImpl implements MemberManagementService {
         // Window
         PortalWindow window = WindowFactory.getWindow(request);
 
+        // Deleted member
+        List<Member> deleted = new ArrayList<Member>();
+        for (Member member : container.getMembers()) {
+            if (member.isDeleted()) {
+                deleted.add(member);
+            }
+        }
+        container.getMembers().removeAll(deleted);
+
         String property;
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -203,14 +213,14 @@ public class MemberManagementServiceImpl implements MemberManagementService {
      */
     @Override
     public void delete(PortalControllerContext portalControllerContext, MembersContainer container, String name) throws PortletException {
-        Member member = new Member();
-        member.setName(name);
-
         List<Member> members = container.getMembers();
-        if (members != null) {
-            members.remove(member);
-
-            this.update(portalControllerContext, container);
+        if (CollectionUtils.isNotEmpty(members)) {
+            for (Member member : members) {
+                if (StringUtils.equals(member.getName(), name)) {
+                    member.setDeleted(true);
+                    break;
+                }
+            }
         }
     }
 
@@ -223,7 +233,6 @@ public class MemberManagementServiceImpl implements MemberManagementService {
         if (CollectionUtils.isNotEmpty(form.getNames())) {
             // Nuxeo controller
             NuxeoController nuxeoController = new NuxeoController(portalControllerContext);
-
 
             // Members
             List<Member> members = container.getMembers();

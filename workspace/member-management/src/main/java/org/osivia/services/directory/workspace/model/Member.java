@@ -17,6 +17,8 @@ public class Member {
     private String mail;
     /** Role. */
     private Role role;
+    /** Deleted indicator. */
+    private boolean deleted;
 
 
     /**
@@ -152,6 +154,24 @@ public class Member {
      */
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    /**
+     * Getter for deleted.
+     * 
+     * @return the deleted
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * Setter for deleted.
+     * 
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 }

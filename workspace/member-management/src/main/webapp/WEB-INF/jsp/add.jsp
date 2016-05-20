@@ -6,7 +6,11 @@
 <%@ page contentType="text/html" isELIgnored="false"%>
 
 
-<portlet:actionURL name="add" var="addUrl" />
+<portlet:actionURL name="add" var="addUrl">
+    <portlet:param name="sort" value="${sort}" />
+    <portlet:param name="alt" value="${alt}" />
+</portlet:actionURL>
+
 <portlet:resourceURL id="search" var="searchUrl" />
 
 <c:set var="namespace"><portlet:namespace /></c:set>
@@ -24,13 +28,13 @@
             <form:label path="names"><op:translate key="ADD_MEMBERS_LABEL" /></form:label>
         
             <div class="row">
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                     <!-- Member names selector -->
                     <form:select path="names" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-searching="${searching}" data-no-results="${noResults}">
                     </form:select>
                 </div>
                 
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <!-- Role -->
                     <form:label path="role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
                     <form:select path="role" cssClass="form-control">

@@ -100,7 +100,7 @@ public class ViewMemberManagementController implements PortletContextAware {
      * @param container members container model attribute
      * @throws PortletException
      */
-    @ActionMapping(value = "update")
+    @ActionMapping(value = "update", params = "save")
     public void update(ActionRequest request, ActionResponse response, @ModelAttribute(value = "container") MembersContainer container) throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
@@ -120,13 +120,34 @@ public class ViewMemberManagementController implements PortletContextAware {
      * @param name member name request parameter
      * @throws PortletException
      */
-    @ActionMapping(value = "delete")
+    @ActionMapping(value = "update", params = "delete")
     public void delete(ActionRequest request, ActionResponse response, @ModelAttribute(value = "container") MembersContainer container, @RequestParam(
-            value = "name") String name) throws PortletException {
+            value = "delete") String name) throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         this.service.delete(portalControllerContext, container, name);
+
+        this.copyRenderParameter(request, response);
+    }
+
+
+    /**
+     * Cancel update members action mapping.
+     * 
+     * @param request action request
+     * @param response action response
+     * @param container members container
+     * @throws PortletException
+     */
+    @ActionMapping(value = "update", params = "cancel")
+    public void cancelUpdate(ActionRequest request, ActionResponse response, @ModelAttribute(value = "container") MembersContainer container)
+            throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        MembersContainer previousContainer = this.service.getMembersContainer(portalControllerContext);
+        container.setMembers(previousContainer.getMembers());
 
         this.copyRenderParameter(request, response);
     }
@@ -157,7 +178,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
 
     /**
-     * Cancel action mapping.
+     * Cancel add member action mapping.
      *
      * @param request action request
      * @param response action response
@@ -165,7 +186,7 @@ public class ViewMemberManagementController implements PortletContextAware {
      * @throws PortletException
      */
     @ActionMapping(value = "add", params = "cancel")
-    public void cancel(ActionRequest request, ActionResponse response, @ModelAttribute(value = "addForm") AddForm form) {
+    public void cancelAdd(ActionRequest request, ActionResponse response, @ModelAttribute(value = "addForm") AddForm form) {
         // Reset role
         form.setRole(Role.DEFAULT);
 

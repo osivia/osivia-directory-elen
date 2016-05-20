@@ -13,18 +13,25 @@
 .workspace-member-result {
     @avatar-size: 36px;
     
-    .media-left {
-        .media-object {
-            width: @avatar-size;
-            
-            img {
-                max-height: @avatar-size;
-                max-width: 100%;
+    .media {
+        overflow: hidden;
+        
+        .media-left {
+            .media-object {
+                width: @avatar-size;
+                
+                img {
+                    max-height: @avatar-size;
+                    max-width: 100%;
+                }
             }
-        }  
+        }
+        
+        .media-body {
+            white-space: nowrap;
+        }
     }
-    
-    
+
     @media screen and (max-width: @screen-xs-max) {
         .table & {
             margin-bottom: 5px;
@@ -79,6 +86,11 @@
             .table-cell {
                 font-weight: bold;
             }
+        }
+        
+        
+        fieldset[disabled] {
+            opacity: 0.3;
         }
     }
 
