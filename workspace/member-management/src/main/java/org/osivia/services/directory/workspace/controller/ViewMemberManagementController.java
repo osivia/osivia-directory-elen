@@ -18,8 +18,6 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
-import net.sf.json.JSONArray;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -29,8 +27,13 @@ import org.osivia.services.directory.workspace.model.MemberComparator;
 import org.osivia.services.directory.workspace.model.MembersContainer;
 import org.osivia.services.directory.workspace.model.Role;
 import org.osivia.services.directory.workspace.service.MemberManagementService;
+import org.osivia.services.directory.workspace.validator.AddFormValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +42,8 @@ import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.portlet.context.PortletContextAware;
+
+import net.sf.json.JSONArray;
 
 /**
  * Workspace member management portlet view controller.
@@ -57,12 +62,27 @@ public class ViewMemberManagementController implements PortletContextAware {
     @Autowired
     private MemberManagementService service;
 
+    /** Add form validator. */
+    @Autowired
+    private AddFormValidator addFormValidator;
+
 
     /**
      * Constructor.
      */
     public ViewMemberManagementController() {
         super();
+    }
+
+
+    /**
+     * Add form model attribute init binder.
+     *
+     * @param binder web data binder
+     */
+    @InitBinder(value = "addForm")
+    protected void initBinder(WebDataBinder binder) {
+        binder.addValidators(this.addFormValidator);
     }
 
 
@@ -94,7 +114,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Update members action mapping.
-     * 
+     *
      * @param request action request
      * @param response action response
      * @param container members container model attribute
@@ -113,7 +133,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Delete member action mapping.
-     * 
+     *
      * @param request action request
      * @param response action response
      * @param container members container model attribute
@@ -134,7 +154,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Cancel update members action mapping.
-     * 
+     *
      * @param request action request
      * @param response action response
      * @param container members container
@@ -164,7 +184,7 @@ public class ViewMemberManagementController implements PortletContextAware {
      */
     @ActionMapping(value = "add", params = "save")
     public void add(ActionRequest request, ActionResponse response, @ModelAttribute(value = "container") MembersContainer container, @ModelAttribute(
-            value = "addForm") AddForm form) throws PortletException {
+            value = "addForm") @Validated AddForm form, BindingResult result) throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
@@ -224,7 +244,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Get members container model attribute.
-     * 
+     *
      * @param request portlet request
      * @param response portlet response
      * @return members container
@@ -241,7 +261,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Get add members form model attribute.
-     * 
+     *
      * @param request portlet request
      * @param response portlet response
      * @return form
@@ -255,7 +275,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Get roles.
-     * 
+     *
      * @param request portlet request
      * @param response portlet response
      * @return roles
@@ -269,7 +289,7 @@ public class ViewMemberManagementController implements PortletContextAware {
 
     /**
      * Copy render parameters.
-     * 
+     *
      * @param request action request
      * @param response action response
      */

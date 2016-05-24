@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 
@@ -30,8 +31,13 @@
             <div class="row">
                 <div class="col-sm-8">
                     <!-- Member names selector -->
-                    <form:select path="names" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-searching="${searching}" data-no-results="${noResults}">
-                    </form:select>
+                    <spring:bind path="names">
+                        <div class="${status.error ? 'has-error' : ''}">
+                            <form:select path="names" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-searching="${searching}" data-no-results="${noResults}">
+                            </form:select>
+                            <form:errors path="names" cssClass="help-block" />
+                        </div>
+                    </spring:bind>
                 </div>
                 
                 <div class="col-sm-4">
@@ -46,17 +52,19 @@
             </div>
         </div>
         
-        <div class="collapse">
-            <!-- Save -->
-            <button type="submit" name="save" class="btn btn-primary">
-                <i class="glyphicons glyphicons-floppy-disk"></i>
-                <span><op:translate key="SAVE" /></span>
-            </button>
-            
-            <!-- Cancel -->
-            <button type="submit" name="cancel" class="btn btn-default">
-                <span><op:translate key="CANCEL" /></span>
-            </button>
-        </div>
+        <spring:bind path="*">
+            <div class="collapse ${status.error ? 'in' : ''}">
+                <!-- Save -->
+                <button type="submit" name="save" class="btn btn-primary">
+                    <i class="glyphicons glyphicons-floppy-disk"></i>
+                    <span><op:translate key="SAVE" /></span>
+                </button>
+                
+                <!-- Cancel -->
+                <button type="submit" name="cancel" class="btn btn-default">
+                    <span><op:translate key="CANCEL" /></span>
+                </button>
+            </div>
+        </spring:bind>
     </form:form>
 </div>

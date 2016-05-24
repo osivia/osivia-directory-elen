@@ -24,41 +24,38 @@
 <c:set var="namespace"><portlet:namespace /></c:set>
 
 
+
 <form:form action="${updateUrl}" method="post" modelAttribute="container">
     <div class="table">
         <!-- Header -->
-        <div class="table-header table-row">
+        <div class="table-header">
             <div class="row">
+                <!-- Member -->
                 <div class="col-sm-8">
-                    <!-- Member -->
-                    <div class="table-cell">
-                        <a href="${sortMemberUrl}"><op:translate key="MEMBER"/></a>
-                        
-                        <c:if test="${sort eq 'name'}">
-                            <small class="text-muted">
-                                <c:choose>
-                                    <c:when test="${alt}"><i class="halflings halflings-sort-by-attributes-alt"></i></c:when>
-                                    <c:otherwise><i class="halflings halflings-sort-by-attributes"></i></c:otherwise>
-                                </c:choose>
-                            </small>
-                        </c:if>
-                    </div>
+                    <a href="${sortMemberUrl}"><op:translate key="MEMBER"/></a>
+                    
+                    <c:if test="${sort eq 'name'}">
+                        <small class="text-muted">
+                            <c:choose>
+                                <c:when test="${alt}"><i class="halflings halflings-sort-by-attributes-alt"></i></c:when>
+                                <c:otherwise><i class="halflings halflings-sort-by-attributes"></i></c:otherwise>
+                            </c:choose>
+                        </small>
+                    </c:if>
                 </div>
                 
+                <!-- Role -->
                 <div class="col-sm-3">
-                    <!-- Role -->
-                    <div class="table-cell">
-                        <a href="${sortRoleUrl}"><op:translate key="ROLE"/></a>
-                        
-                        <c:if test="${sort eq 'role'}">
-                            <small class="text-muted">
-                                <c:choose>
-                                    <c:when test="${alt}"><i class="halflings halflings-sort-by-attributes-alt"></i></c:when>
-                                    <c:otherwise><i class="halflings halflings-sort-by-attributes"></i></c:otherwise>
-                                </c:choose>
-                            </small>
-                        </c:if>
-                    </div>
+                    <a href="${sortRoleUrl}"><op:translate key="ROLE"/></a>
+                    
+                    <c:if test="${sort eq 'role'}">
+                        <small class="text-muted">
+                            <c:choose>
+                                <c:when test="${alt}"><i class="halflings halflings-sort-by-attributes-alt"></i></c:when>
+                                <c:otherwise><i class="halflings halflings-sort-by-attributes"></i></c:otherwise>
+                            </c:choose>
+                        </small>
+                    </c:if>
                 </div>
             </div>
         </div>
@@ -70,66 +67,65 @@
             </c:if>
         
         
-            <div class="table-row">
+            <div class="row">
                 <form:hidden path="members[${status.index}].deleted" />
             
                 <fieldset
                     <c:if test="${member.deleted}">disabled="disabled"</c:if>
                 >
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <!-- Member -->
-                            <div class="table-cell">
-                                <div class="workspace-member-result">
-                                    <div class="media">
-                                        <!-- Avatar -->
-                                        <div class="media-left media-middle">
-                                            <div class="media-object">
-                                                <img src="${member.avatar}" alt="" class="center-block">
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="media-body">
-                                            <!-- Display name -->
-                                            <div>${member.displayName}</div>
-                                            
-                                            <!-- Mail -->
-                                            <c:if test="${not empty member.mail}">
-                                                <div>
-                                                    <small class="text-muted">${member.mail}</small>
-                                                </div>
-                                            </c:if>
-                                        </div>
+                    <!-- Member -->
+                    <div class="col-sm-8">
+                        <div class="workspace-member-result">
+                            <div class="media">
+                                <!-- Avatar -->
+                                <div class="media-left media-middle">
+                                    <div class="media-object">
+                                        <img src="${member.avatar}" alt="" class="center-block">
                                     </div>
+                                </div>
+                                
+                                <div class="media-body">
+                                    <!-- Display name -->
+                                    <div>${member.displayName}</div>
+                                    
+                                    <!-- Mail -->
+                                    <c:if test="${not empty member.mail}">
+                                        <div>
+                                            <small class="text-muted">${member.mail}</small>
+                                        </div>
+                                    </c:if>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="col-xs-10 col-sm-3">
-                            <!-- Role -->
-                            <div class="table-cell">
-                                <form:label path="members[${status.index}].role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
-                                <form:select path="members[${status.index}].role" cssClass="form-control">
-                                    <c:forEach var="role" items="${roles}">
-                                        <form:option value="${role}"><op:translate key="${role.key}" /></form:option>
-                                    </c:forEach>
-                                </form:select>
-                            </div>
-                        </div>
-                        
-                        <div class="col-xs-2 col-sm-1">
-                            <!-- Deletion -->
-                            <div class="table-cell">
-                                <button type="button" class="btn btn-default delete">
-                                    <i class="glyphicons glyphicons-remove"></i>
-                                    <span class="sr-only"><op:translate key="DELETE" /></span>
-                                </button>
-                            </div>
-                        </div>
+                    </div>
+                    
+                    <!-- Role -->
+                    <div class="col-xs-10 col-sm-3">
+                        <form:label path="members[${status.index}].role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
+                        <form:select path="members[${status.index}].role" cssClass="form-control">
+                            <c:forEach var="role" items="${roles}">
+                                <form:option value="${role}"><op:translate key="${role.key}" /></form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
+                    
+                    <!-- Deletion -->
+                    <div class="col-xs-2 col-sm-1">
+                        <button type="button" class="btn btn-default delete">
+                            <i class="glyphicons glyphicons-remove"></i>
+                            <span class="sr-only"><op:translate key="DELETE" /></span>
+                        </button>
                     </div>
                 </fieldset>
             </div>
         </c:forEach>
+        
+        <!-- No results -->
+        <c:if test="${empty container.members}">
+            <div class="row">
+                <div class="col-xs-12 text-center"><op:translate key="NO_MEMBER" /></div>
+            </div>
+        </c:if>
     </div>
     
     

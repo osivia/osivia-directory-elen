@@ -4,6 +4,7 @@ $JQry(function() {
 		var $element = $JQry(element),
 			url = $element.data("url"),
  			options = {
+//					tags : true,
 					minimumInputLength : 3,
 					theme : "bootstrap"
 				};
@@ -51,7 +52,13 @@ $JQry(function() {
 				$mediaObject.addClass("media-object");
 				$mediaObject.appendTo($mediaLeft);
 				
-				if (params.avatar !== undefined) {
+				if (params.create) {
+					// Icon
+					$icon = $JQry(document.createElement("i"));
+					$icon.addClass("glyphicons glyphicons-user-add");
+					$icon.text("");
+					$icon.appendTo($mediaObject);
+				} else if (params.avatar !== undefined) {
 					// Avatar
 					$avatar = $JQry(document.createElement("img"));
 					$avatar.addClass("center-block");
@@ -71,14 +78,19 @@ $JQry(function() {
 				$displayName.appendTo($mediaBody);
 				
 				// Extra infos : name + mail
-				text = params.id;
-				if (params.mail !== undefined) {
-					text += " - ";
-					text += params.mail;
-				}
 				$extra = $JQry(document.createElement("div"));
 				$extra.addClass("text-muted small");
-				$extra.text(text);
+				if (params.create) {
+					$extra.text(params.extra);
+				} else {
+					text = params.id;
+					if (params.mail !== undefined) {
+						text += " – ";
+						text += params.mail;
+					}
+					
+					$extra.text(text);
+				}
 				$extra.appendTo($mediaBody);
 			}
 
@@ -102,7 +114,13 @@ $JQry(function() {
 			
 			// Display name
 			$displayName = $JQry(document.createElement("span"));
-			$displayName.text(params.displayName);
+			if (params.create) {
+				$displayName.text(params.id);
+			} else if (params.displayName === undefined) {
+				$displayName.text(params.text);
+			} else {
+				$displayName.text(params.displayName);
+			}
 			$displayName.appendTo($selection);
 			
 			return $selection;
@@ -157,15 +175,6 @@ $JQry(function() {
 	});
 	
 	
-//	$JQry(".workspace-member-management form").each(function(index, element) {
-//		var $element = $JQry(element);
-//		
-//		$element.change(function(event) {
-//			var $collapse = $element.find(".collapse");
-//			
-//			$collapse.collapse('show');
-//		});
-//	});
 	$JQry(".workspace-member-management select").change(function(event) {
 		var $target = $JQry(event.target),
 			$form = $target.closest("form"),
@@ -178,7 +187,7 @@ $JQry(function() {
 	$JQry(".workspace-member-management button.delete").click(function(event) {
 		var $target = $JQry(event.target),
 			$fieldset = $target.closest("fieldset"),
-			$row = $fieldset.closest(".table-row"),
+			$row = $fieldset.closest(".row"),
 			$hidden = $row.find("input[type=hidden]"),
 			$form = $fieldset.closest("form"),
 			$collapse = $form.find(".collapse");

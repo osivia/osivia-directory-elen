@@ -18,13 +18,14 @@ import javax.naming.ldap.LdapName;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.osivia.portal.api.context.PortalControllerContext;
+import org.osivia.portal.api.internationalization.Bundle;
+import org.osivia.portal.api.internationalization.IBundleFactory;
+import org.osivia.portal.api.internationalization.IInternationalizationService;
+import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
@@ -37,10 +38,12 @@ import org.osivia.services.directory.workspace.service.MemberManagementService;
 import org.springframework.stereotype.Service;
 
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * Workspace member management service implementation.
- * 
+ *
  * @author Cédric Krommenhoek
  * @see MemberManagementService
  */
@@ -51,17 +54,24 @@ public class MemberManagementServiceImpl implements MemberManagementService {
     private static final String MEMBERS_WINDOW_PROPERTY = "directory.workspace.members";
 
 
+    /** Bundle factory. */
+    private final IBundleFactory bundleFactory;
     /** LDAP context. */
     private final InitialLdapContext ldapContext;
 
 
     /**
      * Constructor.
-     * 
+     *
      * @throws NamingException
      */
     public MemberManagementServiceImpl() throws NamingException {
         super();
+
+        // Bundle factory
+        IInternationalizationService internationalizationService = Locator.findMBean(IInternationalizationService.class,
+                IInternationalizationService.MBEAN_NAME);
+        this.bundleFactory = internationalizationService.getBundleFactory(this.getClass().getClassLoader());
 
         // LDAP context
         Properties properties = new Properties();
@@ -141,6 +151,8 @@ public class MemberManagementServiceImpl implements MemberManagementService {
     public JSONArray searchMembers(PortalControllerContext portalControllerContext, String filter) throws PortletException {
         // Nuxeo controller
         NuxeoController nuxeoController = new NuxeoController(portalControllerContext);
+        // Bundle
+        Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
 
         // LDAP filter
         StringBuilder ldapFilter = new StringBuilder();
@@ -204,6 +216,15 @@ public class MemberManagementServiceImpl implements MemberManagementService {
             throw new PortletException(e);
         }
 
+
+        // Create user
+        JSONObject create = new JSONObject();
+        create.put("id", filter);
+        create.put("displayName", bundle.getString("CREATE_NEW_MEMBER", filter));
+        create.put("extra", bundle.getString("CREATE_NEW_MEMBER_HELP"));
+        create.put("create", true);
+        array.add(create);
+
         return array;
     }
 
@@ -236,15 +257,14 @@ public class MemberManagementServiceImpl implements MemberManagementService {
 
             // Members
             List<Member> members = container.getMembers();
-
-            Map<String, Member> map;
             if (members == null) {
-                map = new HashMap<String, Member>(0);
-            } else {
-                map = new HashMap<String, Member>(members.size());
-                for (Member member : members) {
-                    map.put(member.getName(), member);
-                }
+                members = new ArrayList<Member>();
+                container.setMembers(members);
+            }
+
+            Map<String, Member> map = new HashMap<String, Member>(members.size());
+            for (Member member : members) {
+                map.put(member.getName(), member);
             }
 
             for (String name : form.getNames()) {
@@ -271,35 +291,53 @@ public class MemberManagementServiceImpl implements MemberManagementService {
 
                         // LDAP name
                         LdapName ldapName = new LdapName("ou=users,dc=osivia,dc=org");
-                        ldapName.add("uid=" + name);
 
-                        // Attributes
-                        Attributes attributes = this.ldapContext.getAttributes(ldapName);
 
-                        // Display name
-                        Attribute displayNameAttribute = attributes.get("displayName");
-                        if (displayNameAttribute != null) {
-                            String displayName = (String) displayNameAttribute.get();
-                            member.setDisplayName(displayName);
-                        } else {
-                            member.setDisplayName(name);
-                        }
+                        NamingEnumeration<SearchResult> results = this.ldapContext.search(ldapName, "(&(objectClass=portalPerson)(uid=" + name + "))", null);
+                        if (results.hasMore()) {
+                            ldapName.add("uid=" + name);
 
-                        // Avatar
-                        try {
-                            Link avatarLink = nuxeoController.getUserAvatar(name);
-                            if (avatarLink != null) {
-                                member.setAvatar(avatarLink.getUrl());
+                            // Attributes
+                            Attributes attributes = this.ldapContext.getAttributes(ldapName);
+
+                            // Display name
+                            Attribute displayNameAttribute = attributes.get("displayName");
+                            if (displayNameAttribute != null) {
+                                String displayName = (String) displayNameAttribute.get();
+                                member.setDisplayName(displayName);
+                            } else {
+                                member.setDisplayName(name);
                             }
-                        } catch (CMSException e) {
-                            // Do nothing
-                        }
 
-                        // Mail
-                        Attribute mailAttribute = attributes.get("mail");
-                        if (mailAttribute != null) {
-                            String mail = (String) mailAttribute.get();
-                            member.setMail(mail);
+                            // Avatar
+                            try {
+                                Link avatarLink = nuxeoController.getUserAvatar(name);
+                                if (avatarLink != null) {
+                                    member.setAvatar(avatarLink.getUrl());
+                                }
+                            } catch (CMSException e) {
+                                // Do nothing
+                            }
+
+                            // Mail
+                            Attribute mailAttribute = attributes.get("mail");
+                            if (mailAttribute != null) {
+                                String mail = (String) mailAttribute.get();
+                                member.setMail(mail);
+                            }
+                        } else {
+                            // Create user
+                            member.setDisplayName(name);
+
+                            // Avatar
+                            try {
+                                Link avatarLink = nuxeoController.getUserAvatar(name);
+                                if (avatarLink != null) {
+                                    member.setAvatar(avatarLink.getUrl());
+                                }
+                            } catch (CMSException e) {
+                                // Do nothing
+                            }
                         }
 
                         members.add(member);

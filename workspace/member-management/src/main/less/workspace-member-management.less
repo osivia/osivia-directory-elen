@@ -26,10 +26,6 @@
                 }
             }
         }
-        
-        .media-body {
-            white-space: nowrap;
-        }
     }
 
     @media screen and (max-width: @screen-xs-max) {
@@ -52,48 +48,11 @@
 }
 
 
-// Table
 .workspace-member-management {
-    .table {
-        @table-padding: 8px;
-        @table-border-color: #ddd;
-        
-        .row {
-            margin: 0;
-            
-            > * {
-                padding: 0;
-            }
-        }
-        
-        .table-row {
-            padding: @table-padding 0;
-            
-            border-bottom-style: solid;
-            border-width: 1px;
-            border-color: @table-border-color;
-        }
-        
-        .table-cell {
-            padding: 0 @table-padding;
-        }
-        
-        .table-header {
-            &.table-row {
-                border-width: 2px;
-            }
-            
-            .table-cell {
-                font-weight: bold;
-            }
-        }
-        
-        
-        fieldset[disabled] {
-            opacity: 0.3;
-        }
+    fieldset[disabled] {
+        opacity: 0.3;
     }
-
+    
 
     @media screen and (max-width: @screen-xs-max) {
         .select2 {
