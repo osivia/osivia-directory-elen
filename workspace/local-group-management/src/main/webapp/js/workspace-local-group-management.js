@@ -1,34 +1,20 @@
 $JQry(function() {
 	
-	$JQry(".workspace-member-management select.select2").each(function(index, element) {
+	$JQry(".workspace-local-group-management select.select2").each(function(index, element) {
 		var $element = $JQry(element),
 			url = $element.data("url"),
  			options = {
-					minimumInputLength : 3,
 					theme : "bootstrap"
 				};
-		
-		// Ajax
-		options["ajax"] = {
-			url : url,
-			dataType: "json",
-			delay: 250,
-			data: function(params) {
-				return {
-					filter: params.term,
-				};
-			},
-			processResults: function(data, params) {				
-				return {
-					results: data
-				};
-			},
-			cache: true
-		};
 		
 		
 		// Result template
 		options["templateResult"] = function(params) {
+			var $element = $JQry(params.element),
+				displayName = $element.data("displayname"),
+				avatar = $element.data("avatar"),
+				mail = $element.data("mail");
+			
 			$result = $JQry(document.createElement("div"));
 			
 			if (params.loading) {
@@ -51,17 +37,11 @@ $JQry(function() {
 				$mediaObject.addClass("media-object");
 				$mediaObject.appendTo($mediaLeft);
 				
-				if (params.create) {
-					// Icon
-					$icon = $JQry(document.createElement("i"));
-					$icon.addClass("glyphicons glyphicons-user-add");
-					$icon.text("");
-					$icon.appendTo($mediaObject);
-				} else if (params.avatar !== undefined) {
+				if (avatar) {
 					// Avatar
 					$avatar = $JQry(document.createElement("img"));
 					$avatar.addClass("center-block");
-					$avatar.attr("src", params.avatar);
+					$avatar.attr("src", avatar);
 					$avatar.attr("alt", "");
 					$avatar.appendTo($mediaObject);
 				}
@@ -73,23 +53,18 @@ $JQry(function() {
 				
 				// Display name
 				$displayName = $JQry(document.createElement("div"));
-				$displayName.text(params.displayName);
+				$displayName.text(displayName);
 				$displayName.appendTo($mediaBody);
 				
 				// Extra infos : name + mail
 				$extra = $JQry(document.createElement("div"));
 				$extra.addClass("text-muted small");
-				if (params.create) {
-					$extra.text(params.extra);
-				} else {
-					text = params.id;
-					if (params.mail !== undefined) {
-						text += " – ";
-						text += params.mail;
-					}
-					
-					$extra.text(text);
+				text = params.id;
+				if (mail) {
+					text += " – ";
+					text += mail;
 				}
+				$extra.text(text);
 				$extra.appendTo($mediaBody);
 			}
 
@@ -99,32 +74,30 @@ $JQry(function() {
 		
 		// Selection template
 		options["templateSelection"] = function(params) {
+			var $element = $JQry(params.element),
+				displayName = $element.data("displayname"),
+				avatar = $element.data("avatar");
+			
 			// Selection
 			$selection = $JQry(document.createElement("div"));
 			$selection.addClass("workspace-member-selection");
 			
-			if (params.avatar !== undefined) {
+			if (avatar) {
 				// Avatar
 				$avatar = $JQry(document.createElement("img"));
-				$avatar.attr("src", params.avatar);
+				$avatar.attr("src", avatar);
 				$avatar.attr("alt", "");
 				$avatar.appendTo($selection);
 			}
 			
 			// Display name
 			$displayName = $JQry(document.createElement("span"));
-			if (params.create) {
-				$displayName.text(params.id);
-			} else if (params.displayName === undefined) {
-				$displayName.text(params.text);
-			} else {
-				$displayName.text(params.displayName);
-			}
+			$displayName.text(displayName);
 			$displayName.appendTo($selection);
 			
 			return $selection;
 		};
-
+		
 		
 		// Internationalization
 		options["language"] = {};
@@ -162,28 +135,21 @@ $JQry(function() {
 		
 		
 		$element.select2(options);
-		
-		
-		// Display collapsed buttons
-		$element.on("select2:opening", function(event) {
-			var $form = $element.closest("form"),
-				$collapse = $form.find(".collapse");
-			
-			$collapse.collapse("show");
-		});
 	});
 	
 	
-	$JQry(".workspace-member-management select").change(function(event) {
+	$JQry(".workspace-local-group-management input").focus(function(event) {
 		var $target = $JQry(event.target),
 			$form = $target.closest("form"),
 			$collapse = $form.find(".collapse");
 		
-		$collapse.collapse("show");
+		if (!$collapse.hasClass("in")) {
+			$collapse.collapse("show");
+		}
 	});
-
 	
-	$JQry(".workspace-member-management button.delete").click(function(event) {
+	
+	$JQry(".workspace-local-group-management button[data-type=delete-local-group]").click(function(event) {
 		var $target = $JQry(event.target),
 			$fieldset = $target.closest("fieldset"),
 			$row = $fieldset.closest(".row"),
@@ -193,11 +159,23 @@ $JQry(function() {
 		
 		$hidden.val(true);
 		$fieldset.prop("disabled", true);
-		$collapse.collapse('show');
+		if (!$collapse.hasClass("in")) {
+			$collapse.collapse("show");
+		}
 	});
 	
 	
-	$JQry(".workspace-member-management button[type=reset]").click(function(event) {
+	$JQry(".workspace-local-group-management button[data-type=delete-member]").click(function(event) {
+		var $target = $JQry(event.target),
+			$fieldset = $target.closest("fieldset"),
+			$hidden = $fieldset.find("input[type=hidden]");
+		
+		$hidden.val(true);
+		$fieldset.prop("disabled", true);
+	});
+	
+	
+	$JQry(".workspace-local-group-management button[type=reset]").click(function(event) {
 		var $target = $JQry(event.target),
 			$form = $target.closest("form");
 		

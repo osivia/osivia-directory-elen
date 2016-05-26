@@ -16,7 +16,8 @@
 
 
     <modules>
-        <!-- <module>member-management</module> -->
+        <module>member-management</module>
+        <module>local-group-management</module>
     </modules>
     
     

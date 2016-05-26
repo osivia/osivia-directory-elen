@@ -24,15 +24,15 @@
 
 <div class="well">
     <form:form action="${addUrl}" method="post" modelAttribute="addForm" role="form">
-        <div class="form-group">
-            <!-- Label -->
-            <form:label path="names"><op:translate key="ADD_MEMBERS_LABEL" /></form:label>
+        <fieldset>
+            <legend><op:translate key="ADD_MEMBERS_LEGEND" /></legend>
         
             <div class="row">
                 <div class="col-sm-8">
                     <!-- Member names selector -->
                     <spring:bind path="names">
-                        <div class="${status.error ? 'has-error' : ''}">
+                        <div class="form-group ${status.error ? 'has-error' : ''}">
+                            <form:label path="names" cssClass="control-label"><op:translate key="ADD_MEMBERS_LABEL" /></form:label>
                             <form:select path="names" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-searching="${searching}" data-no-results="${noResults}">
                             </form:select>
                             <form:errors path="names" cssClass="help-block" />
@@ -42,29 +42,32 @@
                 
                 <div class="col-sm-4">
                     <!-- Role -->
-                    <form:label path="role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
-                    <form:select path="role" cssClass="form-control">
-                        <c:forEach var="role" items="${roles}">
-                            <form:option value="${role}"><op:translate key="${role.key}" /></form:option>
-                        </c:forEach>
-                    </form:select>
+                    <div class="form-group">
+                        <form:label path="role" cssClass="control-label"><op:translate key="ROLE" /></form:label>
+                        <form:select path="role" cssClass="form-control">
+                            <c:forEach var="role" items="${roles}">
+                                <form:option value="${role}"><op:translate key="${role.key}" /></form:option>
+                            </c:forEach>
+                        </form:select>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <spring:bind path="*">
-            <div class="collapse ${status.error ? 'in' : ''}">
-                <!-- Save -->
-                <button type="submit" name="save" class="btn btn-primary">
-                    <i class="glyphicons glyphicons-floppy-disk"></i>
-                    <span><op:translate key="SAVE" /></span>
-                </button>
-                
-                <!-- Cancel -->
-                <button type="submit" name="cancel" class="btn btn-default">
-                    <span><op:translate key="CANCEL" /></span>
-                </button>
-            </div>
-        </spring:bind>
+            
+            <!-- Buttons -->
+            <spring:bind path="*">
+                <div class="collapse ${status.error ? 'in' : ''}">
+                    <!-- Save -->
+                    <button type="submit" name="save" class="btn btn-primary">
+                        <i class="glyphicons glyphicons-floppy-disk"></i>
+                        <span><op:translate key="SAVE" /></span>
+                    </button>
+                    
+                    <!-- Cancel -->
+                    <button type="submit" name="cancel" class="btn btn-default">
+                        <span><op:translate key="CANCEL" /></span>
+                    </button>
+                </div>
+            </spring:bind>
+        </fieldset>
     </form:form>
 </div>

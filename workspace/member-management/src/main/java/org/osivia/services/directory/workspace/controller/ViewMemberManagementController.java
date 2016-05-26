@@ -76,17 +76,6 @@ public class ViewMemberManagementController implements PortletContextAware {
 
 
     /**
-     * Add form model attribute init binder.
-     *
-     * @param binder web data binder
-     */
-    @InitBinder(value = "addForm")
-    protected void initBinder(WebDataBinder binder) {
-        binder.addValidators(this.addFormValidator);
-    }
-
-
-    /**
      * View render mapping.
      *
      * @param request render request
@@ -270,6 +259,17 @@ public class ViewMemberManagementController implements PortletContextAware {
     @ModelAttribute(value = "addForm")
     public AddForm getAddForm(PortletRequest request, PortletResponse response) throws PortletException {
         return new AddForm();
+    }
+
+
+    /**
+     * Add form model attribute init binder.
+     *
+     * @param binder web data binder
+     */
+    @InitBinder(value = "addForm")
+    protected void addFormInitBinder(WebDataBinder binder) {
+        binder.addValidators(this.addFormValidator);
     }
 
 
