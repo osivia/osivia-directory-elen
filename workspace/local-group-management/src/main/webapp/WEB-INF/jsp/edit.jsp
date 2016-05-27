@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 
@@ -14,19 +15,37 @@
     <portlet:param name="id" value="${localGroup.id}" />
 </portlet:actionURL>
 
+<portlet:actionURL name="delete" var="deleteUrl">
+    <portlet:param name="view" value="edit" />
+    <portlet:param name="id" value="${localGroup.id}" />
+</portlet:actionURL>
+
+<c:set var="namespace"><portlet:namespace /></c:set>
+
 
 <div class="workspace-local-group-management">
     <form:form action="${editUrl}" method="post" modelAttribute="localGroup" cssClass="form-horizontal">
         <fieldset>
-            <legend><op:translate key="EDIT_LOCAL_GROUP_LEGEND" /></legend>
+            <legend>
+                <i class="glyphicons glyphicons-pencil"></i>
+                <span><op:translate key="EDIT_LOCAL_GROUP_LEGEND" /></span>
+            </legend>
     
             <!-- Display name -->
-            <div class="form-group">
-                <form:label path="displayName" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="LOCAL_GROUP_DISPLAY_NAME" /></form:label>
-                <div class="col-sm-9 col-lg-10">
-                    <form:input path="displayName" cssClass="form-control" />
+            <spring:bind path="displayName">
+                <div class="form-group ${status.error ? 'has-error has-feedback' : ''}">
+                    <form:label path="displayName" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="LOCAL_GROUP_DISPLAY_NAME" /></form:label>
+                    <div class="col-sm-9 col-lg-10">
+                        <form:input path="displayName" cssClass="form-control" />
+                        <c:if test="${status.error}">
+                            <span class="form-control-feedback">
+                                <i class="glyphicons glyphicons-remove"></i>
+                            </span>
+                        </c:if>
+                        <form:errors path="displayName" cssClass="help-block" />
+                    </div>
                 </div>
-            </div>
+            </spring:bind>
             
             <!-- Members -->
             <div class="form-group">
@@ -41,7 +60,9 @@
                             <ul class="list-unstyled">
                                 <c:forEach var="member" items="${localGroup.members}" varStatus="status">
                                     <li>
-                                        <fieldset>                                        
+                                        <fieldset
+                                            <c:if test="${member.deleted}">disabled="disabled"</c:if>
+                                        >                                        
                                             <form:hidden path="members[${status.index}].deleted" />
                                         
                                             <p class="form-control-static">
@@ -66,20 +87,12 @@
                     <!-- Add members -->
                     <c:set var="placeholder"><op:translate key="ADD_MEMBERS_LABEL" /></c:set>
                     <form:label path="addedMembers" cssClass="sr-only">${placeholder}</form:label>
-                    <div class="input-group select2-bootstrap-append">
-                        <form:select path="addedMembers" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}">
-                            <c:forEach var="member" items="${members}">
-                                <option value="${member.id}" data-displayname="${member.displayName}" data-avatar="${member.avatar}" data-mail="${member.mail}">${member.displayName} - ${member.id} - ${member.mail}</option>
-                            </c:forEach>
-                        </form:select>
-                        
-                        <span class="input-group-btn">
-                            <button type="submit" name="add" class="btn btn-default">
-                                <i class="glyphicons glyphicons-plus"></i>
-                                <span class="hidden-xs"><op:translate key="ADD_MEMBERS" /></span>
-                            </button>
-                        </span>
-                    </div>
+                    <form:select path="addedMembers" cssClass="form-control select2" data-placeholder="${placeholder}">
+                        <c:forEach var="member" items="${members}">
+                            <option value="${member.id}" data-displayname="${member.displayName}" data-avatar="${member.avatar}" data-mail="${member.mail}">${member.displayName} - ${member.id} - ${member.mail}</option>
+                        </c:forEach>
+                    </form:select>
+                    <input type="submit" name="add" class="hidden">
                 </div>
             </div>
         
@@ -93,7 +106,7 @@
                     </button>
                     
                     <!-- Delete -->
-                    <button type="submit" name="delete" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#${namespace}-delete-modal">
                         <i class="glyphicons glyphicons-bin"></i>
                         <span><op:translate key="DELETE" /></span>
                     </button>
@@ -106,4 +119,35 @@
             </div>
         </fieldset>
     </form:form>
+    
+    
+    <div id="${namespace}-delete-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <i class="glyphicons glyphicons-remove"></i>
+                        <span class="sr-only"><op:translate key="CLOSE" /></span>
+                    </button>
+                    
+                    <h4 class="modal-title"><op:translate key="DELETE_LOCAL_GROUP_MODAL_TITLE" /></h4>
+                </div>
+                
+                <div class="modal-body">
+                    <p><op:translate key="DELETE_LOCAL_GROUP_MODAL_MESSAGE" args="${localGroup.displayName}" /></p>
+                </div>
+                
+                <div class="modal-footer">
+                    <a href="${deleteUrl}" class="btn btn-danger" data-dismiss="modal">
+                        <i class="glyphicons glyphicons-bin"></i>
+                        <span><op:translate key="DELETE" /></span>
+                    </a>
+                    
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span><op:translate key="CANCEL" /></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

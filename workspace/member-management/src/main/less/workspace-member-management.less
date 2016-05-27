@@ -6,12 +6,11 @@
 @screen-sm-min: 768px;
 @screen-xs-max: (@screen-sm-min - 1);
 
-@avatar-size: 36px;
-
 
 // Select2 result
 .workspace-member-result {
     @avatar-size: 36px;
+    @icon-size: 24px;
     
     .media {
         overflow: hidden;
@@ -23,6 +22,11 @@
                 img {
                     max-height: @avatar-size;
                     max-width: 100%;
+                }
+                
+                i {
+                    width: @icon-size;
+                    font-size: @icon-size;
                 }
             }
         }

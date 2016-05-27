@@ -54,7 +54,7 @@ $JQry(function() {
 				if (params.create) {
 					// Icon
 					$icon = $JQry(document.createElement("i"));
-					$icon.addClass("glyphicons glyphicons-user-add");
+					$icon.addClass("glyphicons glyphicons-user-add center-block");
 					$icon.text("");
 					$icon.appendTo($mediaObject);
 				} else if (params.avatar !== undefined) {

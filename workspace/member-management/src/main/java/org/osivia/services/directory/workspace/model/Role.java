@@ -4,25 +4,25 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Workspace roles enumeration.
- * 
+ *
  * @author Cédric Krommenhoek
  */
 public enum Role {
 
-    /** Administrator. */
-    ADMIN(5),
     /** Owner. */
-    OWNER(4),
+    OWNER(5),
+    /** Manager. */
+    MANAGER(4),
     /** Editor. */
     EDITOR(3),
     /** Authors. */
     AUTHOR(2),
-    /** Member. */
-    MEMBER(1);
+    /** Reader. */
+    READER(1);
 
 
     /** Default role. */
-    public static final Role DEFAULT = MEMBER;
+    public static final Role DEFAULT = READER;
 
 
     /** Weight. */
@@ -33,7 +33,7 @@ public enum Role {
 
     /**
      * Constructor.
-     * 
+     *
      * @param weight weight
      */
     private Role(int weight) {
@@ -44,7 +44,7 @@ public enum Role {
 
     /**
      * Get role from his name.
-     * 
+     *
      * @param name role name
      * @return role
      */
@@ -62,7 +62,7 @@ public enum Role {
 
     /**
      * Get role name.
-     * 
+     *
      * @return role name
      */
     public String getName() {
@@ -71,20 +71,20 @@ public enum Role {
 
     /**
      * Getter for weight.
-     * 
+     *
      * @return the weight
      */
     public int getWeight() {
-        return weight;
+        return this.weight;
     }
 
     /**
      * Getter for key.
-     * 
+     *
      * @return the key
      */
     public String getKey() {
-        return key;
+        return this.key;
     }
 
 }

@@ -135,6 +135,15 @@ $JQry(function() {
 		
 		
 		$element.select2(options);
+		
+		
+		$element.on("select2:select", function(event) {
+			var $target = $JQry(event.target),
+				$form = $target.closest("form"),
+				$submit = $form.find("input[type=submit][name=add]");
+			
+			$submit.click();
+        });
 	});
 	
 	
@@ -172,6 +181,14 @@ $JQry(function() {
 		
 		$hidden.val(true);
 		$fieldset.prop("disabled", true);
+	});
+	
+	
+	$JQry(".workspace-local-group-management a[data-type=delete]").click(function(event) {
+		var $target = $JQry(event.target),
+			text = $target.data("text");
+		
+		return confirm(text);
 	});
 	
 	

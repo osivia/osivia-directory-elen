@@ -15,8 +15,11 @@ import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.directory.workspace.model.LocalGroup;
 import org.osivia.services.directory.workspace.model.Member;
 import org.osivia.services.directory.workspace.service.LocalGroupManagementService;
+import org.osivia.services.directory.workspace.validator.LocalGroupValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,6 +47,10 @@ public class EditLocalGroupManagementController implements PortletContextAware {
     /** Local group management service. */
     @Autowired
     private LocalGroupManagementService service;
+
+    /** Local group validator. */
+    @Autowired
+    private LocalGroupValidator localGroupValidator;
 
 
     /**
@@ -73,18 +80,24 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      * @param request action request
      * @param response action response
      * @param localGroup local group model attribute
+     * @param result binding result
      * @param sessionStatus session status
      * @throws PortletException
      */
     @ActionMapping(value = "edit", params = "save")
-    public void save(ActionRequest request, ActionResponse response, @ModelAttribute LocalGroup localGroup, SessionStatus sessionStatus)
-            throws PortletException {
-        // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+    public void save(ActionRequest request, ActionResponse response, @ModelAttribute(value = "localGroup") @Validated LocalGroup localGroup,
+            BindingResult result, SessionStatus sessionStatus) throws PortletException {
+        if (result.hasErrors()) {
+            response.setRenderParameter("view", "edit");
+            response.setRenderParameter("id", localGroup.getId());
+        } else {
+            // Portal controller context
+            PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        this.service.saveLocalGroup(portalControllerContext, localGroup);
+            this.service.saveLocalGroup(portalControllerContext, localGroup);
 
-        sessionStatus.setComplete();
+            sessionStatus.setComplete();
+        }
     }
 
 
@@ -109,27 +122,6 @@ public class EditLocalGroupManagementController implements PortletContextAware {
 
 
     /**
-     * Delete local group action mapping.
-     *
-     * @param request action request
-     * @param response action response
-     * @param localGroup local group model attribute
-     * @param sessionStatus session status
-     * @throws PortletException
-     */
-    @ActionMapping(value = "edit", params = "delete")
-    public void delete(ActionRequest request, ActionResponse response, @ModelAttribute LocalGroup localGroup, SessionStatus sessionStatus)
-            throws PortletException {
-        // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
-
-        this.service.deleteLocalGroup(portalControllerContext, localGroup);
-
-        sessionStatus.setComplete();
-    }
-
-
-    /**
      * Cancel action mapping.
      *
      * @param request action request
@@ -138,6 +130,27 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      */
     @ActionMapping(value = "edit", params = "cancel")
     public void cancel(ActionRequest request, ActionResponse response, SessionStatus sessionStatus) {
+        sessionStatus.setComplete();
+    }
+
+
+    /**
+     * Delete local group action mapping.
+     *
+     * @param request action request
+     * @param response action response
+     * @param id local group identifier
+     * @param sessionStatus session status
+     * @throws PortletException
+     */
+    @ActionMapping(value = "delete")
+    public void delete(ActionRequest request, ActionResponse response, @RequestParam String id, SessionStatus sessionStatus)
+            throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        this.service.deleteLocalGroup(portalControllerContext, id);
+
         sessionStatus.setComplete();
     }
 
@@ -161,6 +174,18 @@ public class EditLocalGroupManagementController implements PortletContextAware {
 
 
     /**
+     * Local group init binder.
+     *
+     * @param binder web data binder
+     */
+    @InitBinder(value = "localGroup")
+    public void localGroupInitBinder(WebDataBinder binder) {
+        binder.setDisallowedFields("id");
+        binder.addValidators(this.localGroupValidator);
+    }
+
+
+    /**
      * Get members model attribute.
      *
      * @param request portlet request
@@ -174,17 +199,6 @@ public class EditLocalGroupManagementController implements PortletContextAware {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         return this.service.getMembers(portalControllerContext);
-    }
-
-
-    /**
-     * Local group init binder.
-     *
-     * @param binder web data binder
-     */
-    @InitBinder(value = "localGroup")
-    public void localGroupInitBinder(WebDataBinder binder) {
-        binder.setDisallowedFields("id");
     }
 
 

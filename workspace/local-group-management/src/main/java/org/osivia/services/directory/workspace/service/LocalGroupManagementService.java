@@ -101,11 +101,11 @@ public interface LocalGroupManagementService {
 
     /**
      * Delete local group.
-     * 
+     *
      * @param portalControllerContext portal controller context
-     * @param localGroup local group
+     * @param id local group identifier
      * @throws PortletException
      */
-    void deleteLocalGroup(PortalControllerContext portalControllerContext, LocalGroup localGroup) throws PortletException;
+    void deleteLocalGroup(PortalControllerContext portalControllerContext, String id) throws PortletException;
 
 }

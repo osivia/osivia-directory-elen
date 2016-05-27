@@ -151,8 +151,8 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      * {@inheritDoc
      */
     @Override
-    public void deleteLocalGroup(PortalControllerContext portalControllerContext, LocalGroup localGroup) throws PortletException {
-        this.repository.deleteLocalGroup(portalControllerContext, localGroup.getId());
+    public void deleteLocalGroup(PortalControllerContext portalControllerContext, String id) throws PortletException {
+        this.repository.deleteLocalGroup(portalControllerContext, id);
     }
 
 }

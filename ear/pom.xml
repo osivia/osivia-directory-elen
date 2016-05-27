@@ -56,6 +56,14 @@
             <type>war</type>
         </dependency> -->
         
+        <!-- Workspace local group management -->
+        <!-- <dependency>
+            <groupId>org.osivia.services.directory.workspace</groupId>
+            <artifactId>osivia-services-directory-workspace-local-group-management</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency> -->
+        
     </dependencies>
     
     
@@ -93,6 +101,11 @@
                             <groupId>org.osivia.services.directory.workspace</groupId>
                             <artifactId>osivia-services-directory-workspace-member-management</artifactId>
                             <contextRoot>/osivia-services-directory-workspace-member-management</contextRoot>
+                        </webModule> -->
+                        <!-- <webModule>
+                            <groupId>org.osivia.services.directory.workspace</groupId>
+                            <artifactId>osivia-services-directory-workspace-local-group-management</artifactId>
+                            <contextRoot>/osivia-services-directory-workspace-local-group-management</contextRoot>
                         </webModule> -->
                     </modules>
                 </configuration>
