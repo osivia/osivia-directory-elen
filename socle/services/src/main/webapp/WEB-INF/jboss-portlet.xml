@@ -3,17 +3,11 @@
 <portlet-app>
 
     <portlet>
-        <portlet-name>directory-services</portlet-name>
+        <portlet-name>directory-provider</portlet-name>
 
         <transaction>
             <trans-attribute>Required</trans-attribute>
         </transaction>
     </portlet>
-
-    <service>
-        <service-name>UserDatasModulesRepository</service-name>
-        <service-class>org.osivia.portal.api.login.IUserDatasModuleRepository</service-class>
-        <service-ref>osivia:service=Interceptor,type=Server,name=ServerLogin</service-ref>
-    </service>
 
 </portlet-app>

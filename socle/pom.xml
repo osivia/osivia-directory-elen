@@ -16,8 +16,8 @@
 
 
     <properties>
-        <springframework-ldap.version>2.0.4.RELEASE</springframework-ldap.version>
-        <springframework-security.version>3.2.9.RELEASE</springframework-security.version>
+        <springframework-ldap.version>2.1.0.RELEASE</springframework-ldap.version>
+        <springframework-data.version>1.12.1.RELEASE</springframework-data.version>
     </properties>
 
 
@@ -47,14 +47,15 @@
             <version>${springframework-ldap.version}</version>
             <scope>provided</scope>
         </dependency>
-        
-        <!-- SpringFramework security -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${springframework-security.version}</version>
-            <scope>provided</scope>
-        </dependency>
+
+         
+         <!-- Springframework data -->
+         <dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-commons</artifactId>
+			<version>${springframework-data.version}</version>
+			<scope>provided</scope>
+		</dependency>
         
     </dependencies>
 

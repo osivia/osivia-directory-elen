@@ -31,14 +31,6 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-        
-        <!-- JBoss JMX -->
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-jmx</artifactId>
-            <version>4.2.3.GA</version>
-            <scope>provided</scope>
-        </dependency>
     
     </dependencies>
 

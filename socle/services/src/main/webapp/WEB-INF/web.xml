@@ -7,30 +7,24 @@
 
     <display-name>Directory - Services</display-name>
 
-	<!-- Fichier de configuration Spring pour l'application web -->
+    <context-param>
+        <param-name>contextClass</param-name>
+        <param-value>
+            org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+        </param-value>
+    </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/directory-services-portlet.xml classpath:directory-application-context.xml</param-value>
+        <param-value>org.osivia.directory.v2.DirAppContext</param-value>       
     </context-param>
+    
 
 	<!-- Listener pour le lancement de Spring au démarrage du contexte -->
+
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-	<!-- Spring MVC servlet -->
-    <servlet>
-        <servlet-name>ViewRendererServlet</servlet-name>
-        <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>ViewRendererServlet</servlet-name>
-        <url-pattern>/WEB-INF/servlet/view</url-pattern>
-    </servlet-mapping>
 
-    <session-config>
-        <session-timeout>15</session-timeout>
-    </session-config>
 
 </web-app>

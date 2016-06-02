@@ -92,23 +92,10 @@
 		</form:label>
 		
 		<div class="col-md-10">
-			<form:input path="nouveauEmail" name="nouveauEmail" type="email" value="${fiche.userConsulte.email}" cssClass="form-control"/>
+			<form:input path="nouveauEmail" name="nouveauEmail" type="email" value="${fiche.userConsulte.mail}" cssClass="form-control"/>
 			<font style="color: #C11B17;"><form:errors path="nouveauEmail"/></font>
 		</div>
 	
-	</div>
-
-	<div class="form-group"> 	
-		<form:label path="departementCns" cssClass="col-md-2 control-label">
-			<op:translate  key="label.departementCns" />
-			
-		
-		</form:label>
-	
-		<div class="col-md-10">
-			<form:select path="departementCns" name="departementCns" cssClass="form-control" items="${fiche.listeDptCns}"/>
-			<font style="color: #C11B17;"><form:errors path="departementCns"/></font>
-		</div>
 	</div>
 
     <div class="form-group">

@@ -20,7 +20,7 @@
     <modules>
         <module>socle</module>
         <module>person</module>
-        <module>workspace</module>
+        <!-- <module>workspace</module>  -->
         
         <module>ear</module>
     </modules>

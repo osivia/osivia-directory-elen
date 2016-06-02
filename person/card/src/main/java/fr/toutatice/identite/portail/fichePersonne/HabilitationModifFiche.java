@@ -1,10 +1,9 @@
 package fr.toutatice.identite.portail.fichePersonne;
 
+import org.osivia.directory.v2.service.RoleService;
+import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import fr.toutatice.outils.ldap.entity.Person;
-import fr.toutatice.outils.ldap.exception.ToutaticeAnnuaireException;
 
 @Component
 public class HabilitationModifFiche {
@@ -20,16 +19,19 @@ public class HabilitationModifFiche {
 	@Autowired
 	private FichePersonneConfig config;
 
+	@Autowired
+	private RoleService roleService;
+	
 	public Level findRoleUser(Person userConnecte, Person userConsulte)
-			throws ToutaticeAnnuaireException {
+			 {
 
 		Level role = Level.NONHABILITE;
 
 		// super admin
 		if (userConnecte == null) {
 			role = Level.NONHABILITE;
-		} else if (userConnecte.hasRole(config.getRoleSuperAdministrateur())
-				|| userConnecte.hasRole(config.getRoleAdministrateur())) {
+		} else if (roleService.hasRole(userConnecte.getDn(), config.getRoleSuperAdministrateur())
+				|| roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrateur())) {
 			role = Level.DROITMODIF;
 		} else if (userConnecte.getUid().equals(userConsulte.getUid())) {
 			role = Level.DROITMODIF;

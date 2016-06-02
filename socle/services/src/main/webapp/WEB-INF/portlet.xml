@@ -5,15 +5,15 @@
     version="2.0">
 
 	<portlet>
-		<portlet-name>directory-services</portlet-name>
-        <portlet-class>org.osivia.services.directory.DirectoryServicePortlet</portlet-class>
+		<portlet-name>directory-provider</portlet-name>
+        <portlet-class>org.osivia.directory.v2.DirProviderPortlet</portlet-class>
 
 		<supports>
 			<mime-type>text/html</mime-type>
 		</supports>
         
 		<portlet-info>
-			<title>Directory services</title>
+			<title>Directory provider</title>
 		</portlet-info>
 	</portlet>
 		

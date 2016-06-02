@@ -5,10 +5,10 @@
 	<deployment>
         <if-exists>overwrite</if-exists>
 		<instance>
-            <display-name xml:lang="en">Directory - Services</display-name>
-			<display-name xml:lang="fr">Annuaire - Services</display-name>
-			<instance-id>directory-services-instance</instance-id>
-			<portlet-ref>directory-services</portlet-ref>
+            <display-name xml:lang="en">Directory - Provider</display-name>
+			<display-name xml:lang="fr">Annuaire - Fournisseur de services</display-name>
+			<instance-id>directory-provider-instance</instance-id>
+			<portlet-ref>directory-provider</portlet-ref>
             <preferences>
                 <preference>
                     <name>hide</name>

@@ -10,7 +10,7 @@
     
 		<init-param>
 			<name>contextConfigLocation</name>
-			<value>classpath:directory-beans.xml /WEB-INF/directory-person-card-portlet.xml</value>
+			<value>/WEB-INF/directory-person-card-portlet.xml</value>
 		</init-param>
         
 		<supports>

@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<%@ page import="fr.toutatice.outils.ldap.entity.Person"%>
 <%@page import="javax.portlet.WindowState"%>
 
 <head>

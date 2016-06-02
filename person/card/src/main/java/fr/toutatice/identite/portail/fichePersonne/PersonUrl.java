@@ -1,6 +1,6 @@
 package fr.toutatice.identite.portail.fichePersonne;
 
-import fr.toutatice.outils.ldap.entity.Person;
+import org.osivia.portal.api.directory.v2.model.Person;
 
 public class PersonUrl {
 	
