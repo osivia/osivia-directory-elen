@@ -1,63 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.osivia.services.directory</groupId>
-        <artifactId>osivia-services-directory-parent</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
-    </parent>
-    
-    <groupId>org.osivia.services.directory.socle</groupId>
-    <artifactId>osivia-services-directory-socle-parent</artifactId>
-    <packaging>pom</packaging>
-    
-    <name>OSIVIA Services - Directory - Socle parent</name>
+	<parent>
+		<groupId>org.osivia.services.directory</groupId>
+		<artifactId>osivia-services-directory-parent</artifactId>
+		<version>4.4.0-SNAPSHOT</version>
+	</parent>
 
+	<groupId>org.osivia.services.directory.socle</groupId>
+	<artifactId>osivia-services-directory-socle-parent</artifactId>
+	<packaging>pom</packaging>
 
-    <properties>
-        <springframework-ldap.version>2.1.0.RELEASE</springframework-ldap.version>
-        <springframework-data.version>1.12.1.RELEASE</springframework-data.version>
-    </properties>
+	<name>OSIVIA Services - Directory - Socle parent</name>
 
 
-    <modules>  
-        <module>interfaces</module>
-        <module>implementations</module>
-        <module>services</module>
-    </modules>
-    
-    
-    <dependencies>
-        
-        <!-- Toutatice -->
-        <dependency>
-            <groupId>toutatice-portail.cms</groupId>
-            <artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>toutatice-portail.cms</groupId>
-            <artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
-        </dependency>
-        
-        <!-- SpringFramework LDAP -->
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap-core</artifactId>
-            <version>${springframework-ldap.version}</version>
-            <scope>provided</scope>
-        </dependency>
+	<properties>
+		<springframework-ldap.version>2.1.0.RELEASE</springframework-ldap.version>
+		<springframework-data.version>1.12.1.RELEASE</springframework-data.version>
+		<ehcache.version>2.7.2</ehcache.version>
+	</properties>
 
-         
-         <!-- Springframework data -->
-         <dependency>
+
+	<modules>
+		<module>interfaces</module>
+		<module>implementations</module>
+		<module>services</module>
+	</modules>
+
+
+	<dependencies>
+
+		<!-- Toutatice -->
+		<dependency>
+			<groupId>toutatice-portail.cms</groupId>
+			<artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>toutatice-portail.cms</groupId>
+			<artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
+		</dependency>
+
+		<!-- SpringFramework LDAP -->
+		<dependency>
+			<groupId>org.springframework.ldap</groupId>
+			<artifactId>spring-ldap-core</artifactId>
+			<version>${springframework-ldap.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<!-- Springframework data -->
+		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-commons</artifactId>
 			<version>${springframework-data.version}</version>
 			<scope>provided</scope>
 		</dependency>
-        
-    </dependencies>
+
+	</dependencies>
+
+
+	<profiles>
+		<profile>
+
+			<id>test-int</id>
+			<build>
+
+				<testResources>
+					<testResource>
+						<directory>src/test-int/resources
+    				</directory>
+					</testResource>
+				</testResources>
+
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.9.1</version>
+						<executions>
+							<execution>
+								<id>add-test-source</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>add-test-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>src/test-int/java</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<version>2.14.1</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+
+
+
+		</profile>
+	</profiles>
 
 </project>
 

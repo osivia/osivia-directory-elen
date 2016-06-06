@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +38,13 @@ import org.springframework.stereotype.Component;
 @Component("collabProfile")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"portalCollabProfile"})
-public class CollabProfileImpl implements CollabProfile {
+public final class CollabProfileImpl implements CollabProfile, Serializable {
 
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7838307664620741006L;
 
 	@Id
 	private Name dn;

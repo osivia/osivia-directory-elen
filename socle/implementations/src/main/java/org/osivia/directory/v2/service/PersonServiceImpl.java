@@ -16,14 +16,10 @@ package org.osivia.directory.v2.service;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.ModificationItem;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.osivia.directory.v2.MappingHelper;
+import org.osivia.directory.v2.dao.PersonDao;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
@@ -33,9 +29,6 @@ import org.osivia.portal.core.cms.CMSServiceCtx;
 import org.osivia.portal.core.cms.ICMSService;
 import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.filter.OrFilter;
-import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -50,22 +43,19 @@ public class PersonServiceImpl implements PersonService {
 
 	
 	@Autowired
-	private LdapTemplate template;
-
-	@Autowired
 	private Person sample;
 	
+	@Autowired
+	private PersonDao dao;
 	
-
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(javax.naming.Name)
 	 */
 	@Override
 	public Person getPerson(Name dn) {
 		
-		return template.findByDn(dn, sample.getClass());
+		return dao.getPerson(dn);
 		
-
 	}
 	
 	/* (non-Javadoc)
@@ -119,16 +109,8 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public List<Person> findByCriteria(Person p) {
-		
 
-		LdapQueryBuilder query = LdapQueryBuilder.query();
-		
-		//AndFilter filter = MappingHelper.getBasicFilter(sample);
-		OrFilter filter = MappingHelper.generateOrFilter(p);
-		
-		query.filter(filter);
-		
-		return (List<Person>) template.find(query, sample.getClass());
+		return dao.findByCriteria(p);
 	}
 
 	
@@ -138,9 +120,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void create(Person p) {
 		
-		p.setDn(sample.buildDn(p.getUid()));
-		
-		template.create(p);
+		dao.create(p);
 		
 	}
 
@@ -149,7 +129,7 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public void update(Person p) {
-		template.update(p);
+		dao.update(p);
 		
 	}
 	
@@ -160,9 +140,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public boolean verifyPassword(String uid, String currentPassword) {
 		
-		Name dn = sample.buildDn(uid);;
-		String personFilter = MappingHelper.getBasicFilter(sample).encode();
-		return template.authenticate(dn, personFilter, currentPassword);
+		return dao.verifyPassword(uid, currentPassword);
 		
 	}	
 	
@@ -172,24 +150,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void updatePassword(Person p, String newPassword) {
 
-		ModificationItem[] mods = new ModificationItem[1];
-		Attribute userPasswordAttribute = new BasicAttribute ( MappingHelper.getLdapFieldName(p, "userPassword"), newPassword ); ;
-		mods[ 0 ] = new ModificationItem ( DirContext.REPLACE_ATTRIBUTE, userPasswordAttribute  );
-		template.modifyAttributes(p.getDn(), mods);
-	}
-
-	/**
-	 * @return the template
-	 */
-	public LdapTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * @param template the template to set
-	 */
-	public void setTemplate(LdapTemplate template) {
-		this.template = template;
+		dao.updatePassword(p, newPassword);
 	}
 	
 }

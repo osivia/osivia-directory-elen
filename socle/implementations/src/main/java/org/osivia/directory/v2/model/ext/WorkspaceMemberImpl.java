@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.model.ext;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,14 @@ import org.osivia.portal.api.directory.v2.model.Person;
  * @author Loïc Billon
  * @since 4.4
  */
-public class WorkspaceMemberImpl implements WorkspaceMember {
+public class WorkspaceMemberImpl implements WorkspaceMember, Serializable {
+
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6982278397728977829L;
+	
 
 	private final Person member;
 	

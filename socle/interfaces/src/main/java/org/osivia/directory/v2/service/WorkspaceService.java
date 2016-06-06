@@ -101,9 +101,10 @@ public interface WorkspaceService extends IDirService {
 
 	/**
 	 * Remove a local group
+	 * @param workspaceId
 	 * @param dn
 	 */
-	void removeLocalGroup(Name dn);
+	void removeLocalGroup(String workspaceId, Name dn);
 
 	/**
 	 * Add member to a local group (should be already in the member group)
@@ -120,7 +121,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param localGroupDn
 	 * @param member
 	 */
-	void removeMemberFromLocalGroup(Name localGroupDn,
+	void removeMemberFromLocalGroup(String workspaceId,Name localGroupDn,
 			Name member);
 
 

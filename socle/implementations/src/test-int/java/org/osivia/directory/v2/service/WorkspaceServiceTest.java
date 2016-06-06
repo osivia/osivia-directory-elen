@@ -210,7 +210,7 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 		CollabProfile sample = context.getBean(CollabProfile.class);
 		Name localGroupDn = sample.buildDn(workspaceId + "_1");
 		
-		service.removeMemberFromLocalGroup(localGroupDn, localPerson.getDn());
+		service.removeMemberFromLocalGroup(workspaceId, localGroupDn, localPerson.getDn());
 		
 		
 		System.out.println("=== testRemoveMemberFromLocalGroup ===");
@@ -226,7 +226,7 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 		CollabProfile sample = context.getBean(CollabProfile.class);
 		Name localGroupDn = sample.buildDn(workspaceId + "_2");
 		
-		service.removeLocalGroup(localGroupDn);
+		service.removeLocalGroup(workspaceId, localGroupDn);
 		
 		CollabProfile searchProfile = context.getBean(CollabProfile.class);
 		searchProfile.setWorkspaceId(workspaceId);

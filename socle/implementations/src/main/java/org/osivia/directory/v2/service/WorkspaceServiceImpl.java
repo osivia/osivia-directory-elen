@@ -20,7 +20,7 @@ import java.util.Map;
 
 import javax.naming.Name;
 
-import org.osivia.directory.v2.MappingHelper;
+import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
@@ -30,9 +30,6 @@ import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.filter.AndFilter;
-import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -46,9 +43,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	
 	@Autowired
 	private ApplicationContext context;
-	
-	@Autowired
-	private LdapTemplate template;
 
 	
 	@Autowired
@@ -57,6 +51,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
 	@Autowired
 	private CollabProfile sample;
+	
+	
+	@Autowired
+	private CollabProfileDao dao;
 	
 	
 	public List<CollabProfile> findByWorkspaceId(String workspaceId) {
@@ -70,20 +68,14 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	@SuppressWarnings("unchecked")
 	public List<CollabProfile> findByCriteria(CollabProfile profile) {
 		
-		LdapQueryBuilder query = LdapQueryBuilder.query();
-		
-		AndFilter filter = MappingHelper.generateAndFilter(profile);
-		
-		query.filter(filter);
-		
-		return (List<CollabProfile>) template.find(query, sample.getClass());
-		
+		return dao.findByCriteria(profile);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.osivia.directory.v2.service.WorkspaceService#getAllMembers(java.lang.String)
 	 */
 	@Override
+	//@Cacheable(key = "#workspaceId", value = { "membersByWksCache" })
 	public List<WorkspaceMember> getAllMembers(String workspaceId) {
 		
 		List<CollabProfile> list = findByWorkspaceId(workspaceId);
@@ -161,7 +153,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 		members.setDescription(description);
 		members.setDn(sample.buildDn(cn));
 		
-		template.create(members);
+		dao.create(members);
 		
 		// The owner is a member of the workspace
 		attachPerson(owner, members);
@@ -178,7 +170,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 			roleGroup.setDisplayName(role.getValue());
 			roleGroup.setDn(sample.buildDn(cnRole));
 			
-			template.create(roleGroup);
+			dao.create(roleGroup);
 			
 			// Define the owner
 			if(role.getKey() == WorkspaceRole.owner) {
@@ -194,7 +186,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 		pending.setType(WorkspaceGroupType.pending_group);
 		pending.setDn(sample.buildDn(cn));
 		
-		template.create(pending);
+		dao.create(pending);
 
 	}
 	
@@ -203,6 +195,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	 * @see org.osivia.directory.v2.service.WorkspaceService#create(java.lang.String, java.lang.String)
 	 */
 	@Override
+	//@CacheEvict(key = "#workspaceId", value = "membersByWksCache")
 	public void delete(String workspaceId) {
 
 		
@@ -234,7 +227,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 		// remove all groups about this workspace
 		for(CollabProfile cp : list) {
 			
-			template.delete(cp);
+			dao.delete(cp);
 			
 		}
 		
@@ -246,6 +239,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	 * @see org.osivia.directory.v2.service.WorkspaceService#addOrModifyMember(javax.naming.Name, org.osivia.directory.v2.model.Workspace.WorkspaceRole)
 	 */
 	@Override
+	//@CacheEvict(key = "#workspaceId", value = "membersByWksCache")
 	public void addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role) {
 
 		
@@ -276,6 +270,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	 * @see org.osivia.directory.v2.service.WorkspaceService#removeMember(javax.naming.Name)
 	 */
 	@Override
+	//@CacheEvict(key = "#workspaceId", value = "membersByWksCache")
 	public void removeMember(String workspaceId, Name memberDn) {
 		
 		List<CollabProfile> list = findByWorkspaceId(workspaceId);
@@ -293,7 +288,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 			
 			profile.getUniqueMember().add(person.getDn());
 			
-			template.update(profile);
+			dao.update(profile);
 		}
 		
 		if(!(person.getPortalPersonProfile().contains(profile.getDn()))) {
@@ -319,7 +314,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 			
 			profile.getUniqueMember().remove(person.getDn());
 			
-			template.update(profile);
+			dao.update(profile);
 		}
 		
 		if(person.getPortalPersonProfile().contains(profile.getDn())) {
@@ -371,7 +366,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 		localGroup.setDescription(description);
 		localGroup.setDn(sample.buildDn(cn));
 		
-		template.create(localGroup);
+		dao.create(localGroup);
 	}
 	
 	@Override
@@ -384,7 +379,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 			if(cp.getType() == WorkspaceGroupType.space_group) {
 				if (cp.getUniqueMember().contains(member)) {
 					
-					CollabProfile localGroup = template.findByDn(localGroupDn, sample.getClass());
+					CollabProfile localGroup = dao.findByDn(localGroupDn);
 					
 					if(localGroup.getType() == WorkspaceGroupType.local_group) {
 						attachPerson(member, localGroup);
@@ -396,18 +391,18 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	}
 	
 	@Override
-	public void removeMemberFromLocalGroup(Name localGroupDn, Name member) {
+	public void removeMemberFromLocalGroup(String workspaceId, Name localGroupDn, Name member) {
 		
-		CollabProfile localGroup = template.findByDn(localGroupDn, sample.getClass());
+		CollabProfile localGroup = dao.findByDn(localGroupDn);
 		if(localGroup.getType() == WorkspaceGroupType.local_group) {
 			detachPerson(member, localGroup);
 		}
 	}
 	
 	@Override
-	public void removeLocalGroup(Name dn) {
+	public void removeLocalGroup(String workspaceId, Name dn) {
 		
-		CollabProfile groupToRemove = template.findByDn(dn, sample.getClass());
+		CollabProfile groupToRemove = dao.findByDn(dn);
 		
 		Person searchPers = context.getBean(Person.class);
 		
@@ -422,7 +417,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 		}
 		
 		
-		template.delete(groupToRemove);
+		dao.delete(groupToRemove);
 		
 	}
 

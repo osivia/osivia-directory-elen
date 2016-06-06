@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +35,13 @@ import org.springframework.stereotype.Component;
 @Component("role")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"groupOfUniqueNames"})
-public class RoleImpl implements Role {
+public final class RoleImpl implements Role, Serializable {
 
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 263339811067817048L;
 
 	@Id
 	private Name dn;

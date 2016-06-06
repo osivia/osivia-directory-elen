@@ -14,6 +14,7 @@
 package org.osivia.directory.v2;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 
 import javax.portlet.PortletContext;
 
@@ -22,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
 import org.osivia.portal.api.directory.v2.IDirService;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.portlet.context.PortletApplicationContextUtils;
@@ -74,19 +76,21 @@ public class DirDelegate implements IDirDelegate, PortletContextAware {
         this.appContext = PortletApplicationContextUtils.getWebApplicationContext(portletContext);
     }
 
-//	public void clearCaches() {
-//		EhCacheCacheManager cacheManager = appContext.getBean(EhCacheCacheManager.class);
-//		
-//		if (cacheManager != null) {
-//
-//			Collection<String> cacheNames = cacheManager.getCacheNames();
-//
-//			for (String bean : cacheNames) {
-//				LOGGER.warn("clear cache : " + bean);
-//				cacheManager.getCache(bean).clear();
-//			}
-//		}
-//		
-//	}
+
+    @Override
+	public void clearCaches() {
+		EhCacheCacheManager cacheManager = appContext.getBean(EhCacheCacheManager.class);
+		
+		if (cacheManager != null) {
+
+			Collection<String> cacheNames = cacheManager.getCacheNames();
+
+			for (String bean : cacheNames) {
+				LOGGER.warn("clear cache : " + bean);
+				cacheManager.getCache(bean).clear();
+			}
+		}
+		
+	}
 
 }

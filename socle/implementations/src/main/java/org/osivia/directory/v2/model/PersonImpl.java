@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,12 @@ import org.springframework.stereotype.Component;
 @Component("person")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"portalPerson"})
-public class PersonImpl implements Person {
+public final class PersonImpl implements Person, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5043314855366729485L;
 
 	@Id
 	private Name dn;
