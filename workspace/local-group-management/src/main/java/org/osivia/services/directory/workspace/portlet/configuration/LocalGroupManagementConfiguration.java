@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.configuration;
+package org.osivia.services.directory.workspace.portlet.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,11 +13,11 @@ import org.springframework.web.servlet.view.JstlView;
  * @author Cédric Krommenhoek
  */
 @Configuration
-@ComponentScan(basePackages = "org.osivia.services.directory.workspace")
+@ComponentScan(basePackages = "org.osivia.services.directory.workspace.portlet")
 public class LocalGroupManagementConfiguration {
 
     /**
-     * {@inheritDoc}
+     * Constructor.
      */
     public LocalGroupManagementConfiguration() {
         super();

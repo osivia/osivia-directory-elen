@@ -1,20 +1,22 @@
-package org.osivia.services.directory.workspace.model;
+package org.osivia.services.directory.workspace.portlet.model;
+
+import java.util.List;
 
 /**
- * Workspace member java-bean.
+ * Local group java-bean.
  *
  * @author Cédric Krommenhoek
  */
-public class Member {
+public class LocalGroup {
 
     /** Identifier. */
     private String id;
-    /** Avatar URL. */
-    private String avatar;
     /** Display name. */
     private String displayName;
-    /** Mail. */
-    private String mail;
+    /** Members. */
+    private List<Member> members;
+    /** Added members. */
+    private List<String> addedMembers;
     /** Deleted indicator. */
     private boolean deleted;
 
@@ -22,7 +24,7 @@ public class Member {
     /**
      * Constructor.
      */
-    public Member() {
+    public LocalGroup() {
         super();
     }
 
@@ -52,7 +54,7 @@ public class Member {
         if (this.getClass() != obj.getClass()) {
             return false;
         }
-        Member other = (Member) obj;
+        LocalGroup other = (LocalGroup) obj;
         if (this.id == null) {
             if (other.id != null) {
                 return false;
@@ -83,24 +85,6 @@ public class Member {
     }
 
     /**
-     * Getter for avatar.
-     *
-     * @return the avatar
-     */
-    public String getAvatar() {
-        return this.avatar;
-    }
-
-    /**
-     * Setter for avatar.
-     *
-     * @param avatar the avatar to set
-     */
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    /**
      * Getter for displayName.
      *
      * @return the displayName
@@ -119,21 +103,39 @@ public class Member {
     }
 
     /**
-     * Getter for mail.
+     * Getter for members.
      *
-     * @return the mail
+     * @return the members
      */
-    public String getMail() {
-        return this.mail;
+    public List<Member> getMembers() {
+        return this.members;
     }
 
     /**
-     * Setter for mail.
+     * Setter for members.
      *
-     * @param mail the mail to set
+     * @param members the members to set
      */
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
+
+    /**
+     * Getter for addedMembers.
+     *
+     * @return the addedMembers
+     */
+    public List<String> getAddedMembers() {
+        return this.addedMembers;
+    }
+
+    /**
+     * Setter for addedMembers.
+     *
+     * @param addedMembers the addedMembers to set
+     */
+    public void setAddedMembers(List<String> addedMembers) {
+        this.addedMembers = addedMembers;
     }
 
     /**

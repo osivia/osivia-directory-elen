@@ -1,13 +1,13 @@
-package org.osivia.services.directory.workspace.repository;
+package org.osivia.services.directory.workspace.portlet.repository;
 
 import java.util.List;
 
 import javax.portlet.PortletException;
 
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.services.directory.workspace.model.LocalGroup;
-import org.osivia.services.directory.workspace.model.LocalGroups;
-import org.osivia.services.directory.workspace.model.Member;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroups;
+import org.osivia.services.directory.workspace.portlet.model.Member;
 
 /**
  * Workspace local group management repository interface.

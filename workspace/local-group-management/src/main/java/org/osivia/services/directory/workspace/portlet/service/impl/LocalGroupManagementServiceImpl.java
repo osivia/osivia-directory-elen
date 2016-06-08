@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.service.impl;
+package org.osivia.services.directory.workspace.portlet.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,11 +8,11 @@ import javax.portlet.PortletException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.services.directory.workspace.model.LocalGroup;
-import org.osivia.services.directory.workspace.model.LocalGroups;
-import org.osivia.services.directory.workspace.model.Member;
-import org.osivia.services.directory.workspace.repository.LocalGroupManagementRepository;
-import org.osivia.services.directory.workspace.service.LocalGroupManagementService;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroups;
+import org.osivia.services.directory.workspace.portlet.model.Member;
+import org.osivia.services.directory.workspace.portlet.repository.LocalGroupManagementRepository;
+import org.osivia.services.directory.workspace.portlet.service.LocalGroupManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

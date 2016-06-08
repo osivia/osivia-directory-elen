@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.controller;
+package org.osivia.services.directory.workspace.portlet.controller;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -10,10 +10,10 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.services.directory.workspace.model.LocalGroup;
-import org.osivia.services.directory.workspace.model.LocalGroups;
-import org.osivia.services.directory.workspace.service.LocalGroupManagementService;
-import org.osivia.services.directory.workspace.validator.LocalGroupValidator;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroups;
+import org.osivia.services.directory.workspace.portlet.model.validator.LocalGroupValidator;
+import org.osivia.services.directory.workspace.portlet.service.LocalGroupManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;

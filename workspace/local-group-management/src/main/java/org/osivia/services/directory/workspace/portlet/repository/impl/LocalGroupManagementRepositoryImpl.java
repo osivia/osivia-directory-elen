@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.repository.impl;
+package org.osivia.services.directory.workspace.portlet.repository.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,10 +25,10 @@ import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
 import org.osivia.portal.core.cms.CMSException;
-import org.osivia.services.directory.workspace.model.LocalGroup;
-import org.osivia.services.directory.workspace.model.LocalGroups;
-import org.osivia.services.directory.workspace.model.Member;
-import org.osivia.services.directory.workspace.repository.LocalGroupManagementRepository;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroups;
+import org.osivia.services.directory.workspace.portlet.model.Member;
+import org.osivia.services.directory.workspace.portlet.repository.LocalGroupManagementRepository;
 import org.springframework.stereotype.Repository;
 
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;

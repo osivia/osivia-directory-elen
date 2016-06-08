@@ -11,11 +11,11 @@
 
         <init-param>
             <name>contextClass</name>
-            <value>org.osivia.services.directory.workspace.configuration.AnnotationPortletApplicationContext</value>
+            <value>org.osivia.portal.api.portlet.AnnotationPortletApplicationContext</value>
         </init-param>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>org.osivia.services.directory.workspace.configuration.LocalGroupManagementConfiguration</value>
+            <value>org.osivia.services.directory.workspace.portlet.configuration.LocalGroupManagementConfiguration</value>
         </init-param>
         
         <expiration-cache>180</expiration-cache>
@@ -29,5 +29,21 @@
 			<title>Workspace local group management</title>
 		</portlet-info>
 	</portlet>
+    
+    
+    <portlet>
+        <portlet-name>workspace-local-group-management-plugin</portlet-name>
+        <portlet-class>org.osivia.services.directory.workspace.plugin.LocalGroupManagementPlugin</portlet-class>
+        
+        <expiration-cache>180</expiration-cache>
+
+        <supports>
+            <mime-type>text/html</mime-type>
+        </supports>
+
+        <portlet-info>
+            <title>Workspace local group management plugin</title>
+        </portlet-info>
+    </portlet>
 	
 </portlet-app>
