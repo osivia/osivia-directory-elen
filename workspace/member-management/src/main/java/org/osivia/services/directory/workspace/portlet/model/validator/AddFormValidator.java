@@ -1,7 +1,7 @@
-package org.osivia.services.directory.workspace.validator;
+package org.osivia.services.directory.workspace.portlet.model.validator;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.osivia.services.directory.workspace.model.AddForm;
+import org.osivia.services.directory.workspace.portlet.model.AddForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

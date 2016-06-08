@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.controller;
+package org.osivia.services.directory.workspace.portlet.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,13 +21,13 @@ import javax.portlet.ResourceResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.services.directory.workspace.model.AddForm;
-import org.osivia.services.directory.workspace.model.Member;
-import org.osivia.services.directory.workspace.model.MemberComparator;
-import org.osivia.services.directory.workspace.model.MembersContainer;
-import org.osivia.services.directory.workspace.model.Role;
-import org.osivia.services.directory.workspace.service.MemberManagementService;
-import org.osivia.services.directory.workspace.validator.AddFormValidator;
+import org.osivia.services.directory.workspace.portlet.model.AddForm;
+import org.osivia.services.directory.workspace.portlet.model.Member;
+import org.osivia.services.directory.workspace.portlet.model.MemberComparator;
+import org.osivia.services.directory.workspace.portlet.model.MembersContainer;
+import org.osivia.services.directory.workspace.portlet.model.Role;
+import org.osivia.services.directory.workspace.portlet.model.validator.AddFormValidator;
+import org.osivia.services.directory.workspace.portlet.service.MemberManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;

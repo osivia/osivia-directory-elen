@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.service.impl;
+package org.osivia.services.directory.workspace.portlet.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,11 +30,11 @@ import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
 import org.osivia.portal.core.cms.CMSException;
-import org.osivia.services.directory.workspace.model.AddForm;
-import org.osivia.services.directory.workspace.model.Member;
-import org.osivia.services.directory.workspace.model.MembersContainer;
-import org.osivia.services.directory.workspace.model.Role;
-import org.osivia.services.directory.workspace.service.MemberManagementService;
+import org.osivia.services.directory.workspace.portlet.model.AddForm;
+import org.osivia.services.directory.workspace.portlet.model.Member;
+import org.osivia.services.directory.workspace.portlet.model.MembersContainer;
+import org.osivia.services.directory.workspace.portlet.model.Role;
+import org.osivia.services.directory.workspace.portlet.service.MemberManagementService;
 import org.springframework.stereotype.Service;
 
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;

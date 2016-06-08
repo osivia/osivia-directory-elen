@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.model;
+package org.osivia.services.directory.workspace.portlet.model;
 
 import java.util.Comparator;
 

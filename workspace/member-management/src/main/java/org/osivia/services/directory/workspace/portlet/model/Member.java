@@ -1,4 +1,4 @@
-package org.osivia.services.directory.workspace.model;
+package org.osivia.services.directory.workspace.portlet.model;
 
 /**
  * Workspace member java-bean.

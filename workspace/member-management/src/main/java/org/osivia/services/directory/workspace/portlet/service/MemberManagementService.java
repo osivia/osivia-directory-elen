@@ -1,12 +1,12 @@
-package org.osivia.services.directory.workspace.service;
+package org.osivia.services.directory.workspace.portlet.service;
 
 import javax.portlet.PortletException;
 
 import net.sf.json.JSONArray;
 
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.services.directory.workspace.model.AddForm;
-import org.osivia.services.directory.workspace.model.MembersContainer;
+import org.osivia.services.directory.workspace.portlet.model.AddForm;
+import org.osivia.services.directory.workspace.portlet.model.MembersContainer;
 
 /**
  * Member management service interface.
