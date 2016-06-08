@@ -80,13 +80,14 @@ public class WorkspaceMemberManagementMenubarModule implements MenubarModule {
                         // Window properties
                         Map<String, String> properties = new HashMap<String, String>();
                         properties.put("osivia.title", bundle.getString("WORKSPACE_MEMBER_MANAGEMENT_TITLE"));
+                        properties.put("osivia.ajaxLink", "1");
                         properties.put("osivia.back.reset", String.valueOf(true));
                         properties.put("osivia.navigation.reset", String.valueOf(true));
 
                         // Menubar item
                         String id = "WORKSPACE_MEMBER_MANAGEMENT";
                         String title = bundle.getString("WORKSPACE_MEMBER_MANAGEMENT_MENUBAR_ITEM");
-                        String icon = "halflings halflings-group";
+                        String icon = "glyphicons glyphicons-parents";
                         MenubarContainer parent = this.menubarService.getDropdown(portalControllerContext, MenubarDropdown.CONFIGURATION_DROPDOWN_MENU_ID);
                         int order = 2;
                         String url = this.portalUrlFactory.getStartPortletUrl(portalControllerContext, "workspace-member-management-instance", properties,
