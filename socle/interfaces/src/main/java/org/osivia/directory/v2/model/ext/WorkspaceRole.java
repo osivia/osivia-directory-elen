@@ -13,26 +13,99 @@
  */
 package org.osivia.directory.v2.model.ext;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
- * Role in a workspace (means rights on the root element)
+ * Role in a workspace (means rights on the root element).
+ *
  * @author Loïc Billon
+ * @author Cédric Krommenhoek
  * @since 4.4
  */
 public enum WorkspaceRole {
 
-	/** Owner, as all rights on all elemnts */
-	owner, 
-	
-	/** Administrator, has all rights on a part or all elemnts */
-	admin, 
-	
-	/** can read and write all documents */
-	writer, 
-	
-	/** can write only his documents */
-	contributor, 
-	
-	/** no rights except reading */
-	reader;
-	
+    /** Owner, as all rights on all elements. */
+    OWNER(5, "Everything"),
+    /** Administrator, has all rights on a part or all elements. */
+    ADMIN(4, "Everything"),
+    /** Can read and write all documents. */
+    WRITER(3, "Read", "Write"),
+    /** Can write only his documents. */
+    CONTRIBUTOR(2, "Read", "WriteModifyOwnOnly"),
+    /** No rights except reading. */
+    READER(1, "Read");
+
+
+    /** Identifier. */
+    private final String id;
+    /** Weight. */
+    private final int weight;
+    /** Permissions. */
+    private final String[] permissions;
+    /** Internationalization key. */
+    private final String key;
+    /** Class loader, user for internationalization resources. */
+    private final ClassLoader classLoader;
+
+
+    /**
+     * Constructor.
+     *
+     * @param weight weight
+     * @param permissions permissions
+     */
+    private WorkspaceRole(int weight, String... permissions) {
+        this.id = StringUtils.lowerCase(this.name());
+        this.weight = weight;
+        this.permissions = permissions;
+        this.key = "WORKSPACE_ROLE_" + StringUtils.upperCase(this.name());
+        this.classLoader = this.getClass().getClassLoader();
+    }
+
+
+    /**
+     * Getter for id.
+     *
+     * @return the id
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
+     * Getter for weight.
+     * 
+     * @return the weight
+     */
+    public int getWeight() {
+        return this.weight;
+    }
+
+    /**
+     * Getter for permissions.
+     *
+     * @return the permissions
+     */
+    public String[] getPermissions() {
+        return this.permissions;
+    }
+
+    /**
+     * Getter for key.
+     *
+     * @return the key
+     */
+    public String getKey() {
+        return this.key;
+    }
+
+    /**
+     * Getter for classLoader.
+     *
+     * @return the classLoader
+     */
+    public ClassLoader getClassLoader() {
+        return this.classLoader;
+    }
+
 }
