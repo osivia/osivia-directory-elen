@@ -23,6 +23,7 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.filter.OrFilter;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
@@ -135,13 +136,13 @@ public class MappingHelper {
 								if (getterResult instanceof Collection<?>) {
 									Collection<Object> collection = (Collection<Object>) getterResult;
 									for (Object o : collection) {
-										or.or(new EqualsFilter(name, o
+										or.or(new LikeFilter(name, o
 												.toString()));
 
 									}
 								} else {
 
-									or.or(new EqualsFilter(name, getterResult
+									or.or(new LikeFilter(name, getterResult
 											.toString()));
 								}
 							}
@@ -213,13 +214,13 @@ public class MappingHelper {
 								if (getterResult instanceof Collection<?>) {
 									Collection<Object> collection = (Collection<Object>) getterResult;
 									for (Object o : collection) {
-										and.and(new EqualsFilter(name, o
+										and.and(new LikeFilter(name, o
 												.toString()));
 
 									}
 								} else {
 
-									and.and(new EqualsFilter(name, getterResult
+									and.and(new LikeFilter(name, getterResult
 											.toString()));
 								}
 							}

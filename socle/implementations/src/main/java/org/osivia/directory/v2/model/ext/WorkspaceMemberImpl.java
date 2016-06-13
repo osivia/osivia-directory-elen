@@ -40,7 +40,9 @@ public class WorkspaceMemberImpl implements WorkspaceMember, Serializable {
 	
 	private List<CollabProfile> localGroups = new ArrayList<CollabProfile>();
 
-	
+    /** Deleted indicator. */
+    private boolean deleted;
+        
 	/**
 	 * 
 	 */
@@ -86,6 +88,20 @@ public class WorkspaceMemberImpl implements WorkspaceMember, Serializable {
 	@Override
 	public void setLocalGroups(List<CollabProfile> localGroups) {
 		this.localGroups = localGroups;
+	}
+
+	/**
+	 * @return the deleted
+	 */
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	/**
+	 * @param deleted the deleted to set
+	 */
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

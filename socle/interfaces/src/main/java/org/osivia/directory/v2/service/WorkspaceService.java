@@ -14,7 +14,6 @@
 package org.osivia.directory.v2.service;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.naming.Name;
 
@@ -36,7 +35,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param cn
 	 * @return members
 	 */
-	public List<WorkspaceMember> getAllMembers(String cn);
+	public List<WorkspaceMember> getAllMembers(String workspaceId);
 	
 	/**
 	 * Create a workspace with all default roles
@@ -44,7 +43,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param description
 	 * @param owner
 	 */
-	public void create(String workspaceId, String description, Person owner);
+	public void create(String workspaceId, Person owner);
 	
 	/**
 	 * Create a workspace with specified roles
@@ -53,8 +52,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param roles
 	 * @param owner
 	 */
-	public void create(String workspaceId, String description,
-			Map<WorkspaceRole, String> roles, Person owner);	
+	public void create(String workspaceId, 	List<WorkspaceRole> roles, Person owner);	
 	
 	/**
 	 * Delete a workspace and his subgroups, unkink users associated.
@@ -97,7 +95,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param workspaceId
 	 * @param description
 	 */
-	void createLocalGroup(String workspaceId, String description);
+	void createLocalGroup(String workspaceId, String displayName, String description);
 
 	/**
 	 * Remove a local group

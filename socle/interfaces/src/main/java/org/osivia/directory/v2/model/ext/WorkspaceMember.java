@@ -50,4 +50,14 @@ public interface WorkspaceMember {
 	 */
 	public void setLocalGroups(List<CollabProfile> localGroups);
 
+	/**
+	 * @return
+	 */
+	public boolean isDeleted();
+
+	/**
+	 * @param deleted
+	 */
+	public void setDeleted(boolean deleted);
+
 }

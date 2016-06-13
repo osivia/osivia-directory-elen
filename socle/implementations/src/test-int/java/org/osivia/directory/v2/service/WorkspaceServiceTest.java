@@ -78,7 +78,7 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 
 		Person owner = persService.getPerson("gracicot");
 		
-		service.create(workspaceId, "Workspace "+workspaceId, owner);
+		service.create(workspaceId, owner);
 		
 		CollabProfile searchProfile = context.getBean(CollabProfile.class);
 		searchProfile.setWorkspaceId(workspaceId);
@@ -102,15 +102,15 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 		
 		Person editor1 = persService.getPerson("hfortier");
 		
-		service.addOrModifyMember(workspaceId, editor1.getDn(), WorkspaceRole.writer);
+		service.addOrModifyMember(workspaceId, editor1.getDn(), WorkspaceRole.WRITER);
 		
 		Person editor2 = persService.getPerson("jbeaudoin");
 		
-		service.addOrModifyMember(workspaceId, editor2.getDn(), WorkspaceRole.writer);
+		service.addOrModifyMember(workspaceId, editor2.getDn(), WorkspaceRole.WRITER);
 		
 		Person reader = persService.getPerson("jcharbonneau");
 		
-		service.addOrModifyMember(workspaceId, reader.getDn(), WorkspaceRole.reader);
+		service.addOrModifyMember(workspaceId, reader.getDn(), WorkspaceRole.READER);
 		
 		System.out.println("=== testAddMembers ===");
 		for(WorkspaceMember wm : service.getAllMembers(workspaceId)) {
@@ -124,15 +124,15 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 		
 		Person editorToreader = persService.getPerson("hfortier");
 		
-		service.addOrModifyMember(workspaceId, editorToreader.getDn(), WorkspaceRole.reader);
+		service.addOrModifyMember(workspaceId, editorToreader.getDn(), WorkspaceRole.READER);
 		
 		Person editorToContributor = persService.getPerson("jbeaudoin");
 		
-		service.addOrModifyMember(workspaceId, editorToContributor.getDn(), WorkspaceRole.contributor);
+		service.addOrModifyMember(workspaceId, editorToContributor.getDn(), WorkspaceRole.CONTRIBUTOR);
 		
 		Person readerToContributor = persService.getPerson("jcharbonneau");
 		
-		service.addOrModifyMember(workspaceId, readerToContributor.getDn(), WorkspaceRole.contributor);
+		service.addOrModifyMember(workspaceId, readerToContributor.getDn(), WorkspaceRole.CONTRIBUTOR);
 		
 
 		System.out.println("=== testModifyMembers ===");
@@ -164,9 +164,9 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void test05CreateLocalGroup() {
 		
-		service.createLocalGroup(workspaceId, "Mon groupe local 1");
+		service.createLocalGroup(workspaceId, "Groupe 1", "Mon groupe local 1");
 		
-		service.createLocalGroup(workspaceId, "Mon groupe local 2");
+		service.createLocalGroup(workspaceId, "Groupe 2", "Mon groupe local 2");
 		
 		CollabProfile searchProfile = context.getBean(CollabProfile.class);
 		searchProfile.setWorkspaceId(workspaceId);
@@ -183,7 +183,7 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 		Person localPerson = persService.getPerson("mlaux");
 		Person localPerson2 = persService.getPerson("hfortier");
 		
-		service.addOrModifyMember(workspaceId, localPerson.getDn(), WorkspaceRole.reader);
+		service.addOrModifyMember(workspaceId, localPerson.getDn(), WorkspaceRole.READER);
 		
 		CollabProfile sample = context.getBean(CollabProfile.class);
 		Name localGroupDn = sample.buildDn(workspaceId + "_1");

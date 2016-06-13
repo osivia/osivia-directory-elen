@@ -29,6 +29,7 @@ import org.osivia.portal.core.cms.CMSServiceCtx;
 import org.osivia.portal.core.cms.ICMSService;
 import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,12 +42,19 @@ public class PersonServiceImpl implements PersonService {
 
 	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
 
+	@Autowired
+	private ApplicationContext context;
 	
 	@Autowired
 	private Person sample;
 	
 	@Autowired
 	private PersonDao dao;
+	
+	@Override
+	public Person getEmptyPerson() {
+		return context.getBean(Person.class);
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(javax.naming.Name)
