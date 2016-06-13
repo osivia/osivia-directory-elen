@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.model.ext;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -29,7 +30,7 @@ public enum WorkspaceRole {
     /** Administrator, has all rights on a part or all elements. */
     ADMIN(4, "Everything"),
     /** Can read and write all documents. */
-    WRITER(3, "Read", "Write"),
+    WRITER(3, "ReadWrite"),
     /** Can write only his documents. */
     CONTRIBUTOR(2, "Read", "WriteModifyOwnOnly"),
     /** No rights except reading. */
@@ -64,6 +65,46 @@ public enum WorkspaceRole {
 
 
     /**
+     * Get workspace role from its identifier.
+     *
+     * @param id identifier
+     * @return workspace role
+     */
+    public static WorkspaceRole fromId(String id) {
+        WorkspaceRole result = null;
+
+        for (WorkspaceRole value : WorkspaceRole.values()) {
+            if (value.id.equals(id)) {
+                result = value;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Get workspace role from its permissions.
+     *
+     * @param permissions permissions
+     * @return workspace role
+     */
+    public static WorkspaceRole fromPermissions(String... permissions) {
+        WorkspaceRole result = null;
+
+        for (WorkspaceRole value : WorkspaceRole.values()) {
+            if (!WorkspaceRole.OWNER.equals(value) && ArrayUtils.isEquals(value.getPermissions(), permissions)) {
+                result = value;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+
+    /**
      * Getter for id.
      *
      * @return the id
@@ -74,7 +115,7 @@ public enum WorkspaceRole {
 
     /**
      * Getter for weight.
-     * 
+     *
      * @return the weight
      */
     public int getWeight() {
