@@ -24,7 +24,7 @@
 
 
 <div class="workspace-local-group-management">
-    <form:form action="${editUrl}" method="post" modelAttribute="localGroup" cssClass="form-horizontal">
+    <form:form action="${editUrl}" method="post" modelAttribute="localGroup" cssClass="form-horizontal" role="form">
         <fieldset>
             <legend>
                 <i class="glyphicons glyphicons-pencil"></i>

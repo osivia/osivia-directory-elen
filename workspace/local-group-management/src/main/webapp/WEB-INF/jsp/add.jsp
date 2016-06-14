@@ -11,7 +11,7 @@
 
 
 <div class="well">
-    <form:form action="${createUrl}" method="post" modelAttribute="creationForm">
+    <form:form action="${createUrl}" method="post" modelAttribute="creationForm" role="form">
         <fieldset>
             <legend><op:translate key="CREATE_LOCAL_GROUP_LEGEND" /></legend>
 

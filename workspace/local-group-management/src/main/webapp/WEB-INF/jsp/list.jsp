@@ -13,7 +13,7 @@
 <c:set var="namespace"><portlet:namespace /></c:set>
 
 
-<form:form action="${saveUrl}" method="post" modelAttribute="localGroups">
+<form:form action="${saveUrl}" method="post" modelAttribute="localGroups" role="form">
     <div class="table">
         <!-- Header -->
         <div class="table-header">

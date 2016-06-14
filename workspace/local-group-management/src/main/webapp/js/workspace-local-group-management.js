@@ -2,7 +2,6 @@ $JQry(function() {
 	
 	$JQry(".workspace-local-group-management select.select2").each(function(index, element) {
 		var $element = $JQry(element),
-			url = $element.data("url"),
  			options = {
 					theme : "bootstrap"
 				};
