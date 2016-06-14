@@ -153,7 +153,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 		// Consultation d'une autre personne, soit en anonyme, soit connecté et dans ce cas l'UID est différent de soi
 		if ((userConnecte == null) || ((uid != null) && !(uid.equals(userConnecte.getUid())))) {
 
-			userConsulte = personService.getPersonWithEcmProfile(uid);
+			userConsulte = personService.getPerson(uid);
 
 		} else {
 			userConsulte = userConnecte;
@@ -332,7 +332,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				//
 				try {
 					// MAJ Annuaire
-					Person p = personService.getPersonWithEcmProfile(fiche.getUserConsulte().getUid());
+					Person p = personService.getPerson(fiche.getUserConsulte().getUid());
 
 					this.mergeProperties(p, formUpload);
 

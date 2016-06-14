@@ -26,6 +26,7 @@ import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.OrFilter;
 import org.springframework.ldap.query.LdapQueryBuilder;
@@ -49,10 +50,11 @@ public class PersonDaoImpl implements PersonDao {
 
 	@Override
 	@Cacheable(key = "#dn", value = { "personByDnCache" })
-	public Person getPerson(Name dn) {
+	public Person getPerson(Name dn) throws NameNotFoundException {
 		
-		return template.findByDn(dn, sample.getClass());
-		
+		Person person = template.findByDn(dn, sample.getClass());
+		return person;
+
 	}
 	
 

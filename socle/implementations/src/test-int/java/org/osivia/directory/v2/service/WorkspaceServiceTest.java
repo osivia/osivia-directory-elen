@@ -8,26 +8,37 @@ import java.util.List;
 import javax.naming.Name;
 
 import org.apache.commons.lang.math.RandomUtils;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
+import org.osivia.portal.api.locator.Locator;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
+
 /**
  * @author Loïc Billon
 
  */
+
 @ContextConfiguration("/testApplicationContext.xml")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Locator.class})
 public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 
 
@@ -64,12 +75,34 @@ public class WorkspaceServiceTest extends AbstractJUnit4SpringContextTests {
 		
 	}
 	
+	
 	@Before
 	public void setUp() {
 		
 		System.setProperty("ldap.base", "dc=osivia,dc=org");
 		
 		workspaceId = WorkspaceNameGenerator.getInstance().id;
+		
+		INuxeoService nuxeoService = EasyMock.createMock(INuxeoService.class);
+		
+		PowerMock.mockStatic(Locator.class);
+		EasyMock.expect(Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME)).andStubReturn(nuxeoService);
+		
+//        // CMS service
+//        this.cmsServiceMock = EasyMock.createMock("CMSService", ICMSService.class);
+//        EasyMock.replay(this.cmsServiceMock);
+//		
+//		// CMS service locator
+//        ICMSServiceLocator cmsServiceLocatorMock = EasyMock.createNiceMock(ICMSServiceLocator.class);
+//        EasyMock.expect(cmsServiceLocatorMock.getCMSService()).andStubReturn(this.cmsServiceMock);
+//        EasyMock.replay(cmsServiceLocatorMock);
+//        
+//        // Locator
+//        PowerMock.mockStatic(Locator.class);
+//        EasyMock.expect(Locator.findMBean(INuxeoService.class, "osivia:service=CmsServiceLocator")).andStubReturn(cmsServiceLocatorMock);
+//
+//
+        PowerMock.replayAll();
 	}
 	
 	@Test

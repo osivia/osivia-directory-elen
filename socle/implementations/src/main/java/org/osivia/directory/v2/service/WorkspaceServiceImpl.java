@@ -235,7 +235,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	 */
 	@Override
 	//@CacheEvict(key = "#workspaceId", value = "membersByWksCache")
-	public void addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role) {
+	public WorkspaceMember addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role) {
 
 		
 		List<CollabProfile> list = findByWorkspaceId(workspaceId);
@@ -258,6 +258,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 			
 		}
 
+		Person person = personService.getPerson(memberDn);
+		WorkspaceMemberImpl member = new WorkspaceMemberImpl(person);
+		member.setRole(role);
+		
+		return member;
 		
 	}
 	

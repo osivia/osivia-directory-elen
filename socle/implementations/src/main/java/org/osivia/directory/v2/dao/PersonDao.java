@@ -18,6 +18,7 @@ import java.util.List;
 import javax.naming.Name;
 
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.springframework.ldap.NameNotFoundException;
 
 /**
  * @author Loïc Billon
@@ -28,8 +29,9 @@ public interface PersonDao {
 	/**
 	 * @param dn
 	 * @return
+	 * @throws NameNotFoundException 
 	 */
-	Person getPerson(Name dn);
+	Person getPerson(Name dn) throws NameNotFoundException;
 
 	/**
 	 * @param ps

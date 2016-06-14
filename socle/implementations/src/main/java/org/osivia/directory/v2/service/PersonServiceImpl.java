@@ -24,13 +24,13 @@ import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.Link;
-import org.osivia.portal.core.cms.CMSException;
-import org.osivia.portal.core.cms.CMSServiceCtx;
-import org.osivia.portal.core.cms.ICMSService;
-import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 
 /**
  * Impl of the person service
@@ -42,6 +42,9 @@ public class PersonServiceImpl implements PersonService {
 
 	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
 
+	private final INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
+	
+	
 	@Autowired
 	private ApplicationContext context;
 	
@@ -50,6 +53,7 @@ public class PersonServiceImpl implements PersonService {
 	
 	@Autowired
 	private PersonDao dao;
+
 	
 	@Override
 	public Person getEmptyPerson() {
@@ -62,36 +66,20 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person getPerson(Name dn) {
 		
-		return dao.getPerson(dn);
-		
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(javax.naming.Name)
-	 */
-	@Override
-	public Person getPersonWithEcmProfile(Name dn) {
-		
-		Person p = getPerson(dn);
-		
-		// Append avatar
-		
-        final ICMSServiceLocator cmsLocator = Locator.findMBean(ICMSServiceLocator.class, "osivia:service=CmsServiceLocator");
-        final ICMSService cmsService = cmsLocator.getCMSService();
+		Person p;
+		try {
+			p = dao.getPerson(dn);
+			appendAvatar(p);
+			
+		} catch (NameNotFoundException e) {
+			logger.warn("Person with dn "+dn+" not found");
+			return null;
+		}
 
-        try {
-            final CMSServiceCtx cmsCtx = new CMSServiceCtx();
-            //cmsCtx.setPortletCtx(portletContext);
-            final Link userAvatar = cmsService.getUserAvatar(cmsCtx, p.getUid());
-            p.setAvatar(userAvatar);
-
-
-        } catch (final CMSException e) {
-            logger.error("unable to prepare user avatar link ", e);
-        }
-		
 		return p;
+		
 	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
@@ -103,22 +91,19 @@ public class PersonServiceImpl implements PersonService {
 
 		return getPerson(dn);
 	}
-	
-	@Override
-	public Person getPersonWithEcmProfile(String uid) {
 
-		Name dn = sample.buildDn(uid);;
-
-		return getPersonWithEcmProfile(dn);
-	}	
 	
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
 	 */
 	@Override
-	public List<Person> findByCriteria(Person p) {
+	public List<Person> findByCriteria(Person search) {
 
-		return dao.findByCriteria(p);
+		List<Person> persons = dao.findByCriteria(search);
+		for(Person p : persons) {
+			appendAvatar(p);
+		}
+		return persons;
 	}
 
 	
@@ -159,6 +144,20 @@ public class PersonServiceImpl implements PersonService {
 	public void updatePassword(Person p, String newPassword) {
 
 		dao.updatePassword(p, newPassword);
+	}
+	
+	/**
+	 * Get avatar url for a person
+	 * @param p the person
+	 */
+	private void appendAvatar(Person p) {
+				
+		// 	Append avatar
+		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
+
+        Link userAvatar = cmsCustomizer.getUserAvatar(p.getUid());
+        p.setAvatar(userAvatar);
+
 	}
 	
 }

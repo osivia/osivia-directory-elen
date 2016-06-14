@@ -66,7 +66,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param memberDn
 	 * @param role
 	 */
-	public void addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role);
+	public WorkspaceMember addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role);
 	
 	/**
 	 * Remove a person from a workspace
