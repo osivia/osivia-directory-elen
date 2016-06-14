@@ -2,7 +2,6 @@ package org.osivia.services.directory.workspace.portlet.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -18,14 +17,17 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.nuxeo.ecm.automation.client.model.Document;
+import org.osivia.directory.v2.model.ext.WorkspaceMember;
+import org.osivia.directory.v2.model.ext.WorkspaceRole;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.directory.workspace.portlet.model.AddForm;
-import org.osivia.services.directory.workspace.portlet.model.Member;
 import org.osivia.services.directory.workspace.portlet.model.MemberComparator;
 import org.osivia.services.directory.workspace.portlet.model.MembersContainer;
-import org.osivia.services.directory.workspace.portlet.model.Role;
 import org.osivia.services.directory.workspace.portlet.model.validator.AddFormValidator;
 import org.osivia.services.directory.workspace.portlet.service.MemberManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,8 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 import org.springframework.web.portlet.context.PortletContextAware;
 
-import net.sf.json.JSONArray;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.cms.NuxeoDocumentContext;
 
 /**
  * Workspace member management portlet view controller.
@@ -92,7 +95,7 @@ public class ViewMemberManagementController implements PortletContextAware {
         boolean alt = BooleanUtils.toBoolean(altParameter);
         request.setAttribute("alt", alt);
         if (CollectionUtils.isNotEmpty(container.getMembers())) {
-            Comparator<Member> comparator = new MemberComparator(sortParameter, alt);
+            Comparator<WorkspaceMember> comparator = new MemberComparator(sortParameter, alt);
             Collections.sort(container.getMembers(), comparator);
         }
 
@@ -142,27 +145,6 @@ public class ViewMemberManagementController implements PortletContextAware {
 
 
     /**
-     * Cancel update members action mapping.
-     *
-     * @param request action request
-     * @param response action response
-     * @param container members container
-     * @throws PortletException
-     */
-    @ActionMapping(value = "update", params = "cancel")
-    public void cancelUpdate(ActionRequest request, ActionResponse response, @ModelAttribute(value = "container") MembersContainer container)
-            throws PortletException {
-        // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
-
-        MembersContainer previousContainer = this.service.getMembersContainer(portalControllerContext);
-        container.setMembers(previousContainer.getMembers());
-
-        this.copyRenderParameter(request, response);
-    }
-
-
-    /**
      * Add members action mapping.
      *
      * @param request action request
@@ -180,7 +162,7 @@ public class ViewMemberManagementController implements PortletContextAware {
         this.service.add(portalControllerContext, container, form);
 
         // Reset role
-        form.setRole(Role.DEFAULT);
+        form.setRole(WorkspaceRole.READER);
 
         this.copyRenderParameter(request, response);
     }
@@ -197,7 +179,7 @@ public class ViewMemberManagementController implements PortletContextAware {
     @ActionMapping(value = "add", params = "cancel")
     public void cancelAdd(ActionRequest request, ActionResponse response, @ModelAttribute(value = "addForm") AddForm form) {
         // Reset role
-        form.setRole(Role.DEFAULT);
+        form.setRole(WorkspaceRole.READER);
 
         this.copyRenderParameter(request, response);
     }
@@ -244,8 +226,27 @@ public class ViewMemberManagementController implements PortletContextAware {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        return this.service.getMembersContainer(portalControllerContext);
+        return this.service.getMembersContainer(portalControllerContext, getWorkspaceId(request, response));
+        
     }
+
+    
+	/**
+	 * Evaluate the workspace id
+	 * @param request
+	 * @param response
+	 * @return workspace id
+	 * @throws PortletException
+	 */
+	private String getWorkspaceId(PortletRequest request, PortletResponse response)
+			throws PortletException {
+		NuxeoDocumentContext docCtx = NuxeoController.getDocumentContext(request, response, portletContext);
+        Document workspace = docCtx.getDoc();
+        if(workspace != null) {
+        	return workspace.getString("webc:url");
+        }
+        else return null;
+	}
 
 
     /**
@@ -282,8 +283,8 @@ public class ViewMemberManagementController implements PortletContextAware {
      * @throws PortletException
      */
     @ModelAttribute(value = "roles")
-    public List<Role> getRoles(PortletRequest request, PortletResponse response) throws PortletException {
-        return Arrays.asList(Role.values());
+    public List<WorkspaceRole> getRoles(PortletRequest request, PortletResponse response) throws PortletException {
+        return service.getAllowedRoles(getWorkspaceId(request, response));
     }
 
 

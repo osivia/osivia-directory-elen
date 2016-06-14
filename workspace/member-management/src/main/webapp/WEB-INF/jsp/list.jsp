@@ -80,18 +80,18 @@
                                 <!-- Avatar -->
                                 <div class="media-left media-middle">
                                     <div class="media-object">
-                                        <img src="${member.avatar}" alt="" class="center-block">
+                                        <img src="${member.member.avatar.url}" alt="" class="center-block">
                                     </div>
                                 </div>
                                 
                                 <div class="media-body">
                                     <!-- Display name -->
-                                    <div>${member.displayName}</div>
+                                    <div>${member.member.displayName}</div>
                                     
                                     <!-- Mail -->
-                                    <c:if test="${not empty member.mail}">
+                                    <c:if test="${not empty member.member.mail}">
                                         <div>
-                                            <small class="text-muted">${member.mail}</small>
+                                            <small class="text-muted">${member.member.mail}</small>
                                         </div>
                                     </c:if>
                                 </div>
@@ -104,7 +104,7 @@
                         <form:label path="members[${status.index}].role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
                         <form:select path="members[${status.index}].role" cssClass="form-control">
                             <c:forEach var="role" items="${roles}">
-                                <form:option value="${role}"><op:translate key="${role.key}" /></form:option>
+                                <form:option value="${role}"><op:translate key="${role.key}" classLoader="${role.classLoader}" /></form:option>
                             </c:forEach>
                         </form:select>
                     </div>

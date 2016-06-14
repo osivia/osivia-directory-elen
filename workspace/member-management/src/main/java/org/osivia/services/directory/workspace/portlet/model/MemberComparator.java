@@ -3,6 +3,7 @@ package org.osivia.services.directory.workspace.portlet.model;
 import java.util.Comparator;
 
 import org.apache.commons.lang.StringUtils;
+import org.osivia.directory.v2.model.ext.WorkspaceMember;
 
 /**
  * Member comparator.
@@ -11,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
  * @see Comparator
  * @see Member
  */
-public class MemberComparator implements Comparator<Member> {
+public class MemberComparator implements Comparator<WorkspaceMember> {
 
     /** Comparator sort field. */
     private final String sort;
@@ -36,7 +37,7 @@ public class MemberComparator implements Comparator<Member> {
      * {@inheritDoc}
      */
     @Override
-    public int compare(Member member1, Member member2) {
+    public int compare(WorkspaceMember member1, WorkspaceMember member2) {
         int result;
 
         if (member1 == null) {
@@ -51,8 +52,8 @@ public class MemberComparator implements Comparator<Member> {
             result = role1.compareTo(role2);
         } else {
             // Name
-            String name1 = StringUtils.defaultIfBlank(member1.getDisplayName(), member1.getName());
-            String name2 = StringUtils.defaultIfBlank(member2.getDisplayName(), member2.getName());
+            String name1 = StringUtils.defaultIfBlank(member1.getMember().getDisplayName(), member1.getMember().getUid());
+            String name2 = StringUtils.defaultIfBlank(member2.getMember().getDisplayName(), member2.getMember().getUid());
             result = name1.compareToIgnoreCase(name2);
         }
 

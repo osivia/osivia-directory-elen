@@ -2,6 +2,8 @@ package org.osivia.services.directory.workspace.portlet.model;
 
 import java.util.List;
 
+import org.osivia.directory.v2.model.ext.WorkspaceRole;
+
 /**
  * Form java-bean.
  * 
@@ -12,7 +14,7 @@ public class AddForm {
     /** Member names. */
     private List<String> names;
     /** Role. */
-    private Role role;
+    private WorkspaceRole role;
 
 
     /**
@@ -20,7 +22,7 @@ public class AddForm {
      */
     public AddForm() {
         super();
-        this.role = Role.DEFAULT;
+        this.role = WorkspaceRole.READER;
     }
 
 
@@ -47,7 +49,7 @@ public class AddForm {
      * 
      * @return the role
      */
-    public Role getRole() {
+    public WorkspaceRole getRole() {
         return role;
     }
 
@@ -56,7 +58,7 @@ public class AddForm {
      * 
      * @param role the role to set
      */
-    public void setRole(Role role) {
+    public void setRole(WorkspaceRole role) {
         this.role = role;
     }
 

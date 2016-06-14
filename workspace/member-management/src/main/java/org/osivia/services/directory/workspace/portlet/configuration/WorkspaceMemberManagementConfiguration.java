@@ -1,5 +1,8 @@
 package org.osivia.services.directory.workspace.portlet.configuration;
 
+import org.osivia.directory.v2.service.WorkspaceService;
+import org.osivia.portal.api.directory.v2.DirServiceFactory;
+import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -51,5 +54,14 @@ public class WorkspaceMemberManagementConfiguration {
         messageSource.setBasename("Resource");
         return messageSource;
     }
+    
+    @Bean
+    public PersonService getPersonService() {
+    	return DirServiceFactory.getService(PersonService.class);
+    }
 
+    @Bean
+    public WorkspaceService getWorkspaceService() {
+    	return DirServiceFactory.getService(WorkspaceService.class);
+    }
 }

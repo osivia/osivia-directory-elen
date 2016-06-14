@@ -46,7 +46,7 @@
                         <form:label path="role" cssClass="control-label"><op:translate key="ROLE" /></form:label>
                         <form:select path="role" cssClass="form-control">
                             <c:forEach var="role" items="${roles}">
-                                <form:option value="${role}"><op:translate key="${role.key}" /></form:option>
+                                <form:option value="${role}"><op:translate key="${role.key}" classLoader="${role.classLoader}"/></form:option>
                             </c:forEach>
                         </form:select>
                     </div>

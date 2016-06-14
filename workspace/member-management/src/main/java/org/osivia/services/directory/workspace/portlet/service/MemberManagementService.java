@@ -1,9 +1,12 @@
 package org.osivia.services.directory.workspace.portlet.service;
 
+import java.util.List;
+
 import javax.portlet.PortletException;
 
 import net.sf.json.JSONArray;
 
+import org.osivia.directory.v2.model.ext.WorkspaceRole;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.directory.workspace.portlet.model.AddForm;
 import org.osivia.services.directory.workspace.portlet.model.MembersContainer;
@@ -22,7 +25,7 @@ public interface MemberManagementService {
      * @return members container
      * @throws PortletException
      */
-    MembersContainer getMembersContainer(PortalControllerContext portalControllerContext) throws PortletException;
+    MembersContainer getMembersContainer(PortalControllerContext portalControllerContext, String workspaceId) throws PortletException;
 
 
     /**
@@ -66,5 +69,14 @@ public interface MemberManagementService {
      * @throws PortletException
      */
     void add(PortalControllerContext portalControllerContext, MembersContainer container, AddForm form) throws PortletException;
+
+
+	/**
+	 * Return allowed roles in the workspace
+	 * 
+	 * @param workspaceId
+	 * @return
+	 */
+	List<WorkspaceRole> getAllowedRoles(String workspaceId);
 
 }
