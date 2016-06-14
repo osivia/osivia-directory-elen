@@ -25,7 +25,7 @@
 
 
 
-<form:form action="${updateUrl}" method="post" modelAttribute="container">
+<form:form action="${updateUrl}" method="post" modelAttribute="container" role="form">
     <div class="table">
         <!-- Header -->
         <div class="table-header">

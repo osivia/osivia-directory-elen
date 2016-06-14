@@ -60,7 +60,7 @@ public class WorkspaceMemberManagementMenubarModule implements MenubarModule {
      * {@inheritDoc}
      */
     @Override
-    public void customizeMenubar(PortalControllerContext portalControllerContext, List<MenubarItem> menubar,
+    public void customizeSpace(PortalControllerContext portalControllerContext, List<MenubarItem> menubar,
             DocumentContext<? extends EcmDocument> spaceDocumentContext) throws PortalException {
         if (spaceDocumentContext != null) {
             // Space document
@@ -102,6 +102,16 @@ public class WorkspaceMemberManagementMenubarModule implements MenubarModule {
                 }
             }
         }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void customizeDocument(PortalControllerContext portalControllerContext, List<MenubarItem> menubar,
+            DocumentContext<? extends EcmDocument> documentContext) throws PortalException {
+        // Do nothing
     }
 
 }

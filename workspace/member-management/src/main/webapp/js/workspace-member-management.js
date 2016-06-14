@@ -169,7 +169,9 @@ $JQry(function() {
 			var $form = $element.closest("form"),
 				$collapse = $form.find(".collapse");
 			
-			$collapse.collapse("show");
+			if (!$collapse.hasClass("in")) {
+				$collapse.collapse("show");
+			}
 		});
 	});
 	
@@ -179,7 +181,9 @@ $JQry(function() {
 			$form = $target.closest("form"),
 			$collapse = $form.find(".collapse");
 		
-		$collapse.collapse("show");
+		if (!$collapse.hasClass("in")) {
+			$collapse.collapse("show");
+		}
 	});
 
 	
@@ -193,7 +197,7 @@ $JQry(function() {
 		
 		$hidden.val(true);
 		$fieldset.prop("disabled", true);
-		$collapse.collapse('show');
+		$collapse.collapse("show");
 	});
 	
 	
