@@ -16,9 +16,6 @@
         </header-content>
     </portlet>
     
-    <portlet>
-        <portlet-name>workspace-member-management-plugin</portlet-name>
-    </portlet>
 
     <service>
         <service-name>CustomizationModulesRepository</service-name>

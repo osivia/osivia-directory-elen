@@ -2,35 +2,25 @@
 <!DOCTYPE deployments PUBLIC "-//JBoss Portal//DTD Portlet Instances 2.6//EN" "http://www.jboss.org/portlet/dtd/portlet-instances_2_6.dtd">
 
 <deployments>
-	<deployment>
-		<if-exists>overwrite</if-exists>
-		<instance>
-			<display-name xml:lang="en">Directory - Workspace member
-				management</display-name>
-			<display-name xml:lang="fr">Annuaire - Gestion des membres
-				d'un espace</display-name>
-			<instance-id>workspace-member-management-instance</instance-id>
-			<portlet-ref>workspace-member-management</portlet-ref>
-			<security-constraint>
-				<policy-permission>
-					<action-name>view</action-name>
-					<unchecked />
-				</policy-permission>
-			</security-constraint>
-		</instance>
-	</deployment>
-
-	<deployment>
-		<if-exists>overwrite</if-exists>
-		<instance>
-			<instance-id>workspace-member-management-plugin-instance</instance-id>
-			<portlet-ref>workspace-member-management-plugin</portlet-ref>
-			<preferences>
-				<preference>
-					<name>hide</name>
-					<value>true</value>
-				</preference>
-			</preferences>
-		</instance>
-	</deployment>
+    <deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+            <display-name xml:lang="en">Directory - Workspace member management</display-name>
+            <display-name xml:lang="fr">Annuaire - Gestion des membres d'un espace</display-name>
+            <instance-id>workspace-member-management-instance</instance-id>
+            <portlet-ref>workspace-member-management</portlet-ref>
+            <security-constraint>
+                <policy-permission>
+                    <action-name>view</action-name>
+                    <unchecked />
+                </policy-permission>
+            </security-constraint>
+            <preferences>
+                <preference>
+                    <name>hide</name>
+                    <value>true</value>
+                </preference>
+            </preferences>
+        </instance>
+    </deployment>
 </deployments>
