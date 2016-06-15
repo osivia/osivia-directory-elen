@@ -53,20 +53,20 @@
          -->
         
         <!-- Workspace member management -->
-        <!-- <dependency>
+ 		<dependency>
             <groupId>org.osivia.services.directory.workspace</groupId>
             <artifactId>osivia-services-directory-workspace-member-management</artifactId>
             <version>${project.version}</version>
             <type>war</type>
-        </dependency> -->
+        </dependency>
         
         <!-- Workspace local group management -->
-        <!-- <dependency>
+        <dependency>
             <groupId>org.osivia.services.directory.workspace</groupId>
             <artifactId>osivia-services-directory-workspace-local-group-management</artifactId>
             <version>${project.version}</version>
             <type>war</type>
-        </dependency> -->
+        </dependency>
         
     </dependencies>
     
@@ -100,17 +100,17 @@
                             <groupId>org.osivia.services.directory.person</groupId>
                             <artifactId>osivia-services-directory-person-creation</artifactId>
                             <contextRoot>/osivia-services-directory-person-creation</contextRoot>
-                        </webModule>
+                        </webModule> -->
                          <webModule>
                             <groupId>org.osivia.services.directory.workspace</groupId>
                             <artifactId>osivia-services-directory-workspace-member-management</artifactId>
                             <contextRoot>/osivia-services-directory-workspace-member-management</contextRoot>
-                        </webModule> -->
-                        <!-- <webModule>
+                        </webModule> 
+                        <webModule>
                             <groupId>org.osivia.services.directory.workspace</groupId>
                             <artifactId>osivia-services-directory-workspace-local-group-management</artifactId>
                             <contextRoot>/osivia-services-directory-workspace-local-group-management</contextRoot>
-                        </webModule> -->
+                        </webModule>
                     </modules>
                 </configuration>
             </plugin>
