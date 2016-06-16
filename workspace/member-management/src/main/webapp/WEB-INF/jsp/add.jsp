@@ -16,11 +16,6 @@
 
 <c:set var="namespace"><portlet:namespace /></c:set>
 
-<c:set var="placeholder"><op:translate key="SELECT2_PLACEHOLDER" /></c:set>
-<c:set var="inputTooShort"><op:translate key="SELECT2_INPUT_TOO_SHORT" /></c:set>
-<c:set var="searching"><op:translate key="SELECT2_SEARCHING" /></c:set>
-<c:set var="noResults"><op:translate key="SELECT2_NO_RESULTS" /></c:set>
-
 
 <div class="well">
     <form:form action="${addUrl}" method="post" modelAttribute="addForm" role="form">
@@ -30,10 +25,13 @@
             <div class="row">
                 <div class="col-sm-8">
                     <!-- Member names selector -->
+                    <c:set var="placeholder"><op:translate key="ADD_MEMBERS_PLACEHOLDER" /></c:set>
+                    <c:set var="inputTooShort"><op:translate key="SELECT2_INPUT_TOO_SHORT" args="3" /></c:set>
+                    <c:set var="searching"><op:translate key="SELECT2_SEARCHING" /></c:set>
                     <spring:bind path="names">
                         <div class="form-group ${status.error ? 'has-error' : ''}">
                             <form:label path="names" cssClass="control-label"><op:translate key="ADD_MEMBERS_LABEL" /></form:label>
-                            <form:select path="names" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-searching="${searching}" data-no-results="${noResults}">
+                            <form:select path="names" cssClass="form-control select2" multiple="multiple" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-searching="${searching}">
                             </form:select>
                             <form:errors path="names" cssClass="help-block" />
                         </div>

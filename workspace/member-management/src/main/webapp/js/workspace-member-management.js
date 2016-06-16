@@ -34,53 +34,38 @@ $JQry(function() {
 			if (params.loading) {
 				$result.text(params.text);
 			} else {
-				$result.addClass("workspace-member-result");
+				$result.addClass("person");
 				
-				// Media
-				$media = $JQry(document.createElement("div"));
-				$media.addClass("media");
-				$media.appendTo($result);
-				
-				// Media left
-				$mediaLeft = $JQry(document.createElement("div"));
-				$mediaLeft.addClass("media-left media-middle");
-				$mediaLeft.appendTo($media);
-				
-				// Media object
-				$mediaObject = $JQry(document.createElement("div"));
-				$mediaObject.addClass("media-object");
-				$mediaObject.appendTo($mediaLeft);
+				// Person avatar
+				$personAvatar = $JQry(document.createElement("div"));
+				$personAvatar.addClass("person-avatar");
+				$personAvatar.appendTo($result);
 				
 				if (params.create) {
 					// Icon
 					$icon = $JQry(document.createElement("i"));
-					$icon.addClass("glyphicons glyphicons-user-add center-block");
+					$icon.addClass("glyphicons glyphicons-user-add");
 					$icon.text("");
-					$icon.appendTo($mediaObject);
+					$icon.appendTo($personAvatar);
 				} else if (params.avatar !== undefined) {
 					// Avatar
 					$avatar = $JQry(document.createElement("img"));
-					$avatar.addClass("center-block");
 					$avatar.attr("src", params.avatar);
 					$avatar.attr("alt", "");
-					$avatar.appendTo($mediaObject);
+					$avatar.appendTo($personAvatar);
 				}
 				
-				// Media body
-				$mediaBody = $JQry(document.createElement("div"));
-				$mediaBody.addClass("media-body");
-				$mediaBody.appendTo($media);
+				// Person title
+				$personTitle = $JQry(document.createElement("div"));
+				$personTitle.addClass("person-title");
+				$personTitle.text(params.displayName)
+				$personTitle.appendTo($result);
 				
-				// Display name
-				$displayName = $JQry(document.createElement("div"));
-				$displayName.text(params.displayName);
-				$displayName.appendTo($mediaBody);
-				
-				// Extra infos : name + mail
-				$extra = $JQry(document.createElement("div"));
-				$extra.addClass("text-muted small");
+				// Person extra
+				$personExtra = $JQry(document.createElement("div"));
+				$personExtra.addClass("person-extra");
 				if (params.create) {
-					$extra.text(params.extra);
+					$personExtra.text(params.extra);
 				} else {
 					text = params.id;
 					if (params.mail !== undefined) {
@@ -88,9 +73,9 @@ $JQry(function() {
 						text += params.mail;
 					}
 					
-					$extra.text(text);
+					$personExtra.text(text);
 				}
-				$extra.appendTo($mediaBody);
+				$personExtra.appendTo($result);
 			}
 
 			return $result;
@@ -101,26 +86,32 @@ $JQry(function() {
 		options["templateSelection"] = function(params) {
 			// Selection
 			$selection = $JQry(document.createElement("div"));
-			$selection.addClass("workspace-member-selection");
+			$selection.addClass("person");
 			
 			if (params.avatar !== undefined) {
+				// Person avatar
+				$personAvatar = $JQry(document.createElement("div"));
+				$personAvatar.addClass("person-avatar");
+				$personAvatar.appendTo($selection);
+				
 				// Avatar
 				$avatar = $JQry(document.createElement("img"));
 				$avatar.attr("src", params.avatar);
 				$avatar.attr("alt", "");
-				$avatar.appendTo($selection);
+				$avatar.appendTo($personAvatar);
 			}
 			
-			// Display name
-			$displayName = $JQry(document.createElement("span"));
+			// Person title
+			$personTitle = $JQry(document.createElement("div"));
+			$personTitle.addClass("person-title");
 			if (params.create) {
-				$displayName.text(params.id);
+				$personTitle.text(params.id);
 			} else if (params.displayName === undefined) {
-				$displayName.text(params.text);
+				$personTitle.text(params.text);
 			} else {
-				$displayName.text(params.displayName);
+				$personTitle.text(params.displayName);
 			}
-			$displayName.appendTo($selection);
+			$personTitle.appendTo($selection);
 			
 			return $selection;
 		};
@@ -190,7 +181,7 @@ $JQry(function() {
 	$JQry(".workspace-member-management button.delete").click(function(event) {
 		var $target = $JQry(event.target),
 			$fieldset = $target.closest("fieldset"),
-			$row = $fieldset.closest(".row"),
+			$row = $fieldset.closest(".table-row"),
 			$hidden = $row.find("input[type=hidden]"),
 			$form = $fieldset.closest("form"),
 			$collapse = $form.find(".collapse");

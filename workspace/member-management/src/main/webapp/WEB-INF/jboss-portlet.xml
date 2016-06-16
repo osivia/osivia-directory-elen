@@ -10,8 +10,6 @@
         </transaction>
         
         <header-content>
-            <link rel="stylesheet" href="/css/workspace-member-management.min.css" />
-            
             <script type="text/javascript" src="/js/workspace-member-management.js"></script>
         </header-content>
     </portlet>

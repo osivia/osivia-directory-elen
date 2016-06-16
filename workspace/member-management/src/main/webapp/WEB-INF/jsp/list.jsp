@@ -28,7 +28,7 @@
 <form:form action="${updateUrl}" method="post" modelAttribute="container" role="form">
     <div class="table">
         <!-- Header -->
-        <div class="table-header">
+        <div class="table-row table-header">
             <div class="row">
                 <!-- Member -->
                 <div class="col-sm-8">
@@ -67,54 +67,43 @@
             </c:if>
         
         
-            <div class="row">
+            <div class="table-row">
                 <form:hidden path="members[${status.index}].deleted" />
             
                 <fieldset
                     <c:if test="${member.deleted}">disabled="disabled"</c:if>
                 >
-                    <!-- Member -->
-                    <div class="col-sm-8">
-                        <div class="workspace-member-result">
-                            <div class="media">
-                                <!-- Avatar -->
-                                <div class="media-left media-middle">
-                                    <div class="media-object">
-                                        <img src="${member.member.avatar.url}" alt="" class="center-block">
-                                    </div>
+                    <div class="row">
+                        <!-- Member -->
+                        <div class="col-xs-12 col-sm-8">
+                            <div class="person">
+                                <div class="person-avatar">
+                                    <img src="${member.member.avatar.url}" alt="">
                                 </div>
-                                
-                                <div class="media-body">
-                                    <!-- Display name -->
-                                    <div>${member.member.displayName}</div>
-                                    
-                                    <!-- Mail -->
-                                    <c:if test="${not empty member.member.mail}">
-                                        <div>
-                                            <small class="text-muted">${member.member.mail}</small>
-                                        </div>
-                                    </c:if>
-                                </div>
+                                <div class="person-title">${member.member.displayName}</div>
+                                <c:if test="${not empty member.member.mail}">
+                                    <div class="person-extra">${member.member.mail}</div>
+                                </c:if>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Role -->
-                    <div class="col-xs-10 col-sm-3">
-                        <form:label path="members[${status.index}].role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
-                        <form:select path="members[${status.index}].role" cssClass="form-control">
-                            <c:forEach var="role" items="${roles}">
-                                <form:option value="${role}"><op:translate key="${role.key}" classLoader="${role.classLoader}" /></form:option>
-                            </c:forEach>
-                        </form:select>
-                    </div>
-                    
-                    <!-- Deletion -->
-                    <div class="col-xs-2 col-sm-1">
-                        <button type="button" class="btn btn-default delete">
-                            <i class="glyphicons glyphicons-remove"></i>
-                            <span class="sr-only"><op:translate key="DELETE" /></span>
-                        </button>
+                        
+                        <!-- Role -->
+                        <div class="col-xs-10 col-sm-3">
+                            <form:label path="members[${status.index}].role" cssClass="sr-only"><op:translate key="ROLE" /></form:label>
+                            <form:select path="members[${status.index}].role" cssClass="form-control">
+                                <c:forEach var="role" items="${roles}">
+                                    <form:option value="${role}"><op:translate key="${role.key}" classLoader="${role.classLoader}" /></form:option>
+                                </c:forEach>
+                            </form:select>
+                        </div>
+                        
+                        <!-- Deletion -->
+                        <div class="col-xs-2 col-sm-1">
+                            <button type="button" class="btn btn-default delete">
+                                <i class="glyphicons glyphicons-remove"></i>
+                                <span class="sr-only"><op:translate key="DELETE" /></span>
+                            </button>
+                        </div>
                     </div>
                 </fieldset>
             </div>
@@ -122,8 +111,10 @@
         
         <!-- No results -->
         <c:if test="${empty container.members}">
-            <div class="row">
-                <div class="col-xs-12 text-center"><op:translate key="NO_MEMBER" /></div>
+            <div class="table-row">
+                <div class="row">
+                    <div class="col-xs-12 text-center"><op:translate key="NO_MEMBER" /></div>
+                </div>
             </div>
         </c:if>
     </div>
