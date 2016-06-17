@@ -56,6 +56,19 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	@Autowired
 	private CollabProfileDao dao;
 	
+
+	@Override
+	public CollabProfile getProfile(String cn) {
+		Name dn = sample.buildDn(cn);
+		
+		return getProfile(dn);
+	}
+
+	@Override
+	public CollabProfile getProfile(Name dn) {
+		return dao.findByDn(dn);
+	}
+	
 	@Override
 	public List<CollabProfile> findByWorkspaceId(String workspaceId) {
 
@@ -338,7 +351,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	 * @see org.osivia.directory.v2.service.WorkspaceService#create(java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void createLocalGroup(String workspaceId, String displayName, String description) {
+	public CollabProfile createLocalGroup(String workspaceId, String displayName, String description) {
 		
 		
 		List<CollabProfile> list = findByWorkspaceId(workspaceId);
@@ -370,6 +383,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 		localGroup.setDn(sample.buildDn(cn));
 		
 		dao.create(localGroup);
+		
+		return localGroup;
 	}
 	
 	@Override

@@ -31,6 +31,20 @@ import org.osivia.portal.api.directory.v2.model.Person;
 public interface WorkspaceService extends IDirService {
 
 	/**
+	 * Get a collab profile
+	 * @param cn
+	 * @return collab profile
+	 */
+	CollabProfile getProfile(String cn);
+
+	/**
+	 * Get a collab profile
+	 * @param dn
+	 * @return collab profile
+	 */
+	CollabProfile getProfile(Name dn);
+	
+	/**
 	 * Get all members, rights and local groups
 	 * @param cn
 	 * @return members
@@ -95,7 +109,7 @@ public interface WorkspaceService extends IDirService {
 	 * @param workspaceId
 	 * @param description
 	 */
-	void createLocalGroup(String workspaceId, String displayName, String description);
+	CollabProfile createLocalGroup(String workspaceId, String displayName, String description);
 
 	/**
 	 * Remove a local group
@@ -121,6 +135,8 @@ public interface WorkspaceService extends IDirService {
 	 */
 	void removeMemberFromLocalGroup(String workspaceId,Name localGroupDn,
 			Name member);
+
+
 
 
 	
