@@ -19,52 +19,43 @@ $JQry(function() {
 			if (params.loading) {
 				$result.text(params.text);
 			} else {
-				$result.addClass("workspace-member-result");
+				$result.addClass("person");
 				
-				// Media
-				$media = $JQry(document.createElement("div"));
-				$media.addClass("media");
-				$media.appendTo($result);
-				
-				// Media left
-				$mediaLeft = $JQry(document.createElement("div"));
-				$mediaLeft.addClass("media-left media-middle");
-				$mediaLeft.appendTo($media);
-				
-				// Media object
-				$mediaObject = $JQry(document.createElement("div"));
-				$mediaObject.addClass("media-object");
-				$mediaObject.appendTo($mediaLeft);
+				// Person avatar
+				$personAvatar = $JQry(document.createElement("div"));
+				$personAvatar.addClass("person-avatar");
+				$personAvatar.appendTo($result);
 				
 				if (avatar) {
 					// Avatar
 					$avatar = $JQry(document.createElement("img"));
-					$avatar.addClass("center-block");
 					$avatar.attr("src", avatar);
 					$avatar.attr("alt", "");
-					$avatar.appendTo($mediaObject);
+					$avatar.appendTo($personAvatar);
+				} else {
+					// Icon
+					$icon = $JQry(document.createElement("i"));
+					$icon.addClass("glyphicons glyphicons-user");
+					$icon.text("");
+					$icon.append($personAvatar);
 				}
 				
-				// Media body
-				$mediaBody = $JQry(document.createElement("div"));
-				$mediaBody.addClass("media-body");
-				$mediaBody.appendTo($media);
+				// Person title
+				$personTitle = $JQry(document.createElement("div"));
+				$personTitle.addClass("person-title");
+				$personTitle.text(displayName);
+				$personTitle.appendTo($result);
 				
-				// Display name
-				$displayName = $JQry(document.createElement("div"));
-				$displayName.text(displayName);
-				$displayName.appendTo($mediaBody);
-				
-				// Extra infos : name + mail
-				$extra = $JQry(document.createElement("div"));
-				$extra.addClass("text-muted small");
+				// Person extra
+				$personExtra = $JQry(document.createElement("div"));
+				$personExtra.addClass("person-extra");
 				text = params.id;
 				if (mail) {
 					text += " – ";
 					text += mail;
 				}
-				$extra.text(text);
-				$extra.appendTo($mediaBody);
+				$personExtra.text(text);
+				$personExtra.appendTo($result);
 			}
 
 			return $result;
@@ -82,17 +73,23 @@ $JQry(function() {
 			$selection.addClass("workspace-member-selection");
 			
 			if (avatar) {
+				// Person avatar
+				$personAvatar = $JQry(document.createElement("div"));
+				$personAvatar.addClass("person-avatar");
+				$personAvatar.appendTo($selection);
+				
 				// Avatar
 				$avatar = $JQry(document.createElement("img"));
-				$avatar.attr("src", avatar);
+				$avatar.attr("src", params.avatar);
 				$avatar.attr("alt", "");
-				$avatar.appendTo($selection);
+				$avatar.appendTo($personAvatar);
 			}
 			
-			// Display name
-			$displayName = $JQry(document.createElement("span"));
-			$displayName.text(displayName);
-			$displayName.appendTo($selection);
+			// Person title
+			$personTitle = $JQry(document.createElement("div"));
+			$personTitle.addClass("person-title");
+			$personTitle.text(displayName);
+			$personTitle.appendTo($selection);
 			
 			return $selection;
 		};
@@ -139,7 +136,7 @@ $JQry(function() {
 		$element.on("select2:select", function(event) {
 			var $target = $JQry(event.target),
 				$form = $target.closest("form"),
-				$submit = $form.find("input[type=submit][name=add]");
+				$submit = $form.find("button[type=submit][name=add]");
 			
 			$submit.click();
         });
@@ -160,7 +157,7 @@ $JQry(function() {
 	$JQry(".workspace-local-group-management button[data-type=delete-local-group]").click(function(event) {
 		var $target = $JQry(event.target),
 			$fieldset = $target.closest("fieldset"),
-			$row = $fieldset.closest(".row"),
+			$row = $fieldset.closest(".table-row"),
 			$hidden = $row.find("input[type=hidden]"),
 			$form = $fieldset.closest("form"),
 			$collapse = $form.find(".collapse");

@@ -24,137 +24,186 @@ import org.osivia.portal.api.directory.v2.IDirService;
 import org.osivia.portal.api.directory.v2.model.Person;
 
 /**
- * Service class used to manager workspace groups
+ * Service class used to manager workspace groups.
+ *
  * @author Loïc Billon
  * @since 4.4
+ * @see IDirService
  */
 public interface WorkspaceService extends IDirService {
 
-	
-	/**
-	 * Get empty profile for searching
-	 * @return empty profile
-	 */
-	CollabProfile getEmptyProfile();
-	
-	/**
-	 * Get a collab profile
-	 * @param cn
-	 * @return collab profile
-	 */
-	CollabProfile getProfile(String cn);
-
-	/**
-	 * Get a collab profile
-	 * @param dn
-	 * @return collab profile
-	 */
-	CollabProfile getProfile(Name dn);
-	
-	/**
-	 * Get all members, rights and local groups
-	 * @param cn
-	 * @return members
-	 */
-	public List<WorkspaceMember> getAllMembers(String workspaceId);
-	
-	/**
-	 * Create a workspace with all default roles
-	 * @param workspaceId
-	 * @param description
-	 * @param owner
-	 */
-	public void create(String workspaceId, Person owner);
-	
-	/**
-	 * Create a workspace with specified roles
-	 * @param workspaceId
-	 * @param description
-	 * @param roles
-	 * @param owner
-	 */
-	public void create(String workspaceId, 	List<WorkspaceRole> roles, Person owner);	
-	
-	/**
-	 * Delete a workspace and his subgroups, unkink users associated.
-	 * @param workspaceId
-	 */
-	void delete(String workspaceId);
-	
-	/**
-	 * Add a person to a workspace, change his level rights.
-	 * @param workspaceId
-	 * @param memberDn
-	 * @param role
-	 */
-	public WorkspaceMember addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role);
-	
-	/**
-	 * Remove a person from a workspace
-	 * @param workspaceId
-	 * @param memberDn
-	 */
-	public void removeMember(String workspaceId, Name memberDn);
+    /**
+     * Get empty profile for searching.
+     *
+     * @return empty profile
+     */
+    CollabProfile getEmptyProfile();
 
 
-	/**
-	 * Find groups by workspace id
-	 * @param workspaceId
-	 * @return searched groups
-	 */
-	List<CollabProfile> findByWorkspaceId(String workspaceId);
-	
-	/**
-	 * Find groups by criteria object
-	 * @param profile
-	 * @return searched groups
-	 */
-	List<CollabProfile> findByCriteria(CollabProfile profile);
-
-	/**
-	 * Create a local group
-	 * @param workspaceId
-	 * @param description
-	 */
-	CollabProfile createLocalGroup(String workspaceId, String displayName, String description);
-
-	/**
-	 * Remove a local group
-	 * @param workspaceId
-	 * @param dn
-	 */
-	void removeLocalGroup(String workspaceId, Name dn);
-
-	/**
-	 * Add member to a local group (should be already in the member group)
-	 * @param workspaceId
-	 * @param localGroupDn
-	 * @param member
-	 */
-	void addMemberToLocalGroup(String workspaceId, Name localGroupDn,
-			Name member);
-
-	
-	/**
-	 * Modify local group properties (name, description)
-	 * @param localGroup the local group with updated fields
-	 */
-	void modifyLocalGroup(CollabProfile localGroup);	
-	
-	/**
-	 * Remove member from a local group.
-	 * @param workspaceId
-	 * @param localGroupDn
-	 * @param member
-	 */
-	void removeMemberFromLocalGroup(String workspaceId,Name localGroupDn,
-			Name member);
+    /**
+     * Get a collab profile.
+     *
+     * @param cn collab profile CN
+     * @return collab profile
+     */
+    CollabProfile getProfile(String cn);
 
 
+    /**
+     * Get a collab profile.
+     *
+     * @param dn collab profile DN
+     * @return collab profile
+     */
+    CollabProfile getProfile(Name dn);
 
 
+    /**
+     * Get all members, rights and local groups.
+     *
+     * @param workspaceId workspace identifier
+     * @return members
+     */
+    List<WorkspaceMember> getAllMembers(String workspaceId);
 
 
+    /**
+     * Create a workspace with all default roles.
+     *
+     * @param workspaceId workspace identifier
+     * @param owner workspace owner
+     */
+    void create(String workspaceId, Person owner);
 
-	
+
+    /**
+     * Create a workspace with specified roles.
+     *
+     * @param workspaceId workspace identifier
+     * @param roles workspace roles
+     * @param owner workspace owner
+     */
+    void create(String workspaceId, List<WorkspaceRole> roles, Person owner);
+
+
+    /**
+     * Delete a workspace and his subgroups, unkink users associated.
+     *
+     * @param workspaceId workspace identifier
+     */
+    void delete(String workspaceId);
+
+
+    /**
+     * Add a person to a workspace, change his level rights.
+     *
+     * @param workspaceId workspace identifier
+     * @param memberDn member DN
+     * @param role workspace role
+     */
+    WorkspaceMember addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role);
+
+
+    /**
+     * Remove a person from a workspace.
+     *
+     * @param workspaceId workspace identifier
+     * @param memberDn member DN
+     */
+    public void removeMember(String workspaceId, Name memberDn);
+
+
+    /**
+     * Find groups by workspace identifier.
+     *
+     * @param workspaceId workspace identifier
+     * @return searched groups
+     */
+    List<CollabProfile> findByWorkspaceId(String workspaceId);
+
+
+    /**
+     * Find groups by criteria object.
+     *
+     * @param profile criteria
+     * @return searched groups
+     */
+    List<CollabProfile> findByCriteria(CollabProfile profile);
+
+
+    /**
+     * Create a local group.
+     *
+     * @param workspaceId workspace identifier
+     * @param displayName workspace display name
+     * @param description workspace description
+     */
+    CollabProfile createLocalGroup(String workspaceId, String displayName, String description);
+
+
+    /**
+     * Remove a local group.
+     *
+     * @param workspaceId workspace identifier
+     * @param dn local group DN
+     */
+    void removeLocalGroup(String workspaceId, Name dn);
+
+
+    /**
+     * Remove local group.
+     *
+     * @param workspaceId workspace identifier
+     * @param cn local group CN
+     */
+    void removeLocalGroup(String workspaceId, String cn);
+
+
+    /**
+     * Add member to a local group (should be already in the member group).
+     *
+     * @param workspaceId workspace identifier
+     * @param localGroupDn local group DN
+     * @param memberDn member DN
+     */
+    void addMemberToLocalGroup(String workspaceId, Name localGroupDn, Name memberDn);
+
+
+    /**
+     * Add member to local group.
+     * 
+     * @param workspaceId workspace identifier
+     * @param localGroupCn local group CN
+     * @param memberUid member UID
+     */
+    void addMemberToLocalGroup(String workspaceId, String localGroupCn, String memberUid);
+
+
+    /**
+     * Modify local group properties (name, description).
+     *
+     * @param localGroup the local group with updated fields
+     */
+    void modifyLocalGroup(CollabProfile localGroup);
+
+
+    /**
+     * Remove member from a local group.
+     *
+     * @param workspaceId workspace identifier
+     * @param localGroupDn local group DN
+     * @param memberDn member DN
+     */
+    void removeMemberFromLocalGroup(String workspaceId, Name localGroupDn, Name memberDn);
+
+
+    /**
+     * Remove member from a local group.
+     * 
+     * @param workspaceId workspace identifier
+     * @param localGroupCn local group CN
+     * @param memberUid member UID
+     */
+    void removeMemberFromLocalGroup(String workspaceId, String localGroupCn, String memberUid);
+
 }

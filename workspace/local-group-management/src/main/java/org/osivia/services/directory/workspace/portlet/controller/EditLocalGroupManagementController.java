@@ -12,8 +12,9 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroupEditionForm;
 import org.osivia.services.directory.workspace.portlet.model.Member;
+import org.osivia.services.directory.workspace.portlet.model.converter.MemberPropertyEditor;
 import org.osivia.services.directory.workspace.portlet.model.validator.LocalGroupValidator;
 import org.osivia.services.directory.workspace.portlet.service.LocalGroupManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ import org.springframework.web.portlet.context.PortletContextAware;
  */
 @Controller
 @RequestMapping(value = "VIEW", params = "view=edit")
-@SessionAttributes(value = {"localGroup", "members"})
+@SessionAttributes(value = {"editionForm", "members"})
 public class EditLocalGroupManagementController implements PortletContextAware {
 
     /** Portlet context. */
@@ -51,6 +52,10 @@ public class EditLocalGroupManagementController implements PortletContextAware {
     /** Local group validator. */
     @Autowired
     private LocalGroupValidator localGroupValidator;
+
+    /** Member property editor. */
+    @Autowired
+    private MemberPropertyEditor memberPropertyEditor;
 
 
     /**
@@ -79,22 +84,22 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      *
      * @param request action request
      * @param response action response
-     * @param localGroup local group model attribute
+     * @param localGroup local group edition form model attribute
      * @param result binding result
      * @param sessionStatus session status
      * @throws PortletException
      */
     @ActionMapping(value = "edit", params = "save")
-    public void save(ActionRequest request, ActionResponse response, @ModelAttribute(value = "localGroup") @Validated LocalGroup localGroup,
+    public void save(ActionRequest request, ActionResponse response, @ModelAttribute(value = "editionForm") @Validated LocalGroupEditionForm form,
             BindingResult result, SessionStatus sessionStatus) throws PortletException {
         if (result.hasErrors()) {
             response.setRenderParameter("view", "edit");
-            response.setRenderParameter("id", localGroup.getId());
+            response.setRenderParameter("id", form.getId());
         } else {
             // Portal controller context
             PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-            this.service.saveLocalGroup(portalControllerContext, localGroup);
+            this.service.saveLocalGroup(portalControllerContext, form);
 
             sessionStatus.setComplete();
         }
@@ -106,18 +111,18 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      *
      * @param request action request
      * @param response action response
-     * @param localGroup local group model attribute
+     * @param form local group edition form model attribute
      * @throws PortletException
      */
     @ActionMapping(value = "edit", params = "add")
-    public void add(ActionRequest request, ActionResponse response, @ModelAttribute LocalGroup localGroup) throws PortletException {
+    public void add(ActionRequest request, ActionResponse response, @ModelAttribute("editionForm") LocalGroupEditionForm form) throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        this.service.addMembersToLocalGroup(portalControllerContext, localGroup);
+        this.service.addMembersToLocalGroup(portalControllerContext, form);
 
         response.setRenderParameter("view", "edit");
-        response.setRenderParameter("id", localGroup.getId());
+        response.setRenderParameter("id", form.getId());
     }
 
 
@@ -139,37 +144,37 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      *
      * @param request action request
      * @param response action response
-     * @param id local group identifier
+     * @param form local group edition form model attribute
      * @param sessionStatus session status
      * @throws PortletException
      */
     @ActionMapping(value = "delete")
-    public void delete(ActionRequest request, ActionResponse response, @RequestParam String id, SessionStatus sessionStatus)
+    public void delete(ActionRequest request, ActionResponse response, @ModelAttribute("editionForm") LocalGroupEditionForm form, SessionStatus sessionStatus)
             throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        this.service.deleteLocalGroup(portalControllerContext, id);
+        this.service.deleteLocalGroup(portalControllerContext, form);
 
         sessionStatus.setComplete();
     }
 
 
     /**
-     * Get local group model attribute.
+     * Get local group edition form model attribute.
      *
      * @param request portlet request
      * @param response portlet response
      * @param id local group identifier request parameter
-     * @return local group
+     * @return form
      * @throws PortletException
      */
-    @ModelAttribute(value = "localGroup")
-    public LocalGroup getLocalGroup(PortletRequest request, PortletResponse response, @RequestParam String id) throws PortletException {
+    @ModelAttribute(value = "editionForm")
+    public LocalGroupEditionForm getLocalGroupEditionForm(PortletRequest request, PortletResponse response, @RequestParam String id) throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        return this.service.getLocalGroup(portalControllerContext, id);
+        return this.service.getLocalGroupEditionForm(portalControllerContext, id);
     }
 
 
@@ -178,10 +183,11 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      *
      * @param binder web data binder
      */
-    @InitBinder(value = "localGroup")
-    public void localGroupInitBinder(WebDataBinder binder) {
-        binder.setDisallowedFields("id");
+    @InitBinder(value = "editionForm")
+    protected void localGroupEditionFormInitBinder(WebDataBinder binder) {
+        binder.setDisallowedFields("id", "workspaceId", "members", "addedMembers");
         binder.addValidators(this.localGroupValidator);
+        binder.registerCustomEditor(Member.class, this.memberPropertyEditor);
     }
 
 
@@ -190,15 +196,17 @@ public class EditLocalGroupManagementController implements PortletContextAware {
      *
      * @param request portlet request
      * @param response portlet response
+     * @param form local group edition form model attribute
      * @return members
      * @throws PortletException
      */
     @ModelAttribute(value = "members")
-    public List<Member> getMembers(PortletRequest request, PortletResponse response) throws PortletException {
+    public List<Member> getMembers(PortletRequest request, PortletResponse response, @ModelAttribute("editionForm") LocalGroupEditionForm form)
+            throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        return this.service.getMembers(portalControllerContext);
+        return this.service.getMembers(portalControllerContext, form);
     }
 
 

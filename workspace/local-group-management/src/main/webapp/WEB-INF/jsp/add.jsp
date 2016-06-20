@@ -7,19 +7,19 @@
 <%@ page contentType="text/html" isELIgnored="false"%>
 
 
-<portlet:actionURL name="create" var="createUrl" />
+<portlet:actionURL name="add" var="addUrl" />
 
 
 <div class="well">
-    <form:form action="${createUrl}" method="post" modelAttribute="creationForm" role="form">
+    <form:form action="${addUrl}" method="post" modelAttribute="addForm" role="form">
         <fieldset>
-            <legend><op:translate key="CREATE_LOCAL_GROUP_LEGEND" /></legend>
+            <legend><op:translate key="ADD_LOCAL_GROUP_LEGEND" /></legend>
 
             <!-- Display name -->
+            <c:set var="placeholder"><op:translate key="LOCAL_GROUP_DISPLAY_NAME_PLACEHOLDER" /></c:set>
             <spring:bind path="displayName">
-                <c:set var="placeholder"><op:translate key="LOCAL_GROUP_DISPLAY_NAME" /></c:set>
                 <div class="form-group ${status.error ? 'has-error has-feedback' : ''}">
-                    <form:label path="displayName" cssClass="sr-only">${placeholder}</form:label>
+                    <form:label path="displayName" cssClass="sr-only"><op:translate key="LOCAL_GROUP_DISPLAY_NAME" /></form:label>
                     <form:input path="displayName" cssClass="form-control" placeholder="${placeholder}" />
                     <c:if test="${status.error}">
                         <span class="form-control-feedback">

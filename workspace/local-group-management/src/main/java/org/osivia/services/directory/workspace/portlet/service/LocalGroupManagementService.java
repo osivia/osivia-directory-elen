@@ -6,6 +6,7 @@ import javax.portlet.PortletException;
 
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroupEditionForm;
 import org.osivia.services.directory.workspace.portlet.model.LocalGroups;
 import org.osivia.services.directory.workspace.portlet.model.Member;
 
@@ -27,25 +28,24 @@ public interface LocalGroupManagementService {
 
 
     /**
-     * Get local group from his identifier.
-     *
+     * Get add local group form.
+     * 
      * @param portalControllerContext portal controller context
-     * @param id local group identifier
-     * @return local group
+     * @return form
      * @throws PortletException
      */
-    LocalGroup getLocalGroup(PortalControllerContext portalControllerContext, String id) throws PortletException;
+    LocalGroup getAddLocalGroupForm(PortalControllerContext portalControllerContext) throws PortletException;
 
 
     /**
-     * Prepare local group deletion.
+     * Get local group edition form from its identifier.
      *
      * @param portalControllerContext portal controller context
-     * @param localGroups local groups
-     * @param id deleted local group identifier
+     * @param id local group identifier
+     * @return form
      * @throws PortletException
      */
-    void prepareDeletion(PortalControllerContext portalControllerContext, LocalGroups localGroups, String id) throws PortletException;
+    LocalGroupEditionForm getLocalGroupEditionForm(PortalControllerContext portalControllerContext, String id) throws PortletException;
 
 
     /**
@@ -73,39 +73,40 @@ public interface LocalGroupManagementService {
      * Get members.
      *
      * @param portalControllerContext portal controller context
+     * @param form local group edition form
      * @return members
      * @throws PortletException
      */
-    List<Member> getMembers(PortalControllerContext portalControllerContext) throws PortletException;
+    List<Member> getMembers(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException;
 
 
     /**
      * Add members to local group.
      *
      * @param portalControllerContext portal controller context
-     * @param localGroup local group
+     * @param form local group edition form
      * @throws PortletException
      */
-    void addMembersToLocalGroup(PortalControllerContext portalControllerContext, LocalGroup localGroup) throws PortletException;
+    void addMembersToLocalGroup(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException;
 
 
     /**
      * Save local group.
      *
      * @param portalControllerContext portal controller context
-     * @param localGroup local group
+     * @param form local group edition form
      * @throws PortletException
      */
-    void saveLocalGroup(PortalControllerContext portalControllerContext, LocalGroup localGroup) throws PortletException;
+    void saveLocalGroup(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException;
 
 
     /**
      * Delete local group.
      *
      * @param portalControllerContext portal controller context
-     * @param id local group identifier
+     * @param form local group edition form
      * @throws PortletException
      */
-    void deleteLocalGroup(PortalControllerContext portalControllerContext, String id) throws PortletException;
+    void deleteLocalGroup(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException;
 
 }

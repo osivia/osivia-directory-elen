@@ -28,7 +28,7 @@ public class LocalGroupValidator implements Validator {
      */
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(LocalGroup.class);
+        return LocalGroup.class.isAssignableFrom(clazz);
     }
 
 

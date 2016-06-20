@@ -1,24 +1,19 @@
 package org.osivia.services.directory.workspace.portlet.model;
 
-import java.util.List;
-
 /**
  * Local group java-bean.
  *
  * @author Cédric Krommenhoek
  */
-public class LocalGroup {
+public abstract class LocalGroup {
 
     /** Identifier. */
     private String id;
     /** Display name. */
     private String displayName;
-    /** Members. */
-    private List<Member> members;
-    /** Added members. */
-    private List<String> addedMembers;
-    /** Deleted indicator. */
-    private boolean deleted;
+    /** Description. */
+    private String description;
+
 
 
     /**
@@ -26,43 +21,6 @@ public class LocalGroup {
      */
     public LocalGroup() {
         super();
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (this.getClass() != obj.getClass()) {
-            return false;
-        }
-        LocalGroup other = (LocalGroup) obj;
-        if (this.id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!this.id.equals(other.id)) {
-            return false;
-        }
-        return true;
     }
 
 
@@ -103,57 +61,21 @@ public class LocalGroup {
     }
 
     /**
-     * Getter for members.
-     *
-     * @return the members
+     * Getter for description.
+     * 
+     * @return the description
      */
-    public List<Member> getMembers() {
-        return this.members;
+    public String getDescription() {
+        return description;
     }
 
     /**
-     * Setter for members.
-     *
-     * @param members the members to set
+     * Setter for description.
+     * 
+     * @param description the description to set
      */
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
-
-    /**
-     * Getter for addedMembers.
-     *
-     * @return the addedMembers
-     */
-    public List<String> getAddedMembers() {
-        return this.addedMembers;
-    }
-
-    /**
-     * Setter for addedMembers.
-     *
-     * @param addedMembers the addedMembers to set
-     */
-    public void setAddedMembers(List<String> addedMembers) {
-        this.addedMembers = addedMembers;
-    }
-
-    /**
-     * Getter for deleted.
-     *
-     * @return the deleted
-     */
-    public boolean isDeleted() {
-        return this.deleted;
-    }
-
-    /**
-     * Setter for deleted.
-     *
-     * @param deleted the deleted to set
-     */
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

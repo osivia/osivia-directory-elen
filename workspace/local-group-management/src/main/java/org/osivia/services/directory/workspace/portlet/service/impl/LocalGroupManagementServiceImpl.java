@@ -1,19 +1,22 @@
 package org.osivia.services.directory.workspace.portlet.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.portlet.PortletException;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.directory.workspace.portlet.model.LocalGroup;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroupEditionForm;
+import org.osivia.services.directory.workspace.portlet.model.LocalGroupListItem;
 import org.osivia.services.directory.workspace.portlet.model.LocalGroups;
 import org.osivia.services.directory.workspace.portlet.model.Member;
+import org.osivia.services.directory.workspace.portlet.model.comparator.LocalGroupsComparator;
 import org.osivia.services.directory.workspace.portlet.repository.LocalGroupManagementRepository;
 import org.osivia.services.directory.workspace.portlet.service.LocalGroupManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,9 +28,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class LocalGroupManagementServiceImpl implements LocalGroupManagementService {
 
+    /** Application context. */
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /** Local group management repository. */
     @Autowired
     private LocalGroupManagementRepository repository;
+
+    /** Local groups comparator. */
+    @Autowired
+    private LocalGroupsComparator localGroupsComparator;
 
 
     /**
@@ -43,7 +54,19 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      */
     @Override
     public LocalGroups getLocalGroups(PortalControllerContext portalControllerContext) throws PortletException {
-        return this.repository.getLocalGroups(portalControllerContext);
+        // Local groups container
+        LocalGroups container = applicationContext.getBean(LocalGroups.class);
+
+        // Workspace identifier
+        String workspaceId = this.repository.getWorkspaceId(portalControllerContext);
+        container.setWorkspaceId(workspaceId);
+
+        // Local groups
+        List<LocalGroup> localGroups = this.repository.getLocalGroups(portalControllerContext, workspaceId);
+        Collections.sort(localGroups, this.localGroupsComparator);
+        container.setGroups(localGroups);
+
+        return container;
     }
 
 
@@ -51,8 +74,8 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      * {@inheritDoc}
      */
     @Override
-    public LocalGroup getLocalGroup(PortalControllerContext portalControllerContext, String id) throws PortletException {
-        return this.repository.getLocalGroup(portalControllerContext, id);
+    public LocalGroup getAddLocalGroupForm(PortalControllerContext portalControllerContext) throws PortletException {
+        return applicationContext.getBean(LocalGroupListItem.class);
     }
 
 
@@ -60,16 +83,8 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      * {@inheritDoc}
      */
     @Override
-    public void prepareDeletion(PortalControllerContext portalControllerContext, LocalGroups localGroups, String id) throws PortletException {
-        List<LocalGroup> groups = localGroups.getGroups();
-        if (CollectionUtils.isNotEmpty(groups)) {
-            for (LocalGroup group : groups) {
-                if (StringUtils.equals(id, group.getId())) {
-                    group.setDeleted(true);
-                    break;
-                }
-            }
-        }
+    public LocalGroupEditionForm getLocalGroupEditionForm(PortalControllerContext portalControllerContext, String id) throws PortletException {
+        return this.repository.getLocalGroupEditionForm(portalControllerContext, id);
     }
 
 
@@ -87,7 +102,11 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      */
     @Override
     public void createLocalGroup(PortalControllerContext portalControllerContext, LocalGroups localGroups, LocalGroup form) throws PortletException {
-        this.repository.createLocalGroup(portalControllerContext, localGroups, form);
+        LocalGroup localGroup = this.repository.createLocalGroup(portalControllerContext, localGroups, form);
+
+        // Update model
+        localGroups.getGroups().add(localGroup);
+        form.setDisplayName(null);
     }
 
 
@@ -95,8 +114,8 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      * {@inheritDoc}
      */
     @Override
-    public List<Member> getMembers(PortalControllerContext portalControllerContext) throws PortletException {
-        return this.repository.getAllMembers(portalControllerContext);
+    public List<Member> getMembers(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException {
+        return this.repository.getAllMembers(portalControllerContext, form.getWorkspaceId());
     }
 
 
@@ -104,26 +123,27 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      * {@inheritDoc}
      */
     @Override
-    public void addMembersToLocalGroup(PortalControllerContext portalControllerContext, LocalGroup localGroup) throws PortletException {
-        List<Member> members = localGroup.getMembers();
+    public void addMembersToLocalGroup(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException {
+        // Local group members
+        List<Member> members = form.getMembers();
         if (members == null) {
             members = new ArrayList<Member>();
-            localGroup.setMembers(members);
+            form.setMembers(members);
         }
 
-        List<String> addedMembers = localGroup.getAddedMembers();
-        if (CollectionUtils.isNotEmpty(addedMembers)) {
-            for (String name : addedMembers) {
-                Member member = new Member();
-                member.setId(name);
-
-                if (!members.contains(member)) {
-                    member = this.repository.getMember(portalControllerContext, name);
-                    members.add(member);
-                }
-            }
-            addedMembers.clear();
+        // Added member
+        Member addedMember = form.getAddedMember();
+        addedMember.setAdded(true);
+        int index = members.indexOf(addedMember);
+        if (index != -1) {
+            Member member = members.get(index);
+            member.setDeleted(false);
+        } else {
+            members.add(addedMember);
         }
+
+        // Update model
+        form.setAddedMember(null);
     }
 
 
@@ -131,28 +151,17 @@ public class LocalGroupManagementServiceImpl implements LocalGroupManagementServ
      * {@inheritDoc}
      */
     @Override
-    public void saveLocalGroup(PortalControllerContext portalControllerContext, LocalGroup localGroup) throws PortletException {
-        // Remove deleted members
-        if (CollectionUtils.isNotEmpty(localGroup.getMembers())) {
-            List<Member> deleted = new ArrayList<Member>();
-            for (Member member : localGroup.getMembers()) {
-                if (member.isDeleted()) {
-                    deleted.add(member);
-                }
-            }
-            localGroup.getMembers().removeAll(deleted);
-        }
-
-        this.repository.setLocalGroup(portalControllerContext, localGroup);
+    public void saveLocalGroup(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException {
+        this.repository.setLocalGroup(portalControllerContext, form);
     }
 
 
     /**
-     * {@inheritDoc
+     * {@inheritDoc}
      */
     @Override
-    public void deleteLocalGroup(PortalControllerContext portalControllerContext, String id) throws PortletException {
-        this.repository.deleteLocalGroup(portalControllerContext, id);
+    public void deleteLocalGroup(PortalControllerContext portalControllerContext, LocalGroupEditionForm form) throws PortletException {
+        this.repository.deleteLocalGroup(portalControllerContext, form.getWorkspaceId(), form.getId());
     }
 
 }

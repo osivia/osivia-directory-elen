@@ -73,25 +73,6 @@ public class ViewLocalGroupManagementController implements PortletContextAware {
 
 
     /**
-     * Delete local group action mapping.
-     *
-     * @param request action request
-     * @param response action response
-     * @param localGroups local groups model attribute
-     * @param id deleted local group identifier request parameter
-     * @throws PortletException
-     */
-    @ActionMapping(value = "delete")
-    public void delete(ActionRequest request, ActionResponse response, @ModelAttribute LocalGroups localGroups, @RequestParam String id)
-            throws PortletException {
-        // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
-
-        this.service.prepareDeletion(portalControllerContext, localGroups, id);
-    }
-
-
-    /**
      * Save local groups action mapping.
      *
      * @param request action request
@@ -109,7 +90,7 @@ public class ViewLocalGroupManagementController implements PortletContextAware {
 
 
     /**
-     * Create local group action mapping.
+     * Add local group action mapping.
      *
      * @param request action request
      * @param response action response
@@ -118,29 +99,27 @@ public class ViewLocalGroupManagementController implements PortletContextAware {
      * @param result binding result
      * @throws PortletException
      */
-    @ActionMapping(value = "create")
-    public void create(ActionRequest request, ActionResponse response, @ModelAttribute LocalGroups localGroups,
-            @ModelAttribute(value = "creationForm") @Validated LocalGroup form, BindingResult result) throws PortletException {
+    @ActionMapping(value = "add", params = "save")
+    public void add(ActionRequest request, ActionResponse response, @ModelAttribute LocalGroups localGroups,
+            @ModelAttribute(value = "addForm") @Validated LocalGroup form, BindingResult result) throws PortletException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         if (!result.hasErrors()) {
             this.service.createLocalGroup(portalControllerContext, localGroups, form);
-
-            form.setDisplayName(null);
         }
     }
 
 
     /**
-     * Cancel local group creation action mapping.
+     * Cancel add local group action mapping.
      *
      * @param request action request
      * @param response action response
      * @param form local group creation form model attribute
      */
-    @ActionMapping(value = "create", params = "cancel")
-    public void cancelCreation(ActionRequest request, ActionResponse response, @ModelAttribute(value = "creationForm") LocalGroup form) {
+    @ActionMapping(value = "add", params = "cancel")
+    public void cancelAdd(ActionRequest request, ActionResponse response, @ModelAttribute(value = "addForm") LocalGroup form) {
         form.setDisplayName(null);
     }
 
@@ -180,15 +159,30 @@ public class ViewLocalGroupManagementController implements PortletContextAware {
 
 
     /**
-     * Get local group creation form model attribute.
+     * Local group init binder.
+     *
+     * @param binder web data binder
+     */
+    @InitBinder(value = "localGroups")
+    protected void localGroupsInitBinder(WebDataBinder binder) {
+        binder.setDisallowedFields("workspaceId");
+    }
+
+
+    /**
+     * Get add local group form model attribute.
      *
      * @param request portlet request
      * @param response portlet response
-     * @return creation form
+     * @return form
+     * @throws PortletException
      */
-    @ModelAttribute(value = "creationForm")
-    public LocalGroup getCreationForm(PortletRequest request, PortletResponse response) {
-        return new LocalGroup();
+    @ModelAttribute(value = "addForm")
+    public LocalGroup getAddLocalGroupForm(PortletRequest request, PortletResponse response) throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        return this.service.getAddLocalGroupForm(portalControllerContext);
     }
 
 
@@ -197,8 +191,8 @@ public class ViewLocalGroupManagementController implements PortletContextAware {
      *
      * @param binder web data binder
      */
-    @InitBinder(value = "creationForm")
-    protected void localGroupInitBinder(WebDataBinder binder) {
+    @InitBinder(value = "addForm")
+    protected void addLocalGroupFormInitBinder(WebDataBinder binder) {
         binder.addValidators(this.localGroupValidator);
     }
 

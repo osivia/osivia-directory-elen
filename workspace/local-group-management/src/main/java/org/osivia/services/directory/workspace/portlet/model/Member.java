@@ -1,10 +1,16 @@
 package org.osivia.services.directory.workspace.portlet.model;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 /**
  * Workspace member java-bean.
  *
  * @author Cédric Krommenhoek
  */
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Member {
 
     /** Identifier. */
@@ -17,6 +23,8 @@ public class Member {
     private String mail;
     /** Deleted indicator. */
     private boolean deleted;
+    /** Added indicator. */
+    private boolean added;
 
 
     /**
@@ -152,6 +160,24 @@ public class Member {
      */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * Getter for added.
+     * 
+     * @return the added
+     */
+    public boolean isAdded() {
+        return added;
+    }
+
+    /**
+     * Setter for added.
+     * 
+     * @param added the added to set
+     */
+    public void setAdded(boolean added) {
+        this.added = added;
     }
 
 }

@@ -16,7 +16,7 @@
 <form:form action="${saveUrl}" method="post" modelAttribute="localGroups" role="form">
     <div class="table">
         <!-- Header -->
-        <div class="table-header">
+        <div class="table-row table-header">
             <div class="row">
                 <!-- Local group -->
                 <div class="col-xs-12 col-sm-10">
@@ -30,44 +30,49 @@
             <portlet:actionURL name="edit" var="editUrl">
                 <portlet:param name="id" value="${group.id}"/>
             </portlet:actionURL>
-
-            <c:set var="members" value="${fn:length(group.members)}" />
-
+            
         
-            <div class="row">
+            <div class="table-row">
                 <form:hidden path="groups[${status.index}].deleted" />
             
                 <fieldset>
-                    <!-- Local group -->
-                    <div class="col-xs-12 col-sm-10">
-                        <div>
-                            <span>${group.displayName}</span>
+                    <div class="row">
+                        <!-- Local group -->
+                        <div class="col-xs-12 col-sm-10">
+                            <div class="person">
+                                <div class="person-avatar">
+                                    <i class="glyphicons glyphicons-group"></i>
+                                </div>
+                                <div class="person-title">
+                                    <span>${group.displayName}</span>
+                                    <small class="text-muted">
+                                        <c:choose>
+                                            <c:when test="${group.membersCount eq 0}">(<op:translate key="LOCAL_GROUP_NO_MEMBER" />)</c:when>
+                                            <c:when test="${group.membersCount eq 1}">(<op:translate key="LOCAL_GROUP_ONE_MEMBER" />)</c:when>
+                                            <c:otherwise>(<op:translate key="LOCAL_GROUP_N_MEMBERS" args="${group.membersCount}" />)</c:otherwise>
+                                        </c:choose>
+                                    </small>
+                                </div>
+                                <c:if test="${not empty group.description}">
+                                    <div class="person-extra">${group.description}</div>
+                                </c:if>
+                            </div>
                         </div>
                         
-                        <div>
-                            <small class="text-muted">
-                                <c:choose>
-                                    <c:when test="${members eq 0}"><op:translate key="LOCAL_GROUP_NO_MEMBER" /></c:when>
-                                    <c:when test="${members eq 1}"><op:translate key="LOCAL_GROUP_ONE_MEMBER" /></c:when>
-                                    <c:otherwise><op:translate key="LOCAL_GROUP_N_MEMBERS" args="${members}" /></c:otherwise>
-                                </c:choose>
-                            </small>
+                        <!-- Actions -->
+                        <div class="col-xs-12 col-sm-2 actions">
+                            <!-- Edit -->
+                            <a href="${editUrl}" class="btn btn-default">
+                                <i class="glyphicons glyphicons-pencil"></i>
+                                <span class="sr-only"><op:translate key="EDIT" /></span>
+                            </a>
+                        
+                            <!-- Delete -->
+                            <button type="button" class="btn btn-default" data-type="delete-local-group">
+                                <i class="glyphicons glyphicons-bin"></i>
+                                <span class="sr-only"><op:translate key="DELETE" /></span>
+                            </button>
                         </div>
-                    </div>
-                    
-                    <!-- Actions -->
-                    <div class="col-xs-12 col-sm-2 actions">
-                        <!-- Edit -->
-                        <a href="${editUrl}" class="btn btn-default">
-                            <i class="glyphicons glyphicons-pencil"></i>
-                            <span class="sr-only"><op:translate key="EDIT" /></span>
-                        </a>
-                    
-                        <!-- Delete -->
-                        <button type="button" class="btn btn-default" data-type="delete-local-group">
-                            <i class="glyphicons glyphicons-bin"></i>
-                            <span class="sr-only"><op:translate key="DELETE" /></span>
-                        </button>
                     </div>
                 </fieldset>
             </div>
@@ -75,8 +80,8 @@
         
         <!-- No results -->
         <c:if test="${empty localGroups.groups}">
-            <div class="row">
-                <div class="col-xs-12 text-center"><op:translate key="NO_LOCAL_GROUP" /></div>
+            <div class="table-row">
+                <div class="text-center"><op:translate key="NO_LOCAL_GROUP" /></div>
             </div>
         </c:if>
     </div>

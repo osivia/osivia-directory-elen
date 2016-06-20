@@ -7,24 +7,27 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
- * Local groups java-bean.
- *
+ * Local group edition form java-bean.
+ * 
  * @author Cédric Krommenhoek
+ * @see LocalGroup
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class LocalGroups {
+public class LocalGroupEditionForm extends LocalGroup {
 
     /** Workspace identifier. */
     private String workspaceId;
-    /** Local groups. */
-    private List<LocalGroup> groups;
+    /** Members. */
+    private List<Member> members;
+    /** Added member. */
+    private Member addedMember;
 
 
     /**
      * Constructor.
      */
-    public LocalGroups() {
+    public LocalGroupEditionForm() {
         super();
     }
 
@@ -48,21 +51,39 @@ public class LocalGroups {
     }
 
     /**
-     * Getter for groups.
+     * Getter for members.
      * 
-     * @return the groups
+     * @return the members
      */
-    public List<LocalGroup> getGroups() {
-        return this.groups;
+    public List<Member> getMembers() {
+        return members;
     }
 
     /**
-     * Setter for groups.
+     * Setter for members.
      * 
-     * @param groups the groups to set
+     * @param members the members to set
      */
-    public void setGroups(List<LocalGroup> groups) {
-        this.groups = groups;
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
+
+    /**
+     * Getter for addedMember.
+     * 
+     * @return the addedMember
+     */
+    public Member getAddedMember() {
+        return addedMember;
+    }
+
+    /**
+     * Setter for addedMember.
+     * 
+     * @param addedMember the addedMember to set
+     */
+    public void setAddedMember(Member addedMember) {
+        this.addedMember = addedMember;
     }
 
 }
