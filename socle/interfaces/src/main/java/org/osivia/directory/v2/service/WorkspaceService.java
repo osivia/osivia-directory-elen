@@ -30,6 +30,13 @@ import org.osivia.portal.api.directory.v2.model.Person;
  */
 public interface WorkspaceService extends IDirService {
 
+	
+	/**
+	 * Get empty profile for searching
+	 * @return empty profile
+	 */
+	CollabProfile getEmptyProfile();
+	
 	/**
 	 * Get a collab profile
 	 * @param cn
@@ -135,6 +142,7 @@ public interface WorkspaceService extends IDirService {
 	 */
 	void removeMemberFromLocalGroup(String workspaceId,Name localGroupDn,
 			Name member);
+
 
 
 

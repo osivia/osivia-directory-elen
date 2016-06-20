@@ -56,6 +56,10 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	@Autowired
 	private CollabProfileDao dao;
 	
+	@Override
+	public CollabProfile getEmptyProfile() {
+		return context.getBean(CollabProfile.class);
+	}
 
 	@Override
 	public CollabProfile getProfile(String cn) {
