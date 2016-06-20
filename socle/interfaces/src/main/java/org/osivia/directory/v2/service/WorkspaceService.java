@@ -134,6 +134,13 @@ public interface WorkspaceService extends IDirService {
 	void addMemberToLocalGroup(String workspaceId, Name localGroupDn,
 			Name member);
 
+	
+	/**
+	 * Modify local group properties (name, description)
+	 * @param localGroup the local group with updated fields
+	 */
+	void modifyLocalGroup(CollabProfile localGroup);	
+	
 	/**
 	 * Remove member from a local group.
 	 * @param workspaceId
@@ -142,6 +149,8 @@ public interface WorkspaceService extends IDirService {
 	 */
 	void removeMemberFromLocalGroup(String workspaceId,Name localGroupDn,
 			Name member);
+
+
 
 
 

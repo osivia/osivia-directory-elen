@@ -422,6 +422,12 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 	}
 	
 	@Override
+	public void modifyLocalGroup(CollabProfile localGroup) {
+		
+		dao.update(localGroup);
+	}
+	
+	@Override
 	public void removeLocalGroup(String workspaceId, Name dn) {
 		
 		CollabProfile groupToRemove = dao.findByDn(dn);
