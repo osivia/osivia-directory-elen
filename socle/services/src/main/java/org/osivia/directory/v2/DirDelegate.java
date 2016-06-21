@@ -45,6 +45,9 @@ public class DirDelegate implements IDirDelegate, PortletContextAware {
     private PortletContext portletContext;
 
     private ApplicationContext appContext;
+    
+    /** ClassLoader kept in memory for calls from other sar, war, ... */
+    private final ClassLoader serviceClassLoader = Thread.currentThread().getContextClassLoader();
 
     
 	/* (non-Javadoc)
@@ -91,6 +94,16 @@ public class DirDelegate implements IDirDelegate, PortletContextAware {
 			}
 		}
 		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.osivia.portal.api.directory.v2.IDirDelegate#getClassLoader()
+	 */
+	@Override
+	public ClassLoader getClassLoader() {
+
+		return serviceClassLoader;
 	}
 
 }

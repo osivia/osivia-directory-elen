@@ -42,8 +42,6 @@ public class PersonServiceImpl implements PersonService {
 
 	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
 
-	private final INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
-	
 	
 	@Autowired
 	private ApplicationContext context;
@@ -153,6 +151,7 @@ public class PersonServiceImpl implements PersonService {
 	private void appendAvatar(Person p) {
 				
 		// 	Append avatar
+		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
 		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
 
         Link userAvatar = cmsCustomizer.getUserAvatar(p.getUid());
