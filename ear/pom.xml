@@ -52,22 +52,6 @@
         </dependency>
          -->
         
-        <!-- Workspace member management -->
- 		<dependency>
-            <groupId>org.osivia.services.directory.workspace</groupId>
-            <artifactId>osivia-services-directory-workspace-member-management</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        
-        <!-- Workspace local group management -->
-        <dependency>
-            <groupId>org.osivia.services.directory.workspace</groupId>
-            <artifactId>osivia-services-directory-workspace-local-group-management</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        
     </dependencies>
     
     
@@ -101,53 +85,11 @@
                             <artifactId>osivia-services-directory-person-creation</artifactId>
                             <contextRoot>/osivia-services-directory-person-creation</contextRoot>
                         </webModule> -->
-                         <webModule>
-                            <groupId>org.osivia.services.directory.workspace</groupId>
-                            <artifactId>osivia-services-directory-workspace-member-management</artifactId>
-                            <contextRoot>/osivia-services-directory-workspace-member-management</contextRoot>
-                        </webModule> 
-                        <webModule>
-                            <groupId>org.osivia.services.directory.workspace</groupId>
-                            <artifactId>osivia-services-directory-workspace-local-group-management</artifactId>
-                            <contextRoot>/osivia-services-directory-workspace-local-group-management</contextRoot>
-                        </webModule>
                     </modules>
                 </configuration>
             </plugin>
         
         </plugins>
     </build>
-    
-    
-    <profiles>
-        <profile>
-            <activation>
-                <property>
-                    <name>deploy.osivia.dir</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <copy file="${basedir}/target/${project.build.finalName}.ear" todir="${deploy.osivia.dir}" />
-                                    </target>
-                                </configuration>
-                                <phase>package</phase>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     
 </project>
