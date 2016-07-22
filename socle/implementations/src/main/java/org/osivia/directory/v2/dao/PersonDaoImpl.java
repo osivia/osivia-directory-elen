@@ -52,7 +52,7 @@ public class PersonDaoImpl implements PersonDao {
 	@Cacheable(key = "#dn", value = { "personByDnCache" })
 	public Person getPerson(Name dn) throws NameNotFoundException {
 		
-		Person person = template.findByDn(dn, sample.getClass());
+		Person person = template.findByDn(dn, getSample().getClass());
 		return person;
 
 	}
@@ -68,14 +68,14 @@ public class PersonDaoImpl implements PersonDao {
 		
 		query.filter(filter);
 		
-		return (List<Person>) template.find(query, sample.getClass());
+		return (List<Person>) template.find(query, getSample().getClass());
 	}
 	
 
 	@Override
 	public void create(Person p) {
 		
-		p.setDn(sample.buildDn(p.getUid()));
+		p.setDn(getSample().buildDn(p.getUid()));
 		
 		template.create(p);
 		
@@ -93,7 +93,7 @@ public class PersonDaoImpl implements PersonDao {
 	@Override
 	public boolean verifyPassword(String uid, String currentPassword) {
 		
-		Name dn = sample.buildDn(uid);;
+		Name dn = getSample().buildDn(uid);;
 		String personFilter = MappingHelper.getBasicFilter(sample).encode();
 		return template.authenticate(dn, personFilter, currentPassword);
 		
@@ -108,4 +108,12 @@ public class PersonDaoImpl implements PersonDao {
 		mods[ 0 ] = new ModificationItem ( DirContext.REPLACE_ATTRIBUTE, userPasswordAttribute  );
 		template.modifyAttributes(p.getDn(), mods);
 	}	
+	
+	
+	/**
+	 * Sample entity object, should be redefined for specific mappings
+	 */
+	protected Person getSample() {
+		return sample;
+	}
 }

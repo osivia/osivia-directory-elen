@@ -24,7 +24,9 @@ import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.Link;
+import org.osivia.portal.core.cms.CMSException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -47,15 +49,17 @@ public class PersonServiceImpl implements PersonService {
 	private ApplicationContext context;
 	
 	@Autowired
+	@Qualifier("person")
 	private Person sample;
 	
 	@Autowired
+	@Qualifier("personDao")
 	private PersonDao dao;
 
 	
 	@Override
 	public Person getEmptyPerson() {
-		return context.getBean(Person.class);
+		return context.getBean(getSample().getClass());
 	}
 	
 	/* (non-Javadoc)
@@ -66,7 +70,7 @@ public class PersonServiceImpl implements PersonService {
 		
 		Person p;
 		try {
-			p = dao.getPerson(dn);
+			p = getDao().getPerson(dn);
 			appendAvatar(p);
 			
 		} catch (NameNotFoundException e) {
@@ -85,11 +89,11 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person getPerson(String uid) {
 
-		Name dn = sample.buildDn(uid);;
+		Name dn = getSample().buildDn(uid);;
 
 		return getPerson(dn);
 	}
-
+	
 	
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
@@ -97,7 +101,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public List<Person> findByCriteria(Person search) {
 
-		List<Person> persons = dao.findByCriteria(search);
+		List<Person> persons = getDao().findByCriteria(search);
 		for(Person p : persons) {
 			appendAvatar(p);
 		}
@@ -111,7 +115,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void create(Person p) {
 		
-		dao.create(p);
+		getDao().create(p);
 		
 	}
 
@@ -120,7 +124,7 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public void update(Person p) {
-		dao.update(p);
+		getDao().update(p);
 		
 	}
 	
@@ -131,7 +135,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public boolean verifyPassword(String uid, String currentPassword) {
 		
-		return dao.verifyPassword(uid, currentPassword);
+		return getDao().verifyPassword(uid, currentPassword);
 		
 	}	
 	
@@ -141,7 +145,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void updatePassword(Person p, String newPassword) {
 
-		dao.updatePassword(p, newPassword);
+		getDao().updatePassword(p, newPassword);
 	}
 	
 	/**
@@ -153,10 +157,31 @@ public class PersonServiceImpl implements PersonService {
 		// 	Append avatar
 		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
 		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
+		
+        Link userAvatar;
+		try {
+			userAvatar = cmsCustomizer.getUserAvatar(null, p.getUid());
 
-        Link userAvatar = cmsCustomizer.getUserAvatar(p.getUid());
-        p.setAvatar(userAvatar);
+	        p.setAvatar(userAvatar);
+	        
+		} catch (CMSException e) {
+			// Never called
+		}
 
+	}
+	
+	/**
+	 * Sample entity object, should be redefined for specific mappings
+	 */
+	protected Person getSample() {
+		return sample;
+	}
+	
+	/**
+	 * Sample dao object, should be redefined for specific mappings
+	 */
+	protected PersonDao getDao() {
+		return dao;
 	}
 	
 }

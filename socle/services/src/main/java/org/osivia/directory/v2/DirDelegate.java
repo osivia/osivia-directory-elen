@@ -15,11 +15,13 @@ package org.osivia.directory.v2;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.portlet.PortletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.osivia.directory.v2.util.BeanPrecedence;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
 import org.osivia.portal.api.directory.v2.IDirService;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -57,7 +59,41 @@ public class DirDelegate implements IDirDelegate, PortletContextAware {
 	public <D extends IDirService> D getDirectoryService(Class<D> requiredType) throws InvocationTargetException {
 		
 		try {
-			return appContext.getBean(requiredType);
+			
+			// A service can be defined multiple times (socle, customisation).
+			Map<String, D> beans = appContext.getBeansOfType(requiredType);
+			
+			// if only 1 service for a given signature
+			if(beans.size() == 1) {
+				return beans.values().iterator().next();
+			}
+			// if many services...
+			else {
+				D selectedBean = null;
+				int currentPrecedence = -1;
+				for(D bean : beans.values()) {
+					
+					// Check precedence defined by the annotation @BeanPrecedence and its value
+					BeanPrecedence precedence = bean.getClass().getAnnotation(BeanPrecedence.class);
+					
+					if(precedence != null && precedence.value() > currentPrecedence) {
+						currentPrecedence = precedence.value();
+						selectedBean = bean;
+					}
+					else if (precedence == null && selectedBean == null) {
+						selectedBean = bean;
+					}
+					
+				}
+				
+				if(selectedBean == null) {
+					throw new NoSuchBeanDefinitionException(requiredType);
+				}
+				
+				return selectedBean;
+			}
+			
+			
 		}
 		catch(NoSuchBeanDefinitionException ex) {
 			throw new InvocationTargetException(ex, "No service registered with type "+requiredType);
