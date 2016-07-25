@@ -30,7 +30,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.Documents;
-import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.cache.services.CacheInfo;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -140,7 +139,8 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 	@ModelAttribute("fiche")
 	public Fiche initFichePerson(PortletRequest request, PortletResponse response) throws CMSException {
 
-		Person userConnecte = (Person) request.getAttribute(Constants.ATTR_LOGGED_PERSON_2);
+		//TODO replace with ATTR_LOGGED_PERSON_2
+		Person userConnecte = (Person) request.getAttribute("osivia.directory.v2.loggedPerson");
 
 //	TODO gérer les déconnectés
 
@@ -266,7 +266,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 			}else{
 
 				
-				Person userConnecte = (Person) request.getAttribute(Constants.ATTR_LOGGED_PERSON_2);
+				Person userConnecte = (Person) request.getAttribute("osivia.directory.v2.loggedPerson");
 				this.updatefichePersonne(fiche, userConnecte, formUpload, result, request, response, status, model);
 
 
@@ -442,7 +442,7 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 				doc = results.get(0);
 			} else {
 
-				Person personConnect = (Person) request.getAttribute(Constants.ATTR_LOGGED_PERSON_2);
+				Person personConnect = (Person) request.getAttribute("osivia.directory.v2.loggedPerson");
 
 				if (p.getUid().equals(personConnect.getUid())) {
 					// création du userProfile si c'est celui de l'utilisateur

@@ -133,7 +133,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
                 List<Name> profiles = new ArrayList<Name>();
                 profiles.add(cp.getDn());
-                searchPers.setPortalPersonProfile(profiles);
+                searchPers.setProfiles(profiles);
 
                 // find all the members
                 allPers = this.personService.findByCriteria(searchPers);
@@ -236,7 +236,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
                 List<Name> profilesDn = new ArrayList<Name>();
                 profilesDn.add(cp.getDn());
-                searchPers.setPortalPersonProfile(profilesDn);
+                searchPers.setProfiles(profilesDn);
 
                 // find all the members
                 allPers = this.personService.findByCriteria(searchPers);
@@ -315,8 +315,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             this.dao.update(profile);
         }
 
-        if (!(person.getPortalPersonProfile().contains(profile.getDn()))) {
-            person.getPortalPersonProfile().add(profile.getDn());
+        if (!(person.getProfiles().contains(profile.getDn()))) {
+            person.getProfiles().add(profile.getDn());
 
             this.personService.update(person);
         }
@@ -349,8 +349,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             this.dao.update(profile);
         }
 
-        if (person.getPortalPersonProfile().contains(profile.getDn())) {
-            person.getPortalPersonProfile().remove(profile.getDn());
+        if (person.getProfiles().contains(profile.getDn())) {
+            person.getProfiles().remove(profile.getDn());
 
             this.personService.update(person);
         }
@@ -482,7 +482,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         List<Name> profilesDn = new ArrayList<Name>();
         profilesDn.add(groupToRemove.getDn());
-        searchPers.setPortalPersonProfile(profilesDn);
+        searchPers.setProfiles(profilesDn);
 
         // find all the members and unlink them
         List<Person> personToDetach = this.personService.findByCriteria(searchPers);

@@ -69,8 +69,8 @@ public final class PersonImpl implements Person, Serializable {
 	@Attribute
 	private String uid;
 	
-	@Attribute
-	private List<Name> portalPersonProfile = new ArrayList<Name>();
+	@Attribute(name="portalPersonProfile")
+	private List<Name> profiles = new ArrayList<Name>();
 	
 	@Attribute
 	@Transient
@@ -212,16 +212,16 @@ public final class PersonImpl implements Person, Serializable {
 	 * @see org.osivia.directory.v2.model.Person#getPortalPersonProfile()
 	 */
 	@Override
-	public List<Name> getPortalPersonProfile() {
-		return portalPersonProfile;
+	public List<Name> getProfiles() {
+		return profiles;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.osivia.directory.v2.model.Person#setPortalPersonProfile(java.util.List)
 	 */
 	@Override
-	public void setPortalPersonProfile(List<Name> portalPersonProfile) {
-		this.portalPersonProfile = portalPersonProfile;
+	public void setProfiles(List<Name> profiles) {
+		this.profiles = profiles;
 	}
 
 	/**
