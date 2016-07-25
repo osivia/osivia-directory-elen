@@ -168,6 +168,27 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    public WorkspaceMember getMember(String workspaceId, String uid) {
+        WorkspaceMember result = null;
+
+        // Workspace members
+        List<WorkspaceMember> members = this.getAllMembers(workspaceId);
+
+        for (WorkspaceMember member : members) {
+            if (StringUtils.equals(member.getMember().getUid(), uid)) {
+                result = member;
+                break;
+            }
+        }
+
+        return result;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void create(String workspaceId, Person owner) {
         this.create(workspaceId, Arrays.asList(WorkspaceRole.values()), owner);
     }

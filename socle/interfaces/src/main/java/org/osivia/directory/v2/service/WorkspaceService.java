@@ -68,6 +68,16 @@ public interface WorkspaceService extends IDirService {
 
 
     /**
+     * Get workspace member, from his UID.
+     * 
+     * @param workspaceId workspace identifier
+     * @param uid person UID
+     * @return workspace member
+     */
+    WorkspaceMember getMember(String workspaceId, String uid);
+
+
+    /**
      * Create a workspace with all default roles.
      *
      * @param workspaceId workspace identifier
