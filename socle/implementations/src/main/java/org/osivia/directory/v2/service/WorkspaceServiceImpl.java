@@ -29,6 +29,7 @@ import org.osivia.directory.v2.model.ext.WorkspaceRole;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -48,14 +49,17 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
     /** Person service. */
     @Autowired
+    @Qualifier("personService")
     private PersonService personService;
 
     /** Collab profile sample. */
     @Autowired
+    @Qualifier("collabProfile")
     private CollabProfile sample;
 
     /** Collab profile DAO. */
     @Autowired
+    @Qualifier("collabProfileDao")
     private CollabProfileDao dao;
 
 
@@ -81,7 +85,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public CollabProfile getProfile(String cn) {
-        Name dn = this.sample.buildDn(cn);
+        Name dn = this.getSample().buildDn(cn);
 
         return this.getProfile(dn);
     }
@@ -92,7 +96,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public CollabProfile getProfile(Name dn) {
-        return this.dao.findByDn(dn);
+        return this.getDao().findByDn(dn);
     }
 
 
@@ -113,7 +117,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public List<CollabProfile> findByCriteria(CollabProfile profile) {
-        return this.dao.findByCriteria(profile);
+        return this.getDao().findByCriteria(profile);
     }
 
 
@@ -136,7 +140,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 searchPers.setProfiles(profiles);
 
                 // find all the members
-                allPers = this.personService.findByCriteria(searchPers);
+                allPers = this.getPersonService().findByCriteria(searchPers);
             }
         }
 
@@ -205,9 +209,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         members.setCn(cn);
         members.setWorkspaceId(workspaceId);
         members.setType(WorkspaceGroupType.space_group);
-        members.setDn(this.sample.buildDn(cn));
+        members.setDn(this.getSample().buildDn(cn));
 
-        this.dao.create(members);
+        this.getDao().create(members);
 
         // The owner is a member of the workspace
         this.attachPerson(owner, members);
@@ -220,9 +224,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             roleGroup.setWorkspaceId(workspaceId);
             roleGroup.setType(WorkspaceGroupType.security_group);
             roleGroup.setRole(entry);
-            roleGroup.setDn(this.sample.buildDn(cnRole));
+            roleGroup.setDn(this.getSample().buildDn(cnRole));
 
-            this.dao.create(roleGroup);
+            this.getDao().create(roleGroup);
 
             // Define the owner
             if (WorkspaceRole.OWNER.equals(entry)) {
@@ -230,15 +234,6 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             }
         }
 
-        // Creation of the pending group
-        CollabProfile pending = this.context.getBean(CollabProfile.class);
-        cn = workspaceId + "_pending";
-        pending.setCn(cn);
-        pending.setWorkspaceId(workspaceId);
-        pending.setType(WorkspaceGroupType.pending_group);
-        pending.setDn(this.sample.buildDn(cn));
-
-        this.dao.create(pending);
     }
 
 
@@ -260,7 +255,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 searchPers.setProfiles(profilesDn);
 
                 // find all the members
-                allPers = this.personService.findByCriteria(searchPers);
+                allPers = this.getPersonService().findByCriteria(searchPers);
             }
         }
 
@@ -273,7 +268,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         // remove all groups about this workspace
         for (CollabProfile cp : list) {
-            this.dao.delete(cp);
+            this.getDao().delete(cp);
         }
     }
 
@@ -301,7 +296,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
             }
         }
 
-        Person person = this.personService.getPerson(memberDn);
+        Person person = this.getPersonService().getPerson(memberDn);
         WorkspaceMemberImpl member = new WorkspaceMemberImpl(person);
         member.setRole(role);
 
@@ -333,13 +328,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (!(profile.getUniqueMember().contains(person.getDn()))) {
             profile.getUniqueMember().add(person.getDn());
 
-            this.dao.update(profile);
+            this.getDao().update(profile);
         }
 
         if (!(person.getProfiles().contains(profile.getDn()))) {
             person.getProfiles().add(profile.getDn());
 
-            this.personService.update(person);
+            this.getPersonService().update(person);
         }
     }
 
@@ -351,7 +346,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @param cp collab profile
      */
     private void attachPerson(Name memberDn, CollabProfile cp) {
-        Person person = this.personService.getPerson(memberDn);
+        Person person = this.getPersonService().getPerson(memberDn);
         this.attachPerson(person, cp);
     }
 
@@ -367,13 +362,13 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
             profile.getUniqueMember().remove(person.getDn());
 
-            this.dao.update(profile);
+            this.getDao().update(profile);
         }
 
         if (person.getProfiles().contains(profile.getDn())) {
             person.getProfiles().remove(profile.getDn());
 
-            this.personService.update(person);
+            this.getPersonService().update(person);
         }
     }
 
@@ -385,7 +380,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @param cp collab profile
      */
     private void detachPerson(Name memberDn, CollabProfile cp) {
-        Person person = this.personService.getPerson(memberDn);
+        Person person = this.getPersonService().getPerson(memberDn);
         this.detachPerson(person, cp);
     }
 
@@ -420,9 +415,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         if (StringUtils.isNotBlank(description)) {
             localGroup.setDescription(description);
         }
-        localGroup.setDn(this.sample.buildDn(cn));
+        localGroup.setDn(this.getSample().buildDn(cn));
 
-        this.dao.create(localGroup);
+        this.getDao().create(localGroup);
 
         return localGroup;
     }
@@ -455,7 +450,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     public void addMemberToLocalGroup(String workspaceId, String localGroupCn, String memberUid) {
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
-        Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
+        Name memberDn = this.getPersonService().getEmptyPerson().buildDn(memberUid);
         this.addMemberToLocalGroup(workspaceId, localGroupDn, memberDn);
     }
 
@@ -465,7 +460,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public void removeMemberFromLocalGroup(String workspaceId, Name localGroupDn, Name memberDn) {
-        CollabProfile localGroup = this.dao.findByDn(localGroupDn);
+        CollabProfile localGroup = this.getDao().findByDn(localGroupDn);
         if (localGroup.getType() == WorkspaceGroupType.local_group) {
             this.detachPerson(memberDn, localGroup);
         }
@@ -478,7 +473,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     public void removeMemberFromLocalGroup(String workspaceId, String localGroupCn, String memberUid) {
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
-        Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
+        Name memberDn = this.getPersonService().getEmptyPerson().buildDn(memberUid);
         this.removeMemberFromLocalGroup(workspaceId, localGroupDn, memberDn);
     }
 
@@ -488,7 +483,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public void modifyLocalGroup(CollabProfile localGroup) {
-        this.dao.update(localGroup);
+        this.getDao().update(localGroup);
     }
 
 
@@ -497,7 +492,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public void removeLocalGroup(String workspaceId, Name dn) {
-        CollabProfile groupToRemove = this.dao.findByDn(dn);
+        CollabProfile groupToRemove = this.getDao().findByDn(dn);
 
         Person searchPers = this.context.getBean(Person.class);
 
@@ -506,12 +501,12 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         searchPers.setProfiles(profilesDn);
 
         // find all the members and unlink them
-        List<Person> personToDetach = this.personService.findByCriteria(searchPers);
+        List<Person> personToDetach = this.getPersonService().findByCriteria(searchPers);
         for (Person p : personToDetach) {
             this.detachPerson(p, groupToRemove);
         }
 
-        this.dao.delete(groupToRemove);
+        this.getDao().delete(groupToRemove);
     }
 
 
@@ -520,8 +515,20 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public void removeLocalGroup(String workspaceId, String cn) {
-        Name dn = this.sample.buildDn(cn);
+        Name dn = this.getSample().buildDn(cn);
         this.removeLocalGroup(workspaceId, dn);
     }
+    
+    
+    protected PersonService getPersonService() {
+    	return personService;
+    }
 
+    protected CollabProfile getSample() {
+    	return sample;
+    }
+    
+    protected CollabProfileDao getDao() {
+    	return dao;
+    }
 }

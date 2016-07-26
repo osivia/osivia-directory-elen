@@ -20,6 +20,7 @@ import javax.naming.Name;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.query.LdapQueryBuilder;
@@ -38,13 +39,14 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 	
 	
 	@Autowired
+	@Qualifier("collabProfile")
 	private CollabProfile sample;	
 
 	
 	@Override
 	public CollabProfile findByDn(Name dn) {
 		
-		return template.findByDn(dn, sample.getClass());
+		return template.findByDn(dn, getSample().getClass());
 	}
 
 	@Override
@@ -57,7 +59,7 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 		
 		query.filter(filter);
 		
-		return (List<CollabProfile>) template.find(query, sample.getClass());
+		return (List<CollabProfile>) template.find(query, getSample().getClass());
 	}
 	
 	@Override
@@ -73,5 +75,9 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 	@Override
 	public void delete(CollabProfile profile) {
 		template.delete(profile);
+	}
+	
+	protected CollabProfile getSample() {
+		return sample;
 	}
 }

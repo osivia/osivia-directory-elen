@@ -24,6 +24,7 @@ import javax.naming.directory.ModificationItem;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ldap.NameNotFoundException;
@@ -41,6 +42,7 @@ public class PersonDaoImpl implements PersonDao {
 
 
 	@Autowired
+	@Qualifier("person")
 	private Person sample;
 	
 	
@@ -94,7 +96,7 @@ public class PersonDaoImpl implements PersonDao {
 	public boolean verifyPassword(String uid, String currentPassword) {
 		
 		Name dn = getSample().buildDn(uid);;
-		String personFilter = MappingHelper.getBasicFilter(sample).encode();
+		String personFilter = MappingHelper.getBasicFilter(getSample()).encode();
 		return template.authenticate(dn, personFilter, currentPassword);
 		
 	}	
