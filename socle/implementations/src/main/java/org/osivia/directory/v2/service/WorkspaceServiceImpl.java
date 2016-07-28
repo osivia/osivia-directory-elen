@@ -51,6 +51,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Autowired
     @Qualifier("personService")
     private PersonService personService;
+    
+    /** Person service. */
+    @Autowired
+    @Qualifier("person")
+    private Person personSample;
 
     /** Collab profile sample. */
     @Autowired
@@ -76,7 +81,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public CollabProfile getEmptyProfile() {
-        return this.context.getBean(CollabProfile.class);
+        return this.context.getBean(getSample().getClass());
     }
 
 
@@ -105,7 +110,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public List<CollabProfile> findByWorkspaceId(String workspaceId) {
-        CollabProfile searchProfile = this.context.getBean(CollabProfile.class);
+        CollabProfile searchProfile = this.context.getBean(getSample().getClass());
         searchProfile.setWorkspaceId(workspaceId);
 
         return this.findByCriteria(searchProfile);
@@ -133,7 +138,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Person> allPers = new ArrayList<Person>();
         for (CollabProfile cp : list) {
             if (cp.getType() == WorkspaceGroupType.space_group) {
-                Person searchPers = this.context.getBean(Person.class);
+                Person searchPers = this.context.getBean(getPersonSample().getClass());
 
                 List<Name> profiles = new ArrayList<Name>();
                 profiles.add(cp.getDn());
@@ -204,7 +209,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     public void create(String workspaceId, List<WorkspaceRole> roles, Person owner) {
         // Creation of the member group
-        CollabProfile members = this.context.getBean(CollabProfile.class);
+        CollabProfile members = this.context.getBean(getSample().getClass());
         String cn = workspaceId + "_members";
         members.setCn(cn);
         members.setWorkspaceId(workspaceId);
@@ -218,7 +223,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         // Création of security groups
         for (WorkspaceRole entry : roles) {
-            CollabProfile roleGroup = this.context.getBean(CollabProfile.class);
+            CollabProfile roleGroup = this.context.getBean(getSample().getClass());
             String cnRole = workspaceId + "_" + entry.getId();
             roleGroup.setCn(cnRole);
             roleGroup.setWorkspaceId(workspaceId);
@@ -248,7 +253,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Person> allPers = new ArrayList<Person>();
         for (CollabProfile cp : list) {
             if (cp.getType() == WorkspaceGroupType.space_group) {
-                Person searchPers = this.context.getBean(Person.class);
+                Person searchPers = this.context.getBean(getPersonSample().getClass());
 
                 List<Name> profilesDn = new ArrayList<Name>();
                 profilesDn.add(cp.getDn());
@@ -406,7 +411,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         }
 
         // local group creation
-        CollabProfile localGroup = this.context.getBean(CollabProfile.class);
+        CollabProfile localGroup = this.context.getBean(getSample().getClass());
         String cn = workspaceId + "_" + Integer.toString(i);
         localGroup.setCn(cn);
         localGroup.setWorkspaceId(workspaceId);
@@ -494,7 +499,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public void removeLocalGroup(String workspaceId, Name dn) {
         CollabProfile groupToRemove = this.getDao().findByDn(dn);
 
-        Person searchPers = this.context.getBean(Person.class);
+        Person searchPers = this.context.getBean(getPersonSample().getClass());
 
         List<Name> profilesDn = new ArrayList<Name>();
         profilesDn.add(groupToRemove.getDn());
@@ -530,5 +535,9 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     
     protected CollabProfileDao getDao() {
     	return dao;
+    }
+    
+    protected Person getPersonSample() {
+    	return personSample;
     }
 }
