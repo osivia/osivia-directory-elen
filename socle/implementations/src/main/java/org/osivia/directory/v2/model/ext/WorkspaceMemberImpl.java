@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.urls.Link;
 
 /**
  * Impl of a workspace member
@@ -35,6 +36,8 @@ public class WorkspaceMemberImpl implements WorkspaceMember, Serializable {
 	
 
 	private final Person member;
+	
+	private Link cardUrl;
 	
 	private WorkspaceRole role;
 	
@@ -56,6 +59,16 @@ public class WorkspaceMemberImpl implements WorkspaceMember, Serializable {
 	@Override
 	public Person getMember() {
 		return member;
+	}
+	
+	
+
+	public Link getCard() {
+		return cardUrl;
+	}
+
+	public void setCard(Link cardUrl) {
+		this.cardUrl = cardUrl;
 	}
 
 	/* (non-Javadoc)

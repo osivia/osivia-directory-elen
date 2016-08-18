@@ -13,16 +13,21 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Name;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osivia.directory.v2.dao.PersonDao;
+import org.osivia.portal.api.PortalException;
+import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
+import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.core.cms.CMSException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,22 +49,25 @@ public class PersonServiceImpl implements PersonService {
 
 	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
 
-	
-	@Autowired
-	private ApplicationContext context;
-	
-	@Autowired
-	@Qualifier("person")
-	private Person sample;
-	
-	@Autowired
-	@Qualifier("personDao")
-	private PersonDao dao;
 
+	private static final String CARD_INSTANCE = "directory-person-card-instance";
+
+	
+	@Autowired
+	protected ApplicationContext context;
+	
+	@Autowired
+	protected Person sample;
+	
+	@Autowired
+	protected PersonDao dao;
+
+	@Autowired
+	protected IPortalUrlFactory urlFactory;
 	
 	@Override
 	public Person getEmptyPerson() {
-		return context.getBean(getSample().getClass());
+		return context.getBean(sample.getClass());
 	}
 	
 	/* (non-Javadoc)
@@ -70,7 +78,7 @@ public class PersonServiceImpl implements PersonService {
 		
 		Person p;
 		try {
-			p = getDao().getPerson(dn);
+			p = dao.getPerson(dn);
 			appendAvatar(p);
 			
 		} catch (NameNotFoundException e) {
@@ -89,7 +97,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person getPerson(String uid) {
 
-		Name dn = getSample().buildDn(uid);;
+		Name dn = sample.buildDn(uid);;
 
 		return getPerson(dn);
 	}
@@ -101,7 +109,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public List<Person> findByCriteria(Person search) {
 
-		List<Person> persons = getDao().findByCriteria(search);
+		List<Person> persons = dao.findByCriteria(search);
 		for(Person p : persons) {
 			appendAvatar(p);
 		}
@@ -115,7 +123,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void create(Person p) {
 		
-		getDao().create(p);
+		dao.create(p);
 		
 	}
 
@@ -124,7 +132,7 @@ public class PersonServiceImpl implements PersonService {
 	 */
 	@Override
 	public void update(Person p) {
-		getDao().update(p);
+		dao.update(p);
 		
 	}
 	
@@ -135,7 +143,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public boolean verifyPassword(String uid, String currentPassword) {
 		
-		return getDao().verifyPassword(uid, currentPassword);
+		return dao.verifyPassword(uid, currentPassword);
 		
 	}	
 	
@@ -145,14 +153,14 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public void updatePassword(Person p, String newPassword) {
 
-		getDao().updatePassword(p, newPassword);
+		dao.updatePassword(p, newPassword);
 	}
 	
 	/**
 	 * Get avatar url for a person
 	 * @param p the person
 	 */
-	private void appendAvatar(Person p) {
+	protected void appendAvatar(Person p) {
 				
 		// 	Append avatar
 		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
@@ -171,17 +179,18 @@ public class PersonServiceImpl implements PersonService {
 	}
 	
 	/**
-	 * Sample entity object, should be redefined for specific mappings
+	 * Generate a portlet url for person card
 	 */
-	protected Person getSample() {
-		return sample;
+	public Link getCardUrl(PortalControllerContext portalControllerContext, Person p) throws PortalException {
+		
+		Map<String, String> windowProperties = new HashMap<String, String>();
+		windowProperties.put("osivia.ajaxLink", "1");
+		windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
+		windowProperties.put("osivia.title", p.getDisplayName());
+		windowProperties.put("uidFichePersonne", p.getUid());
+		
+		return new Link(urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, false),false);
 	}
 	
-	/**
-	 * Sample dao object, should be redefined for specific mappings
-	 */
-	protected PersonDao getDao() {
-		return dao;
-	}
 	
 }

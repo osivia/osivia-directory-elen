@@ -20,6 +20,8 @@ import javax.naming.Name;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
+import org.osivia.portal.api.PortalException;
+import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.IDirService;
 import org.osivia.portal.api.directory.v2.model.Person;
 
@@ -66,7 +68,17 @@ public interface WorkspaceService extends IDirService {
      */
     List<WorkspaceMember> getAllMembers(String workspaceId);
 
-
+    /**
+     * Get all members, rights and local groups, and person card urls.
+     *
+     * @param workspaceId workspace identifier
+     * @return members
+     * @throws PortalException 
+     */
+	List<WorkspaceMember> getAllMembers(PortalControllerContext pcc,
+			String workspaceId) throws PortalException;
+	
+	
     /**
      * Get workspace member, from his UID.
      * 
@@ -215,5 +227,8 @@ public interface WorkspaceService extends IDirService {
      * @param memberUid member UID
      */
     void removeMemberFromLocalGroup(String workspaceId, String localGroupCn, String memberUid);
+
+
+
 
 }

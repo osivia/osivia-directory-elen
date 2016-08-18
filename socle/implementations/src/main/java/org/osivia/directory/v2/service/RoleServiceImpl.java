@@ -29,10 +29,10 @@ import org.springframework.stereotype.Service;
 public class RoleServiceImpl implements RoleService {
 
 	@Autowired
-	private LdapTemplate template;
+	protected LdapTemplate template;
 	
 	@Autowired
-	private Role sample;
+	protected Role sample;
 	
 	public Role getRole(String cn) {
 		

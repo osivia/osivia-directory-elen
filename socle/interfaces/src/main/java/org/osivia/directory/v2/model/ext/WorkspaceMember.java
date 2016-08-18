@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.urls.Link;
 
 /**
  * Object representing a workspace member with his rights on a workspace and the local groups he belongs to.
@@ -59,5 +60,17 @@ public interface WorkspaceMember {
 	 * @param deleted
 	 */
 	public void setDeleted(boolean deleted);
+
+	/**
+	 * Get a link to the card portlet
+	 * @return
+	 */
+	public Link getCard();
+
+	/**
+	 * Sat a link to the card portlet
+	 * @param card
+	 */
+	public void setCard(Link card);
 
 }

@@ -42,19 +42,18 @@ public class PersonDaoImpl implements PersonDao {
 
 
 	@Autowired
-	@Qualifier("person")
-	private Person sample;
+	protected Person sample;
 	
 	
 	@Autowired
-	private LdapTemplate template;
+	protected LdapTemplate template;
 	
 
 	@Override
 	@Cacheable(key = "#dn", value = { "personByDnCache" })
 	public Person getPerson(Name dn) throws NameNotFoundException {
 		
-		Person person = template.findByDn(dn, getSample().getClass());
+		Person person = template.findByDn(dn, sample.getClass());
 		return person;
 
 	}
@@ -70,14 +69,14 @@ public class PersonDaoImpl implements PersonDao {
 		
 		query.filter(filter);
 		
-		return (List<Person>) template.find(query, getSample().getClass());
+		return (List<Person>) template.find(query, sample.getClass());
 	}
 	
 
 	@Override
 	public void create(Person p) {
 		
-		p.setDn(getSample().buildDn(p.getUid()));
+		p.setDn(sample.buildDn(p.getUid()));
 		
 		template.create(p);
 		
@@ -95,8 +94,8 @@ public class PersonDaoImpl implements PersonDao {
 	@Override
 	public boolean verifyPassword(String uid, String currentPassword) {
 		
-		Name dn = getSample().buildDn(uid);;
-		String personFilter = MappingHelper.getBasicFilter(getSample()).encode();
+		Name dn = sample.buildDn(uid);;
+		String personFilter = MappingHelper.getBasicFilter(sample).encode();
 		return template.authenticate(dn, personFilter, currentPassword);
 		
 	}	
@@ -112,10 +111,4 @@ public class PersonDaoImpl implements PersonDao {
 	}	
 	
 	
-	/**
-	 * Sample entity object, should be redefined for specific mappings
-	 */
-	protected Person getSample() {
-		return sample;
-	}
 }

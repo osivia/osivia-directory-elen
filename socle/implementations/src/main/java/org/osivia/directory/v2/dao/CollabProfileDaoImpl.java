@@ -39,14 +39,13 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 	
 	
 	@Autowired
-	@Qualifier("collabProfile")
 	private CollabProfile sample;	
 
 	
 	@Override
 	public CollabProfile findByDn(Name dn) {
 		
-		return template.findByDn(dn, getSample().getClass());
+		return template.findByDn(dn, sample.getClass());
 	}
 
 	@Override
@@ -59,7 +58,7 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 		
 		query.filter(filter);
 		
-		return (List<CollabProfile>) template.find(query, getSample().getClass());
+		return (List<CollabProfile>) template.find(query, sample.getClass());
 	}
 	
 	@Override
@@ -77,7 +76,4 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 		template.delete(profile);
 	}
 	
-	protected CollabProfile getSample() {
-		return sample;
-	}
 }

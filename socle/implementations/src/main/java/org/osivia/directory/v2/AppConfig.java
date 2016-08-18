@@ -15,6 +15,8 @@ package org.osivia.directory.v2;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osivia.portal.api.locator.Locator;
+import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -62,5 +64,11 @@ public class AppConfig {
 		
 		LdapContextSource contextSource = context.getBean(LdapContextSource.class);
 		return new LdapTemplate(contextSource);
+	}
+	
+	@Bean(name="urlFactory")
+	public IPortalUrlFactory getUrlFactory() {
+		
+		return Locator.findMBean(IPortalUrlFactory.class, IPortalUrlFactory.MBEAN_NAME);
 	}
 }
