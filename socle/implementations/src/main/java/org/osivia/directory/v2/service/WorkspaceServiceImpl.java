@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the workspace service.
@@ -209,6 +210,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void create(String workspaceId, Person owner) {
         this.create(workspaceId, Arrays.asList(WorkspaceRole.values()), owner);
     }
@@ -218,6 +220,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void create(String workspaceId, List<WorkspaceRole> roles, Person owner) {
         // Creation of the member group
         CollabProfile members = this.context.getBean(sample.getClass());
@@ -257,6 +260,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     // @CacheEvict(key = "#workspaceId", value = "membersByWksCache")
     public void delete(String workspaceId) {
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
@@ -293,6 +297,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     // @CacheEvict(key = "#workspaceId", value = "membersByWksCache")
     public WorkspaceMember addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role) {
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
@@ -324,6 +329,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     // @CacheEvict(key = "#workspaceId", value = "membersByWksCache")
     public void removeMember(String workspaceId, Name memberDn) {
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
@@ -405,6 +411,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CollabProfile createLocalGroup(String workspaceId, String displayName, String description) {
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
 
@@ -443,6 +450,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addMemberToLocalGroup(String workspaceId, Name localGroupDn, Name memberDn) {
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
 
@@ -464,6 +472,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addMemberToLocalGroup(String workspaceId, String localGroupCn, String memberUid) {
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
         Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
@@ -475,6 +484,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeMemberFromLocalGroup(String workspaceId, Name localGroupDn, Name memberDn) {
         CollabProfile localGroup = this.dao.findByDn(localGroupDn);
         if (localGroup.getType() == WorkspaceGroupType.local_group) {
@@ -487,6 +497,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeMemberFromLocalGroup(String workspaceId, String localGroupCn, String memberUid) {
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
         Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
@@ -498,6 +509,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyLocalGroup(CollabProfile localGroup) {
         this.dao.update(localGroup);
     }
@@ -507,6 +519,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeLocalGroup(String workspaceId, Name dn) {
         CollabProfile groupToRemove = this.dao.findByDn(dn);
 
@@ -530,6 +543,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void removeLocalGroup(String workspaceId, String cn) {
         Name dn = this.sample.buildDn(cn);
         this.removeLocalGroup(workspaceId, dn);

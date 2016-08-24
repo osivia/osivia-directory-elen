@@ -22,8 +22,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManager;
+import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManagerDelegate;
+import org.springframework.ldap.transaction.compensating.manager.TransactionAwareContextSourceProxy;
+import org.springframework.ldap.transaction.compensating.support.DefaultTempEntryRenamingStrategy;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 
 
 /**
@@ -32,6 +40,7 @@ import org.springframework.ldap.core.support.LdapContextSource;
  * @since 4.4
  */
 @Configuration
+@EnableTransactionManagement
 @ComponentScan(basePackages = "org.osivia.directory.v2")
 public class AppConfig {
 	
@@ -66,9 +75,38 @@ public class AppConfig {
 		return new LdapTemplate(contextSource);
 	}
 	
+
+	@Bean(name="contextSourceTransactionAwareProxy")
+	public TransactionAwareContextSourceProxy txProxy() {
+		return new TransactionAwareContextSourceProxy(context.getBean("contextSource", LdapContextSource.class));
+	}	
+	
+	
+	@Bean
+	public ContextSourceTransactionManager getTxManager() {
+		ContextSourceTransactionManager txManager = new ContextSourceTransactionManager();
+		txManager.setContextSource((ContextSource) context.getBean("contextSourceTransactionAwareProxy"));
+		txManager.setRenamingStrategy(new DefaultTempEntryRenamingStrategy());		
+		
+		return txManager;
+	}	
+	
+	/**
+	 * For composite TM
+	 * @return
+	 */
+	@Bean(name="ldapTransactionManagerDelegate")
+	public ContextSourceTransactionManagerDelegate getTxManagerDelegate() {
+		ContextSourceTransactionManagerDelegate txManagerDelegate = new ContextSourceTransactionManagerDelegate();
+		txManagerDelegate.setContextSource((ContextSource) context.getBean("contextSourceTransactionAwareProxy"));
+		
+		return txManagerDelegate;
+	}	
+	
 	@Bean(name="urlFactory")
 	public IPortalUrlFactory getUrlFactory() {
 		
 		return Locator.findMBean(IPortalUrlFactory.class, IPortalUrlFactory.MBEAN_NAME);
 	}
+
 }
