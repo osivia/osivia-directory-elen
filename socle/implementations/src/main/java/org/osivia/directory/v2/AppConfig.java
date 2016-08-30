@@ -47,8 +47,8 @@ public class AppConfig {
 	@Autowired
 	private ApplicationContext context;
 
-	@Bean(name="contextSource")
-	public LdapContextSource getLdapContextSource() {
+	@Bean(name="contextSourceTransactionAwareProxy")
+	public TransactionAwareContextSourceProxy txProxy() {
 		
 		LdapContextSource source = new LdapContextSource();
 		source.setUrl(System.getProperty("ldap.url"));
@@ -63,23 +63,17 @@ public class AppConfig {
 		Map<String, Object> baseEnvironmentProperties = new HashMap<String, Object>();
 		baseEnvironmentProperties.put("com.sun.jndi.ldap.connect.timeout", System.getProperty("ldap.timeout"));
 		source.setBaseEnvironmentProperties(baseEnvironmentProperties);
-	
-		return source;
-	}
-
+		source.afterPropertiesSet();		
+		
+		return new TransactionAwareContextSourceProxy(source);
+	}	
 	
 	@Bean(name="ldapTemplate")
 	public LdapTemplate getLdapTemplate() {
 		
-		LdapContextSource contextSource = context.getBean(LdapContextSource.class);
+		TransactionAwareContextSourceProxy contextSource = context.getBean(TransactionAwareContextSourceProxy.class);
 		return new LdapTemplate(contextSource);
 	}
-	
-
-	@Bean(name="contextSourceTransactionAwareProxy")
-	public TransactionAwareContextSourceProxy txProxy() {
-		return new TransactionAwareContextSourceProxy(context.getBean("contextSource", LdapContextSource.class));
-	}	
 	
 	
 	@Bean
