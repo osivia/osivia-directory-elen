@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.urls.Link;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * ODM of a person
+ * 
  * @author Loïc Billon
  * @since 4.4
  */
@@ -40,210 +42,251 @@ import org.springframework.stereotype.Component;
 @Entry(objectClasses = {"portalPerson"})
 public final class PersonImpl implements Person, Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5043314855366729485L;
+    /** Default serial version UID. */
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	private Name dn;
-	
-	@Attribute
-	private String cn;
-	
-	@Attribute
-	private String sn;
-	
-	@Attribute
-	private String displayName;
-	
-	@Attribute
-	private String givenName;
-	
-	@Attribute
-	private String mail;
-	
-	@Attribute
-	private String title;
-	
-	@Attribute
-	private String uid;
-	
-	@Attribute(name="portalPersonProfile")
-	private List<Name> profiles = new ArrayList<Name>();
-	
-	@Attribute
-	@Transient
-	private String userPassword;
-	
-	/** Avatar */
-	@Transient
-	private Link avatar = new Link("", false);
+    /** DN. */
+    @Id
+    private Name dn;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getDn()
-	 */
-	@Override
-	public Name getDn() {
-		return dn;
-	}
+    /** CN. */
+    @Attribute
+    private String cn;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setDn(javax.naming.Name)
-	 */
-	@Override
-	public void setDn(Name dn) {
-		this.dn = dn;
-	}
+    /** SN. */
+    @Attribute
+    private String sn;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getCn()
-	 */
-	@Override
-	public String getCn() {
-		return cn;
-	}
+    /** Display name. */
+    @Attribute
+    private String displayName;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setCn(java.lang.String)
-	 */
-	@Override
-	public void setCn(String cn) {
-		this.cn = cn;
-	}
+    /** Given name. */
+    @Attribute
+    private String givenName;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getSn()
-	 */
-	@Override
-	public String getSn() {
-		return sn;
-	}
+    /** Email. */
+    @Attribute
+    private String mail;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setSn(java.lang.String)
-	 */
-	@Override
-	public void setSn(String sn) {
-		this.sn = sn;
-	}
+    /** Title. */
+    @Attribute
+    private String title;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getDisplayName()
-	 */
-	@Override
-	public String getDisplayName() {
-		return displayName;
-	}
+    /** UID. */
+    @Attribute
+    private String uid;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setDisplayName(java.lang.String)
-	 */
-	@Override
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    /** Profiles. */
+    @Attribute(name = "portalPersonProfile")
+    private List<Name> profiles;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getGivenName()
-	 */
-	@Override
-	public String getGivenName() {
-		return givenName;
-	}
+    /** User password. */
+    @Attribute
+    @Transient
+    private String userPassword;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setGivenName(java.lang.String)
-	 */
-	@Override
-	public void setGivenName(String givenName) {
-		this.givenName = givenName;
-	}
+    /** Avatar */
+    @Transient
+    private Link avatar;
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getMail()
-	 */
-	@Override
-	public String getMail() {
-		return mail;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setMail(java.lang.String)
-	 */
-	@Override
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
+    /**
+     * Constructor.
+     */
+    public PersonImpl() {
+        super();
+        this.profiles = new ArrayList<Name>();
+        this.avatar = new Link(StringUtils.EMPTY, false);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getTitle()
-	 */
-	@Override
-	public String getTitle() {
-		return title;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setTitle(java.lang.String)
-	 */
-	@Override
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Name getDn() {
+        return this.dn;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getUid()
-	 */
-	@Override
-	public String getUid() {
-		return uid;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setUid(java.lang.String)
-	 */
-	@Override
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDn(Name dn) {
+        this.dn = dn;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#getPortalPersonProfile()
-	 */
-	@Override
-	public List<Name> getProfiles() {
-		return profiles;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.model.Person#setPortalPersonProfile(java.util.List)
-	 */
-	@Override
-	public void setProfiles(List<Name> profiles) {
-		this.profiles = profiles;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCn() {
+        return this.cn;
+    }
 
-	/**
-	 * @return the avatar
-	 */
-	public Link getAvatar() {
-		return avatar;
-	}
 
-	/**
-	 * @param avatar the avatar to set
-	 */
-	public void setAvatar(Link avatar) {
-		this.avatar = avatar;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCn(String cn) {
+        this.cn = cn;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.model.Person#buildDn(java.lang.String)
-	 */
-	@Override
-	public Name buildDn(String uid) {
-		return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=users").add("uid="+uid).build();
-	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSn() {
+        return this.sn;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getGivenName() {
+        return this.givenName;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMail() {
+        return this.mail;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTitle() {
+        return this.title;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getUid() {
+        return this.uid;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Name> getProfiles() {
+        return this.profiles;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setProfiles(List<Name> profiles) {
+        this.profiles = profiles;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Link getAvatar() {
+        return this.avatar;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAvatar(Link avatar) {
+        this.avatar = avatar;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Name buildDn(String uid) {
+        return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=users").add("uid=" + uid).build();
+    }
+
 }
