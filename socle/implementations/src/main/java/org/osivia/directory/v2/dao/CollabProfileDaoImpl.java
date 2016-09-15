@@ -53,6 +53,7 @@ public class CollabProfileDaoImpl implements CollabProfileDao {
 	public List<CollabProfile> findByCriteria(CollabProfile profile) {
 		
 		LdapQueryBuilder query = LdapQueryBuilder.query();
+		query.base(System.getProperty("ldap.base"));
 		
 		AndFilter filter = MappingHelper.generateAndFilter(profile);
 		

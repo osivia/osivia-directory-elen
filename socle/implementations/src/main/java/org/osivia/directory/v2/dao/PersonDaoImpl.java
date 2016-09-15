@@ -64,6 +64,7 @@ public class PersonDaoImpl implements PersonDao {
 		
 
 		LdapQueryBuilder query = LdapQueryBuilder.query();
+		query.base(System.getProperty("ldap.base"));
 		
 		OrFilter filter = MappingHelper.generateOrFilter(p);
 		
