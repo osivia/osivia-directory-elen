@@ -31,7 +31,6 @@ import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.core.cms.CMSException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -97,7 +96,7 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person getPerson(String uid) {
 
-		Name dn = sample.buildDn(uid);;
+        Name dn = sample.buildDn(uid);
 
 		return getPerson(dn);
 	}
