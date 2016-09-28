@@ -26,15 +26,24 @@ import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
+import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
+import org.osivia.portal.core.cms.CMSException;
+import org.osivia.portal.core.cms.CMSServiceCtx;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoException;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 
 /**
  * Implementation of the workspace service.
@@ -44,27 +53,31 @@ import org.springframework.transaction.annotation.Transactional;
  * @see WorkspaceService
  */
 @Service
-public class WorkspaceServiceImpl implements WorkspaceService {
+public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContextAware {
 
-    /** Application context. */
+    /** Nuxeo service. */
     @Autowired
-    protected ApplicationContext context;
+    private INuxeoService nuxeoService;
 
     /** Person service. */
     @Autowired
-    protected PersonService personService;
+    private PersonService personService;
     
     /** Person service. */
     @Autowired
-    protected Person personSample;
+    private Person personSample;
 
     /** Collab profile sample. */
     @Autowired
-    protected CollabProfile sample;
+    private CollabProfile sample;
 
     /** Collab profile DAO. */
     @Autowired
-    protected CollabProfileDao dao;
+    private CollabProfileDao dao;
+
+
+    /** Application context. */
+    private ApplicationContext applicationContext;
 
 
     /**
@@ -80,7 +93,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public CollabProfile getEmptyProfile() {
-        return this.context.getBean(sample.getClass());
+        return this.applicationContext.getBean(sample.getClass());
     }
 
 
@@ -109,7 +122,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      */
     @Override
     public List<CollabProfile> findByWorkspaceId(String workspaceId) {
-        CollabProfile searchProfile = this.context.getBean(sample.getClass());
+        CollabProfile searchProfile = this.applicationContext.getBean(sample.getClass());
         searchProfile.setWorkspaceId(workspaceId);
 
         return this.findByCriteria(searchProfile);
@@ -137,7 +150,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Person> allPers = new ArrayList<Person>();
         for (CollabProfile cp : list) {
             if (cp.getType() == WorkspaceGroupType.space_group) {
-                Person searchPers = this.context.getBean(personSample.getClass());
+                Person searchPers = this.applicationContext.getBean(personSample.getClass());
 
                 List<Name> profiles = new ArrayList<Name>();
                 profiles.add(cp.getDn());
@@ -223,7 +236,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Transactional(rollbackFor = Exception.class)
     public void create(String workspaceId, List<WorkspaceRole> roles, Person owner) {
         // Creation of the member group
-        CollabProfile members = this.context.getBean(sample.getClass());
+        CollabProfile members = this.applicationContext.getBean(sample.getClass());
         String cn = workspaceId + "_members";
         members.setCn(cn);
         members.setWorkspaceId(workspaceId);
@@ -237,7 +250,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
 
         // Création of security groups
         for (WorkspaceRole entry : roles) {
-            CollabProfile roleGroup = this.context.getBean(sample.getClass());
+            CollabProfile roleGroup = this.applicationContext.getBean(sample.getClass());
             String cnRole = workspaceId + "_" + entry.getId();
             roleGroup.setCn(cnRole);
             roleGroup.setWorkspaceId(workspaceId);
@@ -268,7 +281,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Person> allPers = new ArrayList<Person>();
         for (CollabProfile cp : list) {
             if (cp.getType() == WorkspaceGroupType.space_group) {
-                Person searchPers = this.context.getBean(personSample.getClass());
+                Person searchPers = this.applicationContext.getBean(personSample.getClass());
 
                 List<Name> profilesDn = new ArrayList<Name>();
                 profilesDn.add(cp.getDn());
@@ -347,16 +360,23 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @param profile collab profile
      */
     private void attachPerson(Person person, CollabProfile profile) {
+        // Update profile
         if (!(profile.getUniqueMember().contains(person.getDn()))) {
             profile.getUniqueMember().add(person.getDn());
 
             this.dao.update(profile);
         }
 
+        // Update person
         if (!(person.getProfiles().contains(profile.getDn()))) {
             person.getProfiles().add(profile.getDn());
 
             this.personService.update(person);
+        }
+
+        // Update workspace
+        if (WorkspaceGroupType.space_group.equals(profile.getType())) {
+            this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), true);
         }
     }
 
@@ -380,17 +400,23 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @param profile collab profile
      */
     private void detachPerson(Person person, CollabProfile profile) {
+        // Update profile
         if (profile.getUniqueMember().contains(person.getDn())) {
-
             profile.getUniqueMember().remove(person.getDn());
 
             this.dao.update(profile);
         }
 
+        // Update person
         if (person.getProfiles().contains(profile.getDn())) {
             person.getProfiles().remove(profile.getDn());
 
             this.personService.update(person);
+        }
+
+        // Update workspace
+        if (WorkspaceGroupType.space_group.equals(profile.getType())) {
+            this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
         }
     }
 
@@ -404,6 +430,38 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private void detachPerson(Name memberDn, CollabProfile cp) {
         Person person = this.personService.getPerson(memberDn);
         this.detachPerson(person, cp);
+    }
+
+
+    /**
+     * Update workspace.
+     * 
+     * @param workspaceId workspace identifier
+     * @param user user identifier
+     * @param attach true if user is attached, false if user is detached
+     */
+    private void updateWorkspace(String workspaceId, String user, boolean attach) {
+        // CMS customizer
+        INuxeoCustomizer cmsCustomizer = this.nuxeoService.getCMSCustomizer();
+        // CMS context
+        CMSServiceCtx cmsContext = CMSServiceCtx.getDecontextualizedContext();
+        cmsContext.setScope("superuser_no_cache");
+
+        // Nuxeo command
+        INuxeoCommand command = this.applicationContext.getBean(UpdateWorkspaceCommand.class, workspaceId, user, attach);
+
+        try {
+            cmsCustomizer.executeNuxeoCommand(cmsContext, command);
+        } catch (CMSException e) {
+            int errorCode = e.getErrorCode();
+            if (errorCode == CMSException.ERROR_NOTFOUND) {
+                throw new NuxeoException(NuxeoException.ERROR_NOTFOUND);
+            } else if (errorCode == CMSException.ERROR_FORBIDDEN) {
+                throw new NuxeoException(NuxeoException.ERROR_FORBIDDEN);
+            } else {
+                throw new NuxeoException(NuxeoException.ERROR_UNAVAILAIBLE, e.getCause());
+            }
+        }
     }
 
 
@@ -429,7 +487,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         }
 
         // local group creation
-        CollabProfile localGroup = this.context.getBean(sample.getClass());
+        CollabProfile localGroup = this.applicationContext.getBean(sample.getClass());
         String cn = workspaceId + "_" + Integer.toString(i);
         localGroup.setCn(cn);
         localGroup.setWorkspaceId(workspaceId);
@@ -523,7 +581,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     public void removeLocalGroup(String workspaceId, Name dn) {
         CollabProfile groupToRemove = this.dao.findByDn(dn);
 
-        Person searchPers = this.context.getBean(personSample.getClass());
+        Person searchPers = this.applicationContext.getBean(personSample.getClass());
 
         List<Name> profilesDn = new ArrayList<Name>();
         profilesDn.add(groupToRemove.getDn());
@@ -548,6 +606,14 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         Name dn = this.sample.buildDn(cn);
         this.removeLocalGroup(workspaceId, dn);
     }
-    
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
     
 }

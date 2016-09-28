@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
+import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -29,9 +30,9 @@ import org.springframework.ldap.transaction.compensating.manager.ContextSourceTr
 import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManagerDelegate;
 import org.springframework.ldap.transaction.compensating.manager.TransactionAwareContextSourceProxy;
 import org.springframework.ldap.transaction.compensating.support.DefaultTempEntryRenamingStrategy;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 
 
 /**
@@ -97,10 +98,26 @@ public class AppConfig {
 		return txManagerDelegate;
 	}	
 	
+
+    /**
+     * Get portal URL factory.
+     * 
+     * @return portal URL factory
+     */
 	@Bean(name="urlFactory")
 	public IPortalUrlFactory getUrlFactory() {
-		
 		return Locator.findMBean(IPortalUrlFactory.class, IPortalUrlFactory.MBEAN_NAME);
 	}
+
+
+    /**
+     * Get Nuxeo service.
+     * 
+     * @return Nuxeo service
+     */
+    @Bean
+    public INuxeoService getNuxeoService() {
+        return Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
+    }
 
 }
