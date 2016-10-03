@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
@@ -285,8 +286,19 @@ public final class PersonImpl implements Person, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public Name buildDn(String uid) {
-        return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=users").add("uid=" + uid).build();
+    public Name buildBaseDn() {
+        return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=users").build();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws InvalidNameException 
+     */
+    @Override
+    public Name buildDn(String uid)  {
+    	
+    	return LdapNameBuilder.newInstance(buildBaseDn()).add("uid=" + uid).build();
+    	    	
     }
 
 }

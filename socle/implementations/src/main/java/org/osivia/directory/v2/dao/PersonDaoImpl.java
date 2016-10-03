@@ -20,6 +20,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
+import javax.naming.directory.SearchControls;
 
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.portal.api.directory.v2.model.Person;
@@ -31,6 +32,7 @@ import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.OrFilter;
 import org.springframework.ldap.query.LdapQueryBuilder;
+import org.springframework.ldap.query.SearchScope;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -48,11 +50,13 @@ public class PersonDaoImpl implements PersonDao {
 	@Autowired
 	protected LdapTemplate template;
 	
-
+	private SearchControls controls;
+		
+	
 	@Override
 	@Cacheable(key = "#dn", value = { "personByDnCache" })
 	public Person getPerson(Name dn) throws NameNotFoundException {
-		
+				
 		Person person = template.findByDn(dn, sample.getClass());
 		return person;
 
@@ -61,16 +65,11 @@ public class PersonDaoImpl implements PersonDao {
 
 	@Override
 	public List<Person> findByCriteria(Person p) {
-		
 
-		LdapQueryBuilder query = LdapQueryBuilder.query();
-		query.base(System.getProperty("ldap.base"));
-		
 		OrFilter filter = MappingHelper.generateOrFilter(p);
+				
+		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
 		
-		query.filter(filter);
-		
-		return (List<Person>) template.find(query, sample.getClass());
 	}
 	
 
@@ -110,6 +109,38 @@ public class PersonDaoImpl implements PersonDao {
 		mods[ 0 ] = new ModificationItem ( DirContext.REPLACE_ATTRIBUTE, userPasswordAttribute  );
 		template.modifyAttributes(p.getDn(), mods);
 	}	
+	
+	
+	/**
+	 * Query optimization
+	 * @return
+	 */
+	protected SearchControls getSearchControls() {
+		
+		if(controls == null) {
+			controls = new SearchControls();
+			
+			controls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+			
+			if(System.getProperty("ldap.searchperson.maxTime") != null) {
+				int timeout = Integer.parseInt("ldap.searchperson.maxTime");
+				controls.setTimeLimit(timeout);
+			}
+			else {
+				controls.setTimeLimit(3000);
+			}
+			
+			if(System.getProperty("ldap.searchperson.maxResults") != null) {
+				int maxResults = Integer.parseInt("ldap.searchperson.maxResults");
+				controls.setCountLimit(maxResults);
+			}
+			else {
+				controls.setCountLimit(20);
+			}
+		}
+		
+		return controls;
+	}
 	
 	
 }
