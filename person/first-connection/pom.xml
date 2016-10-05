@@ -2,76 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.osivia.services</groupId>
+    <parent>
+        <groupId>org.osivia.services.directory.person</groupId>
+        <artifactId>osivia-services-directory-person-parent</artifactId>
+        <version>4.4.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>osivia-services-first-connection</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>OSIVIA Services - First connection</name>
-
-
-    <properties>
-        <toutatice.version>4.4.0-RC4</toutatice.version>
-    </properties>
-
-
-    <dependencies>
-
-        <!-- Toutatice -->
-        <dependency>
-            <groupId>toutatice-portail.cms</groupId>
-            <artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
-            <version>${toutatice.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>toutatice-portail.cms</groupId>
-            <artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
-            <version>${toutatice.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
+    <name>OSIVIA Services - Directory - First connection</name>
 
 
     <build>
         <pluginManagement>
             <plugins>
-
-                <!-- Compiler -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                        <source>1.7</source>
-                        <target>1.7</target>
-                    </configuration>
-                </plugin>
-
-                <!-- Resources -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-
-                <!-- Release -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                        <tagBase>http://www.osivia.org/repos/osivia-services/first-connection/tags</tagBase>
-                        <releaseProfiles>unpack,pack</releaseProfiles>
-                        <preparationGoals>clean install</preparationGoals>
-                        <goals>deploy</goals>
-                    </configuration>
-                </plugin>
 
                 <!-- WAR -->
                 <plugin>
@@ -143,29 +88,5 @@
             
         </plugins>
     </build>
-
-
-    <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/first-connection/trunk</developerConnection>
-    </scm>
-
-
-    <distributionManagement>
-        <repository>
-            <id>osivia-releases</id>
-            <url>http://www.osivia.org/nexus/content/repositories/osivia-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>osivia-snapshots</id>
-            <url>http://www.osivia.org/nexus/content/repositories/osivia-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
-
-    <organization>
-        <name>OSIVIA</name>
-        <url>http://www.osivia.org/</url>
-    </organization>
-
 </project>
 
