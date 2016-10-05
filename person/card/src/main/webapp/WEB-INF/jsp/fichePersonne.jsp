@@ -30,10 +30,6 @@
 				</c:if>
 			
 				${fiche.userConsulte.displayName}  
-
-				<c:if test="${fiche.levelConsultation.showLogin}">
-					<small>(${fiche.idConsulte})</small>
-				</c:if>
 			</h1>
 		</div>
 	</div>
@@ -88,37 +84,37 @@
 			<p class="form-control-static">${fiche.profilNuxeo.telMobile}</p>
 		</div>
 	</div>
-	<c:if test="${fiche.levelConsultation.showMail}">
-		<div class="form-group">
-			<label class="col-md-2 control-label">
-				<op:translate  key="label.mail" />
-			</label>
-			<div class="col-md-10"><p class="form-control-static">${fiche.userConsulte.email}</p></div>
-		</div>
-	</c:if>	
 
-
-</div>
-
-
-<div class="row">
-	<div class="col-md-offset-2 col-md-10">
-
-		<div class="btn-toolbar no-ajax-link">
-
-			<a class="btn btn-primary" href="${modify}"> <i
-				class="glyphicons pencil"></i> <span><op:translate 
-						key="label.btn.edit" /></span>
-			</a>
-
-			<a class="btn btn-default" href="${chgtMdp}"> <i
-				class="glyphicons keys"></i> <span><op:translate 
-						key="label.btn.chgpwd" /></span>
-			</a>
-		</div>
-
+	<div class="form-group">
+		<label class="col-md-2 control-label">
+			<op:translate  key="label.mail" />
+		</label>
+		<div class="col-md-10"><p class="form-control-static">${fiche.userConsulte.mail}</p></div>
 	</div>
 
 
+
 </div>
 
+<c:if test="${fiche.levelUserConnecteModifFiche == 'DROITMODIF'}">
+	<div class="row">
+		<div class="col-md-offset-2 col-md-10">
+	
+			<div class="btn-toolbar no-ajax-link">
+	
+				<a class="btn btn-primary" href="${modify}"> <i
+					class="glyphicons pencil"></i> <span><op:translate 
+							key="label.btn.edit" /></span>
+				</a>
+	
+				<a class="btn btn-default" href="${chgtMdp}"> <i
+					class="glyphicons keys"></i> <span><op:translate 
+							key="label.btn.chgpwd" /></span>
+				</a>
+			</div>
+	
+		</div>
+	
+	
+	</div>
+</c:if>

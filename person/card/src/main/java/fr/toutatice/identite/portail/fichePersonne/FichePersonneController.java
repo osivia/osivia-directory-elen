@@ -26,6 +26,7 @@ import javax.portlet.ResourceResponse;
 import javax.portlet.ResourceURL;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.client.model.Document;
@@ -404,12 +405,10 @@ public class FichePersonneController extends CMSPortlet implements PortletContex
 
 	private Person mergeProperties(Person p, FormUpload formUpload) {
 
-		if (formUpload.getNouveauEmail() != null) {
-			p.setMail(formUpload.getNouveauEmail());
-		}
-		if (formUpload.getTitle() != null) {
-			p.setTitle(formUpload.getTitle());
-		}
+		p.setMail(StringUtils.trimToNull(formUpload.getNouveauEmail()));
+		
+		p.setTitle(StringUtils.trimToNull(formUpload.getTitle()));
+		
 		if (formUpload.getSn() != null) {
 			p.setSn(formUpload.getSn());
 		}

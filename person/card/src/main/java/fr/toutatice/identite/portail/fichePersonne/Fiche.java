@@ -21,8 +21,6 @@ public class Fiche {
 	
 	private HabilitationModifFiche.Level levelUserConnecteModifFiche;
 	
-	private LevelConsultation levelConsultation;
-	
 	
 	private boolean self = false;
 		
@@ -131,15 +129,4 @@ public class Fiche {
 	public void setTypeMIME(String typeMIME) {
 		this.typeMIME = typeMIME;
 	}
-	
-
-
-	public LevelConsultation getLevelConsultation() {
-		return levelConsultation;
-	}
-
-	public void setLevelConsultation(LevelConsultation levelConsultation) {
-		this.levelConsultation = levelConsultation;
-	}
-
 }
