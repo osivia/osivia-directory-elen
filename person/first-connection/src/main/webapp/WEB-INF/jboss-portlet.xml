@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE portlet-app PUBLIC "-//JBoss Portal//DTD JBoss Portlet 2.6//EN" "http://www.jboss.org/portal/dtd/jboss-portlet_2_6.dtd">
+
+<portlet-app>
+
+    <portlet>
+        <portlet-name>osivia-services-first-connection</portlet-name>
+
+        <transaction>
+            <trans-attribute>Required</trans-attribute>
+        </transaction>
+        
+        <header-content>
+            <link rel="stylesheet" href="/css/first-connection.min.css" />
+        
+            <script type="text/javascript" src="/components/password-score/password-score.js"></script>
+            <script type="text/javascript" src="/components/password-score/password-score-options.js"></script>
+            <script type="text/javascript" src="/components/password-score/bootstrap-strength-meter.js"></script>
+            <script type="text/javascript" src="/js/first-connection.js"></script>
+        </header-content>
+    </portlet>
+
+</portlet-app>

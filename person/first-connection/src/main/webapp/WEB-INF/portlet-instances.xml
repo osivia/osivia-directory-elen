@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE deployments PUBLIC "-//JBoss Portal//DTD Portlet Instances 2.6//EN" "http://www.jboss.org/portal/dtd/portlet-instances_2_6.dtd">
+
+<deployments>
+
+    <deployment>
+        <if-exists>overwrite</if-exists>
+        <instance>
+            <display-name xml:lang="en">OSIVIA - First connection</display-name>
+            <display-name xml:lang="fr">OSIVIA - Première connexion</display-name>
+            <instance-id>osivia-services-first-connection-instance</instance-id>
+            <portlet-ref>osivia-services-first-connection</portlet-ref>
+            <security-constraint>
+                <policy-permission>
+                    <action-name>view</action-name>
+                    <unchecked />
+                </policy-permission>
+            </security-constraint>
+            <preferences>
+                <preference>
+                    <name>hide</name>
+                    <value>true</value>
+                </preference>
+            </preferences>
+        </instance>
+    </deployment>
+
+</deployments>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.osivia.services</groupId>
+    <artifactId>osivia-services-first-connection</artifactId>
+    <version>4.4.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <name>OSIVIA Services - First connection</name>
+
+
+    <properties>
+        <toutatice.version>4.4.0-RC4</toutatice.version>
+    </properties>
+
+
+    <dependencies>
+
+        <!-- Toutatice -->
+        <dependency>
+            <groupId>toutatice-portail.cms</groupId>
+            <artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
+            <version>${toutatice.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>toutatice-portail.cms</groupId>
+            <artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
+            <version>${toutatice.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <!-- Compiler -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>
+
+                <!-- Resources -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+
+                <!-- Release -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <configuration>
+                        <tagBase>http://www.osivia.org/repos/osivia-services/first-connection/tags</tagBase>
+                        <releaseProfiles>unpack,pack</releaseProfiles>
+                        <preparationGoals>clean install</preparationGoals>
+                        <goals>deploy</goals>
+                    </configuration>
+                </plugin>
+
+                <!-- WAR -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <!-- LESS -->
+                <plugin>
+                    <groupId>org.lesscss</groupId>
+                    <artifactId>lesscss-maven-plugin</artifactId>
+                    <version>1.7.0.1.1</version>
+                    <configuration>
+                        <sourceDirectory>${project.basedir}/src/main/less</sourceDirectory>
+                        <outputDirectory>${project.basedir}/src/main/webapp/css</outputDirectory>
+                        <compress>true</compress>
+                        <includes>
+                            <include>*.less</include>
+                        </includes>
+                        <outputFileFormat>{fileName}.min.css</outputFileFormat>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- AntRun -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>1.8</version>
+                </plugin>
+
+                <!-- Eclipse -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.10</version>
+                    <configuration>
+                        <downloadJavadocs>true</downloadJavadocs>
+                        <downloadSources>true</downloadSources>
+                        <wtpversion>2.0</wtpversion>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        
+        <plugins>
+            
+            <!-- LESS -->
+            <plugin>
+                <groupId>org.lesscss</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+            </plugin>
+            
+        </plugins>
+    </build>
+
+
+    <scm>
+        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/first-connection/trunk</developerConnection>
+    </scm>
+
+
+    <distributionManagement>
+        <repository>
+            <id>osivia-releases</id>
+            <url>http://www.osivia.org/nexus/content/repositories/osivia-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>osivia-snapshots</id>
+            <url>http://www.osivia.org/nexus/content/repositories/osivia-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+    <organization>
+        <name>OSIVIA</name>
+        <url>http://www.osivia.org/</url>
+    </organization>
+
+</project>
+
