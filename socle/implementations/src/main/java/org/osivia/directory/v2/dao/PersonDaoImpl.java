@@ -123,19 +123,19 @@ public class PersonDaoImpl implements PersonDao {
 			controls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
 			
 			if(System.getProperty("ldap.searchperson.maxTime") != null) {
-				int timeout = Integer.parseInt("ldap.searchperson.maxTime");
+				int timeout = Integer.parseInt(System.getProperty("ldap.searchperson.maxTime"));
 				controls.setTimeLimit(timeout);
 			}
 			else {
-				controls.setTimeLimit(3000);
+				controls.setTimeLimit(5000);
 			}
 			
 			if(System.getProperty("ldap.searchperson.maxResults") != null) {
-				int maxResults = Integer.parseInt("ldap.searchperson.maxResults");
+				int maxResults = Integer.parseInt(System.getProperty("ldap.searchperson.maxResults"));
 				controls.setCountLimit(maxResults);
 			}
 			else {
-				controls.setCountLimit(20);
+				controls.setCountLimit(50);
 			}
 		}
 		
