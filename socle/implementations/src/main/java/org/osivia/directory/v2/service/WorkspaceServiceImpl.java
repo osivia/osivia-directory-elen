@@ -360,22 +360,29 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
      * @param profile collab profile
      */
     private void attachPerson(Person person, CollabProfile profile) {
+        // Update indicator
+        boolean update = false;
+
         // Update profile
-        if (!(profile.getUniqueMember().contains(person.getDn()))) {
+        if (!profile.getUniqueMember().contains(person.getDn())) {
             profile.getUniqueMember().add(person.getDn());
 
             this.dao.update(profile);
+
+            update = true;
         }
 
         // Update person
-        if (!(person.getProfiles().contains(profile.getDn()))) {
+        if (!person.getProfiles().contains(profile.getDn())) {
             person.getProfiles().add(profile.getDn());
 
             this.personService.update(person);
+
+            update = true;
         }
 
-        // Update workspace
-        if (WorkspaceGroupType.space_group.equals(profile.getType())) {
+        // Update workspace document
+        if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
             this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), true);
         }
     }
@@ -400,11 +407,16 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
      * @param profile collab profile
      */
     private void detachPerson(Person person, CollabProfile profile) {
+        // Update indicator
+        boolean update = false;
+
         // Update profile
         if (profile.getUniqueMember().contains(person.getDn())) {
             profile.getUniqueMember().remove(person.getDn());
 
             this.dao.update(profile);
+
+            update = true;
         }
 
         // Update person
@@ -412,10 +424,12 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
             person.getProfiles().remove(profile.getDn());
 
             this.personService.update(person);
+
+            update = true;
         }
 
         // Update workspace
-        if (WorkspaceGroupType.space_group.equals(profile.getType())) {
+        if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
             this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
         }
     }
