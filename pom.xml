@@ -4,7 +4,7 @@
     
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.4.0-RC10</version>
+    <version>4.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
@@ -169,7 +169,7 @@
     
     
     <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/tags/4.4.0-RC10</developerConnection>
+        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/trunk</developerConnection>
     </scm>
     
     
