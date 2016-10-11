@@ -135,7 +135,7 @@ public class PersonDaoImpl implements PersonDao {
 				controls.setCountLimit(maxResults);
 			}
 			else {
-				controls.setCountLimit(50);
+				controls.setCountLimit(100);
 			}
 		}
 		
