@@ -63,7 +63,7 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
     @Autowired
     private PersonService personService;
     
-    /** Person service. */
+    /** Person sample. */
     @Autowired
     private Person personSample;
 
@@ -209,7 +209,7 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
         List<WorkspaceMember> members = this.getAllMembers(workspaceId);
 
         for (WorkspaceMember member : members) {
-            if (StringUtils.equals(member.getMember().getUid(), uid)) {
+            if (StringUtils.equalsIgnoreCase(member.getMember().getUid(), uid)) {
                 result = member;
                 break;
             }
