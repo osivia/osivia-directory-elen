@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -111,7 +112,16 @@ public final class RoleImpl implements Role, Serializable {
 		this.uniqueMember = uniqueMember;
 	}
 	
+	public Name buildBaseDn() {
+		return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=groups").add("ou=roles").build();
+	}
+	
 	public Name buildDn(String cn) {
-		return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=groups").add("ou=roles").add("cn="+cn).build();
+		try {
+			return buildBaseDn().add("cn="+cn);
+		} catch (InvalidNameException e) {
+			return null;
+		}
+
 	}
 }

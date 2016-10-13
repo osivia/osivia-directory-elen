@@ -70,4 +70,9 @@ public interface Role {
 	 */
 	Name buildDn(String cn);
 
+	/**
+	 * @return
+	 */
+	Name buildBaseDn();
+
 }

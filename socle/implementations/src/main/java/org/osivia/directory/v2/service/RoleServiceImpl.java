@@ -13,11 +13,14 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.util.List;
+
 import javax.naming.Name;
 
+import org.osivia.directory.v2.dao.RoleDao;
 import org.osivia.directory.v2.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,17 +31,41 @@ import org.springframework.stereotype.Service;
 @Service("roleService")
 public class RoleServiceImpl implements RoleService {
 
+    /** Application context. */
+    @Autowired
+    protected ApplicationContext context;	
+	
 	@Autowired
-	protected LdapTemplate template;
+	protected RoleDao dao;
 	
 	@Autowired
 	protected Role sample;
 	
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.RoleService#getEmptyRole()
+	 */
+	@Override
+	public Role getEmptyRole() {
+		return this.context.getBean(sample.getClass());
+	}	
+	
 	public Role getRole(String cn) {
 		
 		Name dn = sample.buildDn(cn);;
-		return template.findByDn(dn, sample.getClass());
+		return getRole(dn);
+		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.RoleService#getRole(javax.naming.Name)
+	 */
+	@Override
+	public Role getRole(Name dn) {
+		return dao.findByDn(dn);
+	}
+
+	
 	
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.RoleService#hasRole(javax.naming.Name, java.lang.String)
@@ -50,5 +77,31 @@ public class RoleServiceImpl implements RoleService {
 				
 		return role.getUniqueMember().contains(person);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.RoleService#getAllRoles()
+	 */
+	@Override
+	public List<Role> getAllRoles() {
+		
+		return dao.getAllRoles();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.RoleService#create(java.lang.String)
+	 */
+	@Override
+	public void create(String id, String description) {
+		
+		Role newRole = getEmptyRole();
+		newRole.setCn(id);
+		newRole.setDn(sample.buildDn(id));
+		newRole.setDescription(description);
+		
+		dao.create(newRole);
+		
+	}
+
+
 
 }

@@ -15,9 +15,10 @@ package org.osivia.directory.v2;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osivia.portal.api.internationalization.IBundleFactory;
+import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
-import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -118,6 +119,18 @@ public class AppConfig {
     @Bean
     public INuxeoService getNuxeoService() {
         return Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
+    }
+
+    /**
+     * Get bundle factory.
+     *
+     * @return bundle factory
+     */
+    @Bean
+    public IBundleFactory getBundleFactory() {
+        IInternationalizationService internationalizationService = Locator.findMBean(IInternationalizationService.class,
+                IInternationalizationService.MBEAN_NAME);
+        return internationalizationService.getBundleFactory(this.getClass().getClassLoader());
     }
 
 }

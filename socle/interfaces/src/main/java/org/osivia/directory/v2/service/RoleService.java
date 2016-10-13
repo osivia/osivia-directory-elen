@@ -13,8 +13,11 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.util.List;
+
 import javax.naming.Name;
 
+import org.osivia.directory.v2.model.Role;
 import org.osivia.portal.api.directory.v2.IDirService;
 
 /**
@@ -24,6 +27,37 @@ import org.osivia.portal.api.directory.v2.IDirService;
  */
 public interface RoleService extends IDirService {
 
+    /**
+     * Get empty role for searching.
+     *
+     * @return empty role
+     */
+	public Role getEmptyRole();
+
+
+    /**
+     * Get a role
+     *
+     * @param cn 
+     * @return role
+     */
+	public Role getRole(String cn);
+
+
+    /**
+     * Get a role
+     *
+     * @param dn 
+     * @return role
+     */
+	public Role getRole(Name dn);
+	
+	/**
+	 * Get all roles
+	 * @return all applicative roles
+	 */
+	public List<Role> getAllRoles();
+	
 	/**
 	 * Check is a user has a role
 	 * @param person
@@ -31,4 +65,13 @@ public interface RoleService extends IDirService {
 	 * @return true or false
 	 */
 	public boolean hasRole(Name person, String cnRole);
+
+
+	/**
+	 * Create a role
+	 * @param id
+	 */
+	public void create(String id, String description);
+	
+	
 }
