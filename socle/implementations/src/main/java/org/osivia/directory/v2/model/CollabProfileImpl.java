@@ -261,4 +261,14 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
 	public Name buildDn(String cn) {
 		return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=groups").add("ou=collabProfiles").add("cn="+cn).build();
 	}
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.dn.toString();
+    }
+
 }

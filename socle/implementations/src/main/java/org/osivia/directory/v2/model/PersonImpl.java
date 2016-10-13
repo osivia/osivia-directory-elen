@@ -301,4 +301,13 @@ public final class PersonImpl implements Person, Serializable {
     	    	
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.dn.toString();
+    }
+
 }

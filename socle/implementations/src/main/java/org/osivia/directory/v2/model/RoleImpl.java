@@ -124,4 +124,14 @@ public final class RoleImpl implements Role, Serializable {
 		}
 
 	}
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return this.dn.toString();
+    }
+
 }
