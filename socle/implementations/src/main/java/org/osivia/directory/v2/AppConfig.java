@@ -27,6 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.pool.factory.PoolingContextSource;
+import org.springframework.ldap.pool.validation.DefaultDirContextValidator;
 import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManager;
 import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManagerDelegate;
 import org.springframework.ldap.transaction.compensating.manager.TransactionAwareContextSourceProxy;
@@ -60,14 +62,46 @@ public class AppConfig {
 		
 		source.setUserDn(System.getProperty("ldap.manager.dn"));
 		source.setPassword(System.getProperty("ldap.manager.pswd"));
-		source.setPooled(true);
-		
+		source.setPooled(false);
 		Map<String, Object> baseEnvironmentProperties = new HashMap<String, Object>();
 		baseEnvironmentProperties.put("com.sun.jndi.ldap.connect.timeout", System.getProperty("ldap.timeout"));
 		source.setBaseEnvironmentProperties(baseEnvironmentProperties);
-		source.afterPropertiesSet();		
+		source.afterPropertiesSet();	
 		
-		return new TransactionAwareContextSourceProxy(source);
+		
+		PoolingContextSource configurePooling = configurePooling(source);
+		
+		return new TransactionAwareContextSourceProxy(configurePooling);
+	}
+
+	/**
+	 * Pooling configuration
+	 */
+	private PoolingContextSource configurePooling(LdapContextSource source) {
+		// Enable pooling
+		PoolingContextSource poolingContextSource = new PoolingContextSource();
+		DefaultDirContextValidator defaultDirContextValidator = new DefaultDirContextValidator();
+		
+		poolingContextSource.setContextSource(source);
+		poolingContextSource.setDirContextValidator(defaultDirContextValidator);
+		if(System.getProperty("ldap.pool.testOnBorrow") != null) {
+			boolean testOnBorrow = Boolean.parseBoolean(System.getProperty("ldap.pool.testOnBorrow"));
+			poolingContextSource.setTestOnBorrow(testOnBorrow);
+		}
+		if(System.getProperty("ldap.pool.testWhileIdle") != null) {
+			boolean testWhileIdle = Boolean.parseBoolean(System.getProperty("ldap.pool.testWhileIdle"));
+			poolingContextSource.setTestWhileIdle(testWhileIdle);
+		}
+		if(System.getProperty("ldap.pool.minEvictableIdleTimeMillis") != null) {
+			long minEvictableIdleTimeMillis = Long.parseLong(System.getProperty("ldap.pool.minEvictableIdleTimeMillis"));
+			poolingContextSource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis );
+		}
+		if(System.getProperty("ldap.pool.timeBetweenEvictionRunsMillis") != null) {
+			long timeBetweenEvictionRunsMillis = Long.parseLong(System.getProperty("ldap.pool.timeBetweenEvictionRunsMillis"));
+			poolingContextSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis );
+		}
+		
+		return poolingContextSource;
 	}	
 	
 	@Bean(name="ldapTemplate")
