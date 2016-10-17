@@ -2,12 +2,15 @@ package org.osivia.directory.v2.service;
 
 import javax.portlet.PortletContext;
 
+import org.osivia.portal.api.directory.v2.IDirService;
+
 /**
  * LDAP service implementation abstract super-class.
  * 
  * @author Cédric Krommenhoek
+ * @see IDirService
  */
-public abstract class LdapServiceImpl {
+public abstract class LdapServiceImpl implements IDirService {
 
     /** Portlet context. */
     private static PortletContext portletContext;
