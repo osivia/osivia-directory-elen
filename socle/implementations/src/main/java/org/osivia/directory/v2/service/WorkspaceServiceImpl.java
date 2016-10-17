@@ -31,8 +31,6 @@ import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
-import org.osivia.portal.core.cms.CMSException;
-import org.osivia.portal.core.cms.CMSServiceCtx;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -41,23 +39,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
-import fr.toutatice.portail.cms.nuxeo.api.NuxeoException;
-import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
-import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 
 /**
  * Implementation of the workspace service.
  *
  * @author Loïc Billon
  * @since 4.4
+ * @see LdapServiceImpl
  * @see WorkspaceService
  */
 @Service
-public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContextAware {
-
-    /** Nuxeo service. */
-    @Autowired
-    private INuxeoService nuxeoService;
+public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceService, ApplicationContextAware {
 
     /** Person service. */
     @Autowired
@@ -455,27 +449,13 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
      * @param attach true if user is attached, false if user is detached
      */
     private void updateWorkspace(String workspaceId, String user, boolean attach) {
-        // CMS customizer
-        INuxeoCustomizer cmsCustomizer = this.nuxeoService.getCMSCustomizer();
-        // CMS context
-        CMSServiceCtx cmsContext = CMSServiceCtx.getDecontextualizedContext();
-        cmsContext.setScope("superuser_no_cache");
+        // Nuxeo controller
+        NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
+        nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
 
         // Nuxeo command
         INuxeoCommand command = this.applicationContext.getBean(UpdateWorkspaceCommand.class, workspaceId, user, attach);
-
-        try {
-            cmsCustomizer.executeNuxeoCommand(cmsContext, command);
-        } catch (CMSException e) {
-            int errorCode = e.getErrorCode();
-            if (errorCode == CMSException.ERROR_NOTFOUND) {
-                throw new NuxeoException(NuxeoException.ERROR_NOTFOUND);
-            } else if (errorCode == CMSException.ERROR_FORBIDDEN) {
-                throw new NuxeoException(NuxeoException.ERROR_FORBIDDEN);
-            } else {
-                throw new NuxeoException(NuxeoException.ERROR_UNAVAILAIBLE, e.getCause());
-            }
-        }
+        nuxeoController.executeNuxeoCommand(command);
     }
 
 
@@ -629,5 +609,5 @@ public class WorkspaceServiceImpl implements WorkspaceService, ApplicationContex
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
 }

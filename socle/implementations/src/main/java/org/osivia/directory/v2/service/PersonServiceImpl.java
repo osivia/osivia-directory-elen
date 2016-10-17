@@ -29,7 +29,7 @@ import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
-import org.osivia.portal.core.cms.CMSException;
+import org.osivia.portal.api.urls.PortalUrlType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
@@ -44,7 +44,7 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
  * @since 4.4
  */
 @Service("personService")
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl extends LdapServiceImpl implements PersonService {
 
 	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
 
@@ -157,38 +157,29 @@ public class PersonServiceImpl implements PersonService {
 	
 	/**
 	 * Get avatar url for a person
-	 * @param p the person
+	 * @param person the person
 	 */
-	protected void appendAvatar(Person p) {
-				
+	protected void appendAvatar(Person person) {
 		// 	Append avatar
 		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
 		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
 		
-        Link userAvatar;
-		try {
-			userAvatar = cmsCustomizer.getUserAvatar(null, p.getUid());
-
-	        p.setAvatar(userAvatar);
-	        
-		} catch (CMSException e) {
-			// Never called
-		}
-
+        Link userAvatar = cmsCustomizer.getUserAvatar(person.getUid());
+        person.setAvatar(userAvatar);
 	}
 	
 	/**
 	 * Generate a portlet url for person card
 	 */
-	public Link getCardUrl(PortalControllerContext portalControllerContext, Person p) throws PortalException {
-		
+	public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
 		Map<String, String> windowProperties = new HashMap<String, String>();
 		windowProperties.put("osivia.ajaxLink", "1");
 		windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
-		windowProperties.put("osivia.title", p.getDisplayName());
-		windowProperties.put("uidFichePersonne", p.getUid());
+		windowProperties.put("osivia.title", person.getDisplayName());
+		windowProperties.put("uidFichePersonne", person.getUid());
 		
-		return new Link(urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, false),false);
+        String url = urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, PortalUrlType.POPUP);
+        return new Link(url,false);
 	}
 	
 	

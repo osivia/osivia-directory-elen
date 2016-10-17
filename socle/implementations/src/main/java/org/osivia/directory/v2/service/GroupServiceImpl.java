@@ -21,11 +21,12 @@ import org.springframework.stereotype.Service;
  * Group service implementation
  * 
  * @author Cédric Krommenhoek
+ * @see LdapServiceImpl
  * @see GroupService
  * @see ApplicationContextAware
  */
 @Service
-public class GroupServiceImpl implements GroupService, ApplicationContextAware {
+public class GroupServiceImpl extends LdapServiceImpl implements GroupService, ApplicationContextAware {
 
     /** Group DAO. */
     @Autowired

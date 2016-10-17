@@ -17,6 +17,7 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 
+import org.osivia.directory.v2.service.LdapServiceImpl;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
 import org.osivia.portal.api.directory.v2.IDirProvider;
 import org.osivia.portal.api.locator.Locator;
@@ -40,21 +41,23 @@ public class DirProviderPortlet extends CMSPortlet {
 
     @Override
     public void init(PortletConfig config) throws PortletException {
-
         super.init(config);
 
-        PortletContext pc = this.getPortletContext();
+        // Portlet context
+        PortletContext portletContext = this.getPortletContext();
 
         // export the directory service for other portlets
-        ApplicationContext context = PortletApplicationContextUtils.getWebApplicationContext(pc);
+        ApplicationContext context = PortletApplicationContextUtils.getWebApplicationContext(portletContext);
         deletagate =  context.getBean(DirDelegate.class);
 
-        deletagate.setPortletContext(pc);
+        deletagate.setPortletContext(portletContext);
 
         provider = Locator.findMBean(IDirProvider.class, IDirProvider.MBEAN_NAME);
 
         IDirDelegate iface = deletagate;
         provider.registerDelegate(iface);
+
+        LdapServiceImpl.setPortletContext(portletContext);
     }
 
 
