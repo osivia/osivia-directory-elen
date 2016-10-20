@@ -30,6 +30,7 @@ import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.api.urls.PortalUrlType;
+import org.osivia.portal.core.cms.CMSException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
@@ -164,7 +165,12 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonService 
 		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
 		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
 		
-        Link userAvatar = cmsCustomizer.getUserAvatar(person.getUid());
+        Link userAvatar = new Link("", false);
+		try {
+			userAvatar = cmsCustomizer.getUserAvatar(null, person.getUid());
+		} catch (CMSException e) {
+			
+		}
         person.setAvatar(userAvatar);
 	}
 	
