@@ -39,8 +39,7 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
     private final String user;
     /** Attach member indicator. */
     private final boolean attach;
-
-
+    
     /**
      * Constructor.
      * 
@@ -87,7 +86,7 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
      * @return Nuxeo document
      * @throws Exception
      */
-    private Document getWorkspace(Session nuxeoSession) throws Exception {
+    protected Document getWorkspace(Session nuxeoSession) throws Exception {
         // Query
         StringBuilder query = new StringBuilder();
         query.append("SELECT * FROM Document WHERE ");
@@ -120,7 +119,7 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
      * @param members members
      * @return JSON
      */
-    private String generateUpdatedMembersJSON(PropertyList members) {
+    protected String generateUpdatedMembersJSON(PropertyList members) {
         JSONArray array = new JSONArray();
 
         for (int i = 0; i < members.size(); i++) {
@@ -159,5 +158,31 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
     public String getId() {
         return null;
     }
+
+
+	/**
+	 * @return the workspaceId
+	 */
+	public String getWorkspaceId() {
+		return workspaceId;
+	}
+
+
+	/**
+	 * @return the user
+	 */
+	public String getUser() {
+		return user;
+	}
+
+
+	/**
+	 * @return the attach
+	 */
+	public boolean isAttach() {
+		return attach;
+	}
+    
+    
 
 }
