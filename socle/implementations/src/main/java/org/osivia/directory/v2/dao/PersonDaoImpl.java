@@ -31,8 +31,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.OrFilter;
-import org.springframework.ldap.query.LdapQueryBuilder;
-import org.springframework.ldap.query.SearchScope;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -48,11 +46,16 @@ public class PersonDaoImpl implements PersonDao {
 	
 	
 	@Autowired
+	@Qualifier("ldapTemplate")
 	protected LdapTemplate template;
+	
+	@Autowired
+	@Qualifier("authenticateLdapTemplate")	
+	protected LdapTemplate authenticateLdapTemplate;	
+	
 	
 	private SearchControls controls;
 		
-	
 	@Override
 	@Cacheable(key = "#dn", value = { "personByDnCache" })
 	public Person getPerson(Name dn) throws NameNotFoundException {
@@ -96,7 +99,7 @@ public class PersonDaoImpl implements PersonDao {
 		
 		Name dn = sample.buildDn(uid);;
 		String personFilter = MappingHelper.getBasicFilter(sample).encode();
-		return template.authenticate(dn, personFilter, currentPassword);
+		return authenticateLdapTemplate.authenticate(dn, personFilter, currentPassword);
 		
 	}	
 	

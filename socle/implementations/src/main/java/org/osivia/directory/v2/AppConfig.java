@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
@@ -105,10 +106,26 @@ public class AppConfig {
 	}	
 	
 	@Bean(name="ldapTemplate")
+	@Primary
 	public LdapTemplate getLdapTemplate() {
 		
 		TransactionAwareContextSourceProxy contextSource = context.getBean(TransactionAwareContextSourceProxy.class);
 		return new LdapTemplate(contextSource);
+	}
+	
+	@Bean(name="authenticateLdapTemplate")
+	public LdapTemplate getAuthenticateLdapTemplate() {
+		
+		LdapContextSource source = new LdapContextSource();
+		source.setUrl(System.getProperty("ldap.url"));
+		
+		source.setPooled(false);
+		Map<String, Object> baseEnvironmentProperties = new HashMap<String, Object>();
+		baseEnvironmentProperties.put("com.sun.jndi.ldap.connect.timeout", System.getProperty("ldap.timeout"));
+		source.setBaseEnvironmentProperties(baseEnvironmentProperties);
+		source.afterPropertiesSet();	
+		
+		return new LdapTemplate(source);
 	}
 	
 	
