@@ -33,7 +33,7 @@ public class UserFormValidator implements Validator {
      */
     @Override
     public boolean supports(Class<?> clazz) {
-        return UserForm.class.isAssignableFrom(clazz);
+        return clazz.isAssignableFrom(UserForm.class);
     }
 
 
