@@ -94,9 +94,19 @@ public enum WorkspaceRole {
         WorkspaceRole result = null;
 
         for (WorkspaceRole value : WorkspaceRole.values()) {
-            if (!WorkspaceRole.OWNER.equals(value) && ArrayUtils.isEquals(value.getPermissions(), permissions)) {
-                result = value;
-                break;
+            if (!WorkspaceRole.OWNER.equals(value) && ((result == null) || (value.weight > result.weight))) {
+                // Check if value matches permissions
+                boolean matches = true;
+                for (String permission : value.getPermissions()) {
+                    if (!ArrayUtils.contains(permissions, permission)) {
+                        matches = false;
+                        break;
+                    }
+                }
+
+                if (matches) {
+                    result = value;
+                }
             }
         }
 
