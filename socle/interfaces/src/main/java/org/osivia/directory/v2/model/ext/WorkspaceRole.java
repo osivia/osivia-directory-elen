@@ -25,8 +25,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public enum WorkspaceRole {
 
-    /** Owner, as all rights on all elements. */
-    OWNER(5, "Everything"),
+    /** Owner, has all rights on all elements. */
+    OWNER(5, "MasterOwner"),
     /** Administrator, has all rights on a part or all elements. */
     ADMIN(4, "Everything"),
     /** Can read and write all documents. */
