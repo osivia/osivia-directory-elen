@@ -8,10 +8,15 @@
 		<portlet-name>directory-person-management</portlet-name>
 		<portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
 
-		<init-param>
-			<name>contextConfigLocation</name>
-			<value> classpath:directory-beans.xml /WEB-INF/directory-person-creation-portlet.xml</value>
-		</init-param>
+        <init-param>
+            <name>contextClass</name>
+            <value>org.osivia.portal.api.portlet.AnnotationPortletApplicationContext</value>
+        </init-param>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>org.osivia.services.person.management.portlet.configuration.PersonManagementConfiguration</value>
+        </init-param>
+
 		
 		<supports>
 			<mime-type>text/html</mime-type>

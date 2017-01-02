@@ -9,7 +9,7 @@
 		</transaction>
 
 		<header-content>
-			<script type="text/javascript" src="/js/gestionPersonnes.js" />
+			<script type="text/javascript" src="/js/person-management.js" />
 		</header-content>
 	</portlet>
 </portlet-app>	
