@@ -33,14 +33,13 @@
         </dependency>
         
         <!-- Person management -->
-        <!-- 
         <dependency>
             <groupId>org.osivia.services.directory.person</groupId>
             <artifactId>osivia-services-directory-person-management</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-         -->
+
         
         <!-- Person creation -->
         <!-- 
@@ -98,11 +97,11 @@
 				    		<artifactId>osivia-services-first-connection</artifactId>
                             <contextRoot>/osivia-services-first-connection</contextRoot>
                         </webModule>
-                        <!--<webModule>
+                        <webModule>
                             <groupId>org.osivia.services.directory.person</groupId>
                             <artifactId>osivia-services-directory-person-management</artifactId>
                             <contextRoot>/osivia-services-directory-person-management</contextRoot>
-                        </webModule>
+                        </webModule> <!-- 
                         <webModule>
                             <groupId>org.osivia.services.directory.person</groupId>
                             <artifactId>osivia-services-directory-person-creation</artifactId>
