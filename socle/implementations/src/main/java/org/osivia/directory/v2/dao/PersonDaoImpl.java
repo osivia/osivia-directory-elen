@@ -144,6 +144,17 @@ public class PersonDaoImpl implements PersonDao {
 		
 		return controls;
 	}
+
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.dao.PersonDao#delete(org.osivia.portal.api.directory.v2.model.Person)
+	 */
+	@Override
+	@CacheEvict(value = "personByDnCache", key = "#p.dn")
+	public void delete(Person p) {
+		template.delete(p);
+		
+	}
 	
 	
 }

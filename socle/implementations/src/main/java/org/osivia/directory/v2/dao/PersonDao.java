@@ -62,4 +62,9 @@ public interface PersonDao {
 	 */
 	void updatePassword(Person p, String newPassword);
 
+	/**
+	 * @param userConsulte
+	 */
+	void delete(Person userConsulte);
+
 }

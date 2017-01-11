@@ -30,7 +30,6 @@ import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
-import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -55,7 +54,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
     /** Person service. */
     @Autowired
-    private PersonService personService;
+    private PersonUpdateService personService;
     
     /** Person sample. */
     @Autowired

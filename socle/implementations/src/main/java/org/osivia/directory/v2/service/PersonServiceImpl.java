@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,16 @@ import javax.naming.Name;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.PersonDao;
+import org.osivia.directory.v2.model.CollabProfile;
+import org.osivia.directory.v2.model.ext.Avatar;
+import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
+import org.osivia.directory.v2.repository.GetUserProfileCommand;
+import org.osivia.directory.v2.repository.UpdateUserProfileCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
-import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
@@ -35,7 +41,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
 import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
 import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 
@@ -45,7 +53,7 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
  * @since 4.4
  */
 @Service("personService")
-public class PersonServiceImpl extends LdapServiceImpl implements PersonService {
+public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
 	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
 
@@ -61,6 +69,9 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonService 
 	
 	@Autowired
 	protected PersonDao dao;
+	
+	@Autowired
+	protected WorkspaceService workspaceService;
 
 	@Autowired
 	protected IPortalUrlFactory urlFactory;
@@ -136,6 +147,23 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonService 
 		
 	}
 	
+	@Transactional
+	public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
+		
+		update(p);
+		
+		NuxeoController controller = new NuxeoController(portalControllerContext);
+		
+		Document nuxeoProfile = getEcmProfile(portalControllerContext, p);
+		
+		UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile,properties, avatar);
+		controller.executeNuxeoCommand(updateCmd);
+		
+		if(avatar != null) {
+			controller.refreshUserAvatar(p.getUid());
+		}
+	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.osivia.portal.api.directory.v2.service.PersonService#verifyPassword(java.lang.String)
@@ -184,9 +212,37 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonService 
 		windowProperties.put("osivia.title", person.getDisplayName());
 		windowProperties.put("uidFichePersonne", person.getUid());
 		
-        String url = urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, PortalUrlType.POPUP);
+        String url = urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, PortalUrlType.DEFAULT);
         return new Link(url,false);
 	}
 	
+	
+	public Document getNuxeoProfile(PortalControllerContext portalControllerContext, Person person) throws PortalException {
+		NuxeoController controller = new NuxeoController(portalControllerContext);
+		
+		return (Document) controller.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.PersonUpdateService#delete(org.osivia.portal.api.directory.v2.model.Person)
+	 */
+	@Override
+	public void delete(Person userConsulte) {
+		
+		CollabProfile searchProfiles = workspaceService.getEmptyProfile();
+		searchProfiles.setType(WorkspaceGroupType.space_group);
+		List<Name> name = new ArrayList<Name>();
+		name.add(userConsulte.getDn());
+		searchProfiles.setUniqueMember(name);
+		
+		List<CollabProfile> spaces = workspaceService.findByCriteria(searchProfiles);
+		for(CollabProfile space : spaces) {
+			workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
+		}
+		
+		dao.delete(userConsulte);
+		
+	}
 	
 }
