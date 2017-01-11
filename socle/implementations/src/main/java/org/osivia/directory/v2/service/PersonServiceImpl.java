@@ -154,7 +154,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 		
 		NuxeoController controller = new NuxeoController(portalControllerContext);
 		
-		Document nuxeoProfile = getEcmProfile(portalControllerContext, p);
+		Document nuxeoProfile = (Document) getEcmProfile(portalControllerContext, p);
 		
 		UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile,properties, avatar);
 		controller.executeNuxeoCommand(updateCmd);
@@ -217,10 +217,13 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	}
 	
 	
-	public Document getNuxeoProfile(PortalControllerContext portalControllerContext, Person person) throws PortalException {
+	@Override
+	public Object getEcmProfile(
+			PortalControllerContext portalControllerContext, Person person)
+			throws PortalException {
 		NuxeoController controller = new NuxeoController(portalControllerContext);
 		
-		return (Document) controller.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
+		return controller.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
 		
 	}
 
@@ -244,5 +247,6 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 		dao.delete(userConsulte);
 		
 	}
-	
+
+
 }
