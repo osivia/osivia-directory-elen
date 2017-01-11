@@ -4,10 +4,10 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
-import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.services.firstconnection.portlet.model.UserForm;
 import org.osivia.services.firstconnection.portlet.repository.FirstConnectionRepository;
@@ -32,7 +32,7 @@ public class FirstConnectionServiceImpl implements FirstConnectionService, Appli
 
     /** Person service. */
     @Autowired
-    private PersonService personService;
+    private PersonUpdateService personService;
 
     /** Portal URL factory. */
     @Autowired

@@ -1,7 +1,7 @@
 package org.osivia.services.firstconnection.configuration;
 
+import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
-import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.springframework.context.annotation.Bean;
@@ -63,8 +63,8 @@ public class FirstConnectionConfiguration {
      * @return person service
      */
     @Bean
-    public PersonService getPersonService() {
-        return DirServiceFactory.getService(PersonService.class);
+    public PersonUpdateService getPersonService() {
+        return DirServiceFactory.getService(PersonUpdateService.class);
     }
 
 

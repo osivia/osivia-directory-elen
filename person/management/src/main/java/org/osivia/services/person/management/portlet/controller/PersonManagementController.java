@@ -5,7 +5,9 @@ package org.osivia.services.person.management.portlet.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -18,12 +20,14 @@ import javax.portlet.ResourceResponse;
 import org.dom4j.QName;
 import org.dom4j.dom.DOMAttribute;
 import org.dom4j.dom.DOMElement;
+import org.jboss.portal.theme.ThemeConstants;
+import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.html.HTMLConstants;
-import org.osivia.portal.api.urls.Link;
+import org.osivia.portal.api.windows.StartingWindowBean;
 import org.osivia.services.person.management.portlet.service.PersonManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -83,10 +87,16 @@ public class PersonManagementController extends CMSPortlet implements PortletCon
     		
     		// Portal controller context
             PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
-    		
-    		Link cardUrl = personService.getCardUrl(portalControllerContext, personService.getPerson(selectedPerson));
+    		 
+            Map<String, String> windowProperties = new HashMap<String, String>();
+            
+            windowProperties.put(ThemeConstants.PORTAL_PROP_REGION, "col-2");
+            windowProperties.put("uidFichePersonne", selectedPerson);
 
-	    	response.sendRedirect(cardUrl.getUrl());
+            windowProperties.put("osivia.ajaxLink", "1");
+            windowProperties.put("osivia.hideTitle", "1");
+
+            request.setAttribute(Constants.PORTLET_ATTR_START_WINDOW, new StartingWindowBean("personne","directory-person-card-instance",windowProperties));
     	
     	}
     	
