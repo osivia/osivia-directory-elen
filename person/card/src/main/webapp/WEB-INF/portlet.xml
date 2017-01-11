@@ -8,10 +8,14 @@
         <portlet-name>directory-person-card</portlet-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
     
-		<init-param>
-			<name>contextConfigLocation</name>
-			<value>/WEB-INF/directory-person-card-portlet.xml</value>
-		</init-param>
+        <init-param>
+            <name>contextClass</name>
+            <value>org.osivia.portal.api.portlet.AnnotationPortletApplicationContext</value>
+        </init-param>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>org.osivia.services.person.card.portlet.configuration.PersonCardConfiguration</value>
+        </init-param>
         
 		<supports>
             <mime-type>text/html</mime-type>

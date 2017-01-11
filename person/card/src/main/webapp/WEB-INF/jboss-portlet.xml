@@ -9,9 +9,11 @@
         </transaction>
 
         <header-content>
-            <link rel="stylesheet" href="/css/fichePersonneStyle.css" />
+            <!-- <link rel="stylesheet" href="/css/fichePersonneStyle.css" />
             <script type="text/javascript" src="/js/utils.js" />
             <script type="text/javascript" src="/js/jquery.pstrength-min.1.2.js"></script>
+             -->
+             <script type="text/javascript" src="/js/person-card.js"></script>
         </header-content>
     </portlet>
 </portlet-app>
