@@ -32,6 +32,14 @@
             <type>war</type>
         </dependency>
         
+        <!-- User settings -->
+        <dependency>
+            <groupId>org.osivia.services.directory.person</groupId>
+            <artifactId>osivia-services-directory-user-settings</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        
         <!-- Person management -->
         <dependency>
             <groupId>org.osivia.services.directory.person</groupId>
@@ -54,7 +62,7 @@
          <!-- Person first connection -->
          <dependency>
         	<groupId>org.osivia.services.directory.person</groupId>
-    		<artifactId>osivia-services-first-connection</artifactId>
+    		<artifactId>osivia-services-directory-first-connection</artifactId>
         	<version>${project.version}</version>
         	<type>war</type>
          </dependency>
@@ -93,9 +101,14 @@
                             <contextRoot>/osivia-services-directory-person-card</contextRoot>
                         </webModule>
                         <webModule>
+                            <groupId>org.osivia.services.directory.person</groupId>
+                            <artifactId>osivia-services-directory-user-settings</artifactId>
+                            <contextRoot>/osivia-services-directory-user-settings</contextRoot>
+                        </webModule>
+                        <webModule>
 				        	<groupId>org.osivia.services.directory.person</groupId>
-				    		<artifactId>osivia-services-first-connection</artifactId>
-                            <contextRoot>/osivia-services-first-connection</contextRoot>
+				    		<artifactId>osivia-services-directory-first-connection</artifactId>
+                            <contextRoot>/osivia-services-directory-first-connection</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.osivia.services.directory.person</groupId>
