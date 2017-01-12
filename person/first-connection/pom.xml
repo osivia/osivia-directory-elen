@@ -8,7 +8,7 @@
         <version>4.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>osivia-services-first-connection</artifactId>
+    <artifactId>osivia-services-directory-first-connection</artifactId>
     <packaging>war</packaging>
 
     <name>OSIVIA Services - Directory - First connection</name>

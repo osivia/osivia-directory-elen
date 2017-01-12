@@ -3,6 +3,7 @@ package org.osivia.directory.v2.repository;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
@@ -130,8 +131,11 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
                 // Do nothing
             } else {
                 JSONObject object = new JSONObject();
-                object.put("login", login);
-                object.put("joinedDate", member.get("joinedDate"));
+                for (Entry<String, Object> entry : member.getMap().entrySet()) {
+                    String key = entry.getKey();
+                    Object value = entry.getValue();
+                    object.put(key, value);
+                }
                 array.add(object);
             }
         }
@@ -158,31 +162,5 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
     public String getId() {
         return null;
     }
-
-
-	/**
-	 * @return the workspaceId
-	 */
-	public String getWorkspaceId() {
-		return workspaceId;
-	}
-
-
-	/**
-	 * @return the user
-	 */
-	public String getUser() {
-		return user;
-	}
-
-
-	/**
-	 * @return the attach
-	 */
-	public boolean isAttach() {
-		return attach;
-	}
-    
-    
 
 }
