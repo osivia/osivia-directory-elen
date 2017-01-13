@@ -53,17 +53,34 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
      * {@inheritDoc}
      */
     @Override
-    public Group get(String id) {
+    public Group getEmptyGroup() {
+        return this.applicationContext.getBean(Group.class);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Group get(Name dn) {
+        return this.dao.get(dn);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Group get(String cn) {
         // Search criteria
         Group criteria = this.applicationContext.getBean(Group.class);
-        criteria.setCn(id);
-        
+        criteria.setCn(cn);
+
         // Search results
         List<Group> results = this.dao.find(criteria);
-        
+
         // LDAP group
         Group group;
-
         if ((results != null) && (results.size() == 1)) {
             group = results.get(0);
         } else {
@@ -102,6 +119,15 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
         }
 
         return persons;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Group> search(Group criteria) {
+        return this.dao.find(criteria);
     }
 
 
