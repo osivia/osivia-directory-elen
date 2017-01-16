@@ -12,24 +12,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
+ * Person management portlet repository implementation.
+ * 
  * @author Loïc Billon
- *
+ * @author Cédric Krommenhoek
+ * @see PersonManagementRepository
  */
 @Repository
-public class PersonManagementRepositoryImpl implements
-		PersonManagementRepository {
+public class PersonManagementRepositoryImpl implements PersonManagementRepository {
 
-	@Autowired
-	private PersonService personService;
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.services.person.management.portlet.repository.PersonManagementRepository#searchPersons(org.osivia.portal.api.context.PortalControllerContext)
-	 */
-	@Override
-	public List<Person> searchPersons(
-			PortalControllerContext portalControllerContext,String filter) {
-		
-		
+    /** Person service. */
+    @Autowired
+    private PersonService personService;
+
+
+    /**
+     * Constructor.
+     */
+    public PersonManagementRepositoryImpl() {
+        super();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Person> searchPersons(PortalControllerContext portalControllerContext, String filter) {
         // Criteria
         Person criteria = this.personService.getEmptyPerson();
 
@@ -40,12 +49,9 @@ public class PersonManagementRepositoryImpl implements
         criteria.setSn(tokenizedFilter);
         criteria.setGivenName(tokenizedFilter);
         criteria.setMail(tokenizedFilter);
-
         criteria.setDisplayName(tokenizedFilterSubStr);
-        
 
         return this.personService.findByCriteria(criteria);
-	}
+    }
 
-	
 }
