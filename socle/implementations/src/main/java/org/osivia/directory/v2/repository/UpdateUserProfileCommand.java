@@ -56,12 +56,14 @@ public class UpdateUserProfileCommand implements INuxeoCommand {
         // Document service
         DocumentService documentService = nuxeoSession.getAdapter(DocumentService.class);
 
-        if(avatar.isDeleted()) {
-        	documentService.removeBlob(new DocRef(userProfile.getId()), "userprofile:avatar");
-        }
-        
-        if(avatar.isUpdated()) {
-        	documentService.setBlob(new DocRef(userProfile.getId()), new FileBlob(avatar.getTemporaryFile()), "userprofile:avatar");
+        if(avatar != null) {
+	        if(avatar.isDeleted()) {
+	        	documentService.removeBlob(new DocRef(userProfile.getId()), "userprofile:avatar");
+	        }
+	        
+	        if(avatar.isUpdated()) {
+	        	documentService.setBlob(new DocRef(userProfile.getId()), new FileBlob(avatar.getTemporaryFile()), "userprofile:avatar");
+	        }
         }
         
 		// Update properties
