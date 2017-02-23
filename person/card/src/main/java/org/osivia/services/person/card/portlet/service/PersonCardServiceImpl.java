@@ -80,42 +80,49 @@ public class PersonCardServiceImpl implements PersonCardService {
     private INotificationsService notificationsService;
 
 
-	@Override
-	public LevelEdition findLevelEdition(Person userConnecte, Person userConsulte) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LevelEdition findLevelEdition(Person userConnecte, Person userConsulte) {
+        // Level
+        LevelEdition level;
 
-		LevelEdition role = LevelEdition.DENY;
+        if (userConnecte == null) {
+            level = LevelEdition.DENY;
+        } else if (config.getRoleAdministrator() != null && roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator())) {
+            level = LevelEdition.ALLOW;
+        } else if (userConnecte.getUid().equals(userConsulte.getUid())) {
+            level = LevelEdition.ALLOW;
+        } else {
+            level = LevelEdition.DENY;
+        }
 
-		// super admin
-		if (userConnecte == null) {
-			role = LevelEdition.DENY;
-		} else if (config.getRoleAdministrator() != null && roleService.hasRole(userConnecte.getDn(),
-				config.getRoleAdministrator()
-				)) {
-			role = LevelEdition.ALLOW;
-		} else if (userConnecte.getUid().equals(userConsulte.getUid())) {
-			role = LevelEdition.ALLOW;
-		}
-
-		return role;
-
-	}
+        return level;
+    }
 	
+
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public LevelDeletion findLevelDeletion(Person userConnecte, Person userConsulte) {
+        // Level
+        LevelDeletion level;
 
-		LevelDeletion role = LevelDeletion.DENY;
+        if (userConnecte == null) {
+            level = LevelDeletion.DENY;
+        } else if ((config.getRoleAdministrator() != null) && (roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator()))
+                && !userConnecte.getUid().equals(userConsulte.getUid())) {
+            level = LevelDeletion.ALLOW;
+        } else {
+            level = LevelDeletion.DENY;
+        }
 
-		role = LevelDeletion.DENY;
-		if ((config.getRoleAdministrator() != null) && (roleService.hasRole(userConnecte.getDn(),
-				config.getRoleAdministrator())) && !userConnecte.getUid().equals(userConsulte.getUid()
-				)) {
-			role = LevelDeletion.ALLOW;
-		} 
-		
-		return role;
-
+        return level;
 	}	
 	
+
 	public Card loadCard(PortalControllerContext context) throws PortalException {
 		
 		//TODO replace with ATTR_LOGGED_PERSON_2
@@ -139,9 +146,9 @@ public class PersonCardServiceImpl implements PersonCardService {
 			userConsulte = userConnecte;
 		}
 		
-		if(userConnecte.getUid().equals(userConsulte.getUid())){
-			card.setSelf(true);
-		}
+        if ((userConnecte != null) && userConnecte.getUid().equals(userConsulte.getUid())) {
+            card.setSelf(true);
+        }
 
 		card.setUserConsulte(userConsulte);
 		card.setLevelEdition(findLevelEdition(userConnecte, userConsulte));
