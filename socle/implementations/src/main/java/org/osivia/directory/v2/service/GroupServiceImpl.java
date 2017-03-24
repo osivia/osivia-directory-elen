@@ -38,7 +38,7 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
 
 
     /** Application context. */
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
 
     /**
