@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Group service implementation
- * 
+ *
  * @author Cédric Krommenhoek
  * @see LdapServiceImpl
  * @see GroupService
