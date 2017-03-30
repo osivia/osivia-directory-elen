@@ -18,9 +18,7 @@
     
     
     <modules>
-        <module>socle</module>
-        <module>person</module>
-        
+        <module>socle</module>        
         <module>ear</module>
     </modules>
     

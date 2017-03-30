@@ -91,7 +91,6 @@ public final class GroupImpl implements Group, Serializable {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void setMembers(List<Name> members) {
         this.members = members;
     }

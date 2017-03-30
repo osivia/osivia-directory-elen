@@ -114,8 +114,16 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
         return workspace;
     }
 
-
+    
     /**
+	 * @return the workspaceId
+	 */
+	public String getWorkspaceId() {
+		return workspaceId;
+	}
+
+
+	/**
      * Generate updated members JSON content.
      *
      * @param members members
