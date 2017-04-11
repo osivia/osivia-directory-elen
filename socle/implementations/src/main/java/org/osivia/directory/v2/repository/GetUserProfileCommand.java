@@ -14,8 +14,7 @@
 package org.osivia.directory.v2.repository;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.automation.client.Constants;
 import org.nuxeo.ecm.automation.client.OperationRequest;
 import org.nuxeo.ecm.automation.client.Session;
 
@@ -26,7 +25,9 @@ import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
  * Get a document representing the user profile
  */
 public class GetUserProfileCommand  implements INuxeoCommand{
-	
+
+    private static final String UP_SCHEMAS = "common, dc, ttc_userprofile, userprofile";
+
 	private String username;
 
 	public GetUserProfileCommand(String username) {
@@ -43,8 +44,9 @@ public class GetUserProfileCommand  implements INuxeoCommand{
 		if (username != null) {
 			newRequest.set("username", username);
 		}
+        newRequest.setHeader(Constants.HEADER_NX_SCHEMAS, UP_SCHEMAS);
 
-		return newRequest.execute();
+        return newRequest.execute();
 		
 	}
 
