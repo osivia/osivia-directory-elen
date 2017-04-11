@@ -15,7 +15,6 @@
 </portlet:actionURL>
 
 
-<div class="portlet-filler container-fluid">
 
 	<form:form  method="post" action="${editUrl}" cssClass="form-horizontal" modelAttribute="formChgPwd" role="form">
 	
@@ -50,27 +49,24 @@
 		</div>
 		
 		<!-- Buttons -->
-		<div class="portlet-toolbar adapt-scrollbar">
-		    <div class="row">
-		        <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10">
-		            <!-- Save -->
-		            <button type="submit" name="save" class="btn btn-primary">
-		                <i class="glyphicons glyphicons-floppy-disk"></i>
-		                <span><op:translate key="SAVE" /></span>
-		            </button>
-		            
-		            <!-- Cancel -->
-		            <button type="submit" name="cancel" class="btn btn-default">
-		                <span><op:translate key="CANCEL" /></span>
-		            </button>
-		        </div>
-		    </div>
-		</div>
+	    <div class="row">
+	        <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10">
+	            <!-- Save -->
+	            <button type="submit" name="save" class="btn btn-primary">
+	                <i class="glyphicons glyphicons-floppy-disk"></i>
+	                <span><op:translate key="SAVE" /></span>
+	            </button>
+	            
+	            <!-- Cancel -->
+	            <button type="submit" name="cancel" class="btn btn-default">
+	                <span><op:translate key="CANCEL" /></span>
+	            </button>
+	        </div>
+	    </div>
 	
 	
 	</form:form>
 	
 	
-</div>
 
 

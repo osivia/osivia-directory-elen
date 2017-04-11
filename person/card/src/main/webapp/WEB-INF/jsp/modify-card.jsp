@@ -22,7 +22,7 @@
 <c:set var="namespace"><portlet:namespace /></c:set>
 
 
-<div class="portlet-filler container-fluid person-card-edition">
+<div class="person-card-edition">
 
 
 	<form:form  method="post" action="${editUrl}" enctype="multipart/form-data" cssClass="form-horizontal" modelAttribute="formEdition" role="form">
@@ -173,28 +173,21 @@
 		
 	
 		<!-- Buttons -->
-		<div class="portlet-toolbar adapt-scrollbar">
-		    <div class="row">
-		        <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10">
-		            <!-- Save -->
-		            <button type="submit" name="save" class="btn btn-primary">
-		                <i class="glyphicons glyphicons-floppy-disk"></i>
-		                <span><op:translate key="SAVE" /></span>
-		            </button>
-		            
-		            <!-- Cancel -->
-		            <button type="submit" name="cancel" class="btn btn-default">
-		                <span><op:translate key="CANCEL" /></span>
-		            </button>
-		            
+	    <div class="row">
+	        <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10">
+	            <!-- Save -->
+	            <button type="submit" name="save" class="btn btn-primary">
+	                <i class="glyphicons glyphicons-floppy-disk"></i>
+	                <span><op:translate key="SAVE" /></span>
+	            </button>
 	            
-		        </div>
-		        
-	        
-		    </div>
-		    
-    
-		    
+	            <!-- Cancel -->
+	            <button type="submit" name="cancel" class="btn btn-default">
+	                <span><op:translate key="CANCEL" /></span>
+	            </button>
+	            
+            
+	        </div>
 		</div>
 	
 	
