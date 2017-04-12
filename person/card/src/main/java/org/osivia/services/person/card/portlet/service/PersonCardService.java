@@ -45,6 +45,15 @@ public interface PersonCardService {
 	public LevelDeletion findLevelDeletion(Person userConnecte, Person userConsulte);
 	
 	/**
+	 * Return the hability of change the user password
+	 * @param userConnecte
+	 * @param userConsulte
+	 * @return
+	 */
+	public LevelChgPwd findLevelChgPwd(Person userConnecte, Person userConsulte);
+	
+	
+	/**
 	 * Load a person card (LDAP and nuxeo)
 	 * @param context
 	 * @return
@@ -88,10 +97,20 @@ public interface PersonCardService {
 	public boolean changePassword(Card card, FormChgPwd formChgPwd);
 
 	/**
+	 * Submit a passowrd change (for admins)
+	 * @param card
+	 * @param formChgPwd
+	 */
+	public void overwritePassword(Card card, FormChgPwd formChgPwd);
+	
+	/**
 	 * Delete a person
 	 * @param card
 	 */
 	public void deletePerson(Card card);
+
+
+
 
 
 

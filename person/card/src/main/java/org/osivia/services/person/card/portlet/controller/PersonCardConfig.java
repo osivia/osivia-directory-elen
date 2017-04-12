@@ -28,7 +28,12 @@ import org.springframework.stereotype.Component;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class PersonCardConfig implements InitializingBean {
 
+	/**
+	 * LDAP role for person management
+	 */
 	private String roleAdministrator;
+	
+	private Boolean personCanChangePassword;
 
 	/**
 	 * @return the roleAdministrator
@@ -44,13 +49,30 @@ public class PersonCardConfig implements InitializingBean {
 	public void setRoleAdministrator(String roleAdministrator) {
 		this.roleAdministrator = roleAdministrator;
 	}
+	
+	/**
+	 * @return the personCanChangePassword
+	 */
+	public Boolean getPersonCanChangePassword() {
+		return personCanChangePassword;
+	}
+
+	/**
+	 * @param personCanChangePassword the personCanChangePassword to set
+	 */
+	@Value("#{systemProperties['personcard.personCanChangePassword']}")
+	public void setPersonCanChangePassword(Boolean personCanChangePassword) {
+		this.personCanChangePassword = personCanChangePassword;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
+		if(personCanChangePassword == null) {
+			personCanChangePassword = true;
+		}
 		
 	}
 

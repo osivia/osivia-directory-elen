@@ -13,6 +13,7 @@ import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.notifications.INotificationsService;
 import org.osivia.portal.api.notifications.NotificationsType;
+import org.osivia.services.person.card.portlet.service.LevelChgPwd;
 import org.osivia.services.person.card.portlet.service.PersonCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,6 +59,9 @@ public class PersonChgPwdController extends CMSPortlet implements PortletContext
 	@Autowired
 	private Validator chgPwdValidator;	
 	
+	@Autowired
+	private Validator overwritePwdValidator;	
+	
 	
 	@RenderMapping
 	public String changePassword() {
@@ -79,12 +83,43 @@ public class PersonChgPwdController extends CMSPortlet implements PortletContext
 
 		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 
-		chgPwdValidator.validate(formChgPwd, result);
-
-		if (!result.hasErrors()) {
-			boolean changeOk = service.changePassword(card, formChgPwd);
-						
-			if(changeOk) {
+		if(card.getLevelChgPwd() == LevelChgPwd.ALLOW) {
+		
+			chgPwdValidator.validate(formChgPwd, result);
+	
+			if (!result.hasErrors()) {
+				boolean changeOk = service.changePassword(card, formChgPwd);
+							
+				if(changeOk) {
+	
+			        // Notification
+			        Bundle bundle = this.bundleFactory.getBundle(request.getLocale());
+			        String message = bundle.getString("PASSWORD_UPDATE_OK");
+			        this.notificationsService.addSimpleNotification(pcc, message, NotificationsType.SUCCESS);			
+					
+					status.setComplete();
+				}
+				else {
+					response.setRenderParameter("controller", "chgPwd");
+					
+			        // Notification
+			        Bundle bundle = this.bundleFactory.getBundle(request.getLocale());
+			        String message = bundle.getString("WRONG_PASSWORD");
+			        this.notificationsService.addSimpleNotification(pcc, message, NotificationsType.ERROR);		
+				}
+	
+			}
+			else {
+				response.setRenderParameter("controller", "chgPwd");
+			}
+		}
+		
+		else if (card.getLevelChgPwd() == LevelChgPwd.OVERWRITE) {
+			
+			overwritePwdValidator.validate(formChgPwd, result);
+			
+			if (!result.hasErrors()) {
+				service.overwritePassword(card, formChgPwd);
 
 		        // Notification
 		        Bundle bundle = this.bundleFactory.getBundle(request.getLocale());
@@ -92,19 +127,11 @@ public class PersonChgPwdController extends CMSPortlet implements PortletContext
 		        this.notificationsService.addSimpleNotification(pcc, message, NotificationsType.SUCCESS);			
 				
 				status.setComplete();
+	
 			}
 			else {
 				response.setRenderParameter("controller", "chgPwd");
-				
-		        // Notification
-		        Bundle bundle = this.bundleFactory.getBundle(request.getLocale());
-		        String message = bundle.getString("WRONG_PASSWORD");
-		        this.notificationsService.addSimpleNotification(pcc, message, NotificationsType.ERROR);		
 			}
-
-		}
-		else {
-			response.setRenderParameter("controller", "chgPwd");
 		}
 	}
     

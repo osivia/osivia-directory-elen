@@ -18,15 +18,19 @@
 
 	<form:form  method="post" action="${editUrl}" cssClass="form-horizontal" modelAttribute="formChgPwd" role="form">
 	
-		<div class="form-group">
-			<form:label path="currentPwd" cssClass="col-md-2 control-label">
-				<op:translate  key="label.pwd.current" />
-			</form:label>	
-		
-			<div class="col-md-10"><form:input path="currentPwd" type="password" cssClass="form-control"/>
-				<form:errors path="currentPwd" />
+	
+		<c:if test="${card.levelChgPwd eq 'ALLOW'}">
+			<div class="form-group">
+				<form:label path="currentPwd" cssClass="col-md-2 control-label">
+					<op:translate  key="label.pwd.current" />
+				</form:label>	
+			
+				<div class="col-md-10"><form:input path="currentPwd" type="password" cssClass="form-control"/>
+					<form:errors path="currentPwd" />
+				</div>
 			</div>
-		</div>
+		</c:if>
+		
 		
 		<div class="form-group">
 			<form:label path="newPwd" cssClass="col-md-2 control-label">

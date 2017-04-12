@@ -15,6 +15,7 @@ package org.osivia.services.person.card.portlet.controller;
 
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.urls.Link;
+import org.osivia.services.person.card.portlet.service.LevelChgPwd;
 import org.osivia.services.person.card.portlet.service.LevelDeletion;
 import org.osivia.services.person.card.portlet.service.LevelEdition;
 
@@ -33,6 +34,8 @@ public class Card {
 	private LevelEdition levelEdition;
 
 	private LevelDeletion levelDeletion;
+	
+	private LevelChgPwd levelChgPwd;
 	
 	
 	private boolean self = false;
@@ -93,6 +96,20 @@ public class Card {
 		this.levelDeletion = levelDeletion;
 	}
 
+	/**
+	 * @return the levelChgPwd
+	 */
+	public LevelChgPwd getLevelChgPwd() {
+		return levelChgPwd;
+	}
+
+	/**
+	 * @param levelChgPwd the levelChgPwd to set
+	 */
+	public void setLevelChgPwd(LevelChgPwd levelChgPwd) {
+		this.levelChgPwd = levelChgPwd;
+	}
+
 	public boolean isSelf() {
 		return self;
 	}
@@ -115,5 +132,6 @@ public class Card {
 	public void setAvatar(Link avatar) {
 		this.avatar = avatar;
 	}
+
 
 }

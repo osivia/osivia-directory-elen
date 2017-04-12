@@ -105,6 +105,28 @@ public class PersonCardServiceImpl implements PersonCardService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public LevelChgPwd findLevelChgPwd(Person userConnecte, Person userConsulte) {
+        // Level
+    	LevelChgPwd level;
+
+        if (userConnecte == null) {
+            level = LevelChgPwd.DENY;
+        } else if (config.getRoleAdministrator() != null && roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator())) {
+            level = LevelChgPwd.OVERWRITE;
+        } else if (userConnecte.getUid().equals(userConsulte.getUid()) && config.getPersonCanChangePassword()) {
+            level = LevelChgPwd.ALLOW;
+        } else {
+            level = LevelChgPwd.DENY;
+        }
+
+        return level;
+    }
+	
+    
+    /**
+     * {@inheritDoc}
+     */
 	@Override
 	public LevelDeletion findLevelDeletion(Person userConnecte, Person userConsulte) {
         // Level
@@ -153,6 +175,7 @@ public class PersonCardServiceImpl implements PersonCardService {
 		card.setUserConsulte(userConsulte);
 		card.setLevelEdition(findLevelEdition(userConnecte, userConsulte));
 		card.setLevelDeletion(findLevelDeletion(userConnecte, userConsulte));
+		card.setLevelChgPwd(findLevelChgPwd(userConnecte, userConsulte));
 		card.setAvatar(userConsulte.getAvatar());
 		
 		
@@ -292,6 +315,16 @@ public class PersonCardServiceImpl implements PersonCardService {
 
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#overwritePassword(org.osivia.services.person.card.portlet.controller.Card, org.osivia.services.person.card.portlet.controller.FormChgPwd)
+	 */
+	@Override
+	public void overwritePassword(Card card, FormChgPwd formChgPwd) {
+		// Modification du mot de passe
+		personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
+		
+	}
 
 	/* (non-Javadoc)
 	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#deletePerson(org.osivia.services.person.card.portlet.controller.Card)
@@ -302,4 +335,7 @@ public class PersonCardServiceImpl implements PersonCardService {
 		personService.delete(card.getUserConsulte());
 		
 	}
+
+
+
 }

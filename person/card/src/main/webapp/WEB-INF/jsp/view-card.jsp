@@ -106,10 +106,12 @@
             </a>
             
             <!-- Change password -->
-            <a href="${chgPwdUrl}" class="btn btn-default">
-                <i class="glyphicons glyphicons-keys"></i>
-                <span><op:translate key="label.btn.chgpwd" /></span>
-            </a>
+            <c:if test="${card.levelChgPwd eq 'ALLOW' || card.levelChgPwd eq 'OVERWRITE'}">
+	            <a href="${chgPwdUrl}" class="btn btn-default">
+	                <i class="glyphicons glyphicons-keys"></i>
+	                <span><op:translate key="label.btn.chgpwd" /></span>
+	            </a>
+            </c:if>
             
             <!-- Delete -->
             <c:if test="${card.levelDeletion eq 'ALLOW'}">
