@@ -38,7 +38,7 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
 
 
     /** Application context. */
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
 
     /**
@@ -52,7 +52,6 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
     /**
      * {@inheritDoc}
      */
-    @Override
     public Group getEmptyGroup() {
         return this.applicationContext.getBean(Group.class);
     }
@@ -61,7 +60,6 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
     /**
      * {@inheritDoc}
      */
-    @Override
     public Group get(Name dn) {
         return this.dao.get(dn);
     }
@@ -125,7 +123,6 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
     /**
      * {@inheritDoc}
      */
-    @Override
     public List<Group> search(Group criteria) {
         return this.dao.find(criteria);
     }

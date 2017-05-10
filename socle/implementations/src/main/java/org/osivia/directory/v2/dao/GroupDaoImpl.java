@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * LDAP group DAO implementation.
- * 
+ *
  * @author Cédric Krommenhoek
  * @see GroupDao
  */
@@ -24,7 +24,7 @@ public class GroupDaoImpl implements GroupDao {
 
     /** LDAP template. */
     @Autowired
-    private LdapTemplate template;
+    protected LdapTemplate template;
 
     /** Group sample. */
     @Autowired
@@ -56,7 +56,7 @@ public class GroupDaoImpl implements GroupDao {
         // LDAP query
         LdapQueryBuilder query = LdapQueryBuilder.query();
         query.base(System.getProperty("ldap.base"));
-        
+
         // Filter
         Filter filter = MappingHelper.generateAndFilter(criteria);
         query.filter(filter);

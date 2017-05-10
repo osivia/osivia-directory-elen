@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.automation.client.Constants;
 import org.nuxeo.ecm.automation.client.OperationRequest;
@@ -21,12 +24,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * Update workspace Nuxeo command.
- * 
+ *
  * @author Cédric Krommenhoek
  * @see INuxeoCommand
  */
@@ -40,10 +41,10 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
     private final String user;
     /** Attach member indicator. */
     private final boolean attach;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param workspaceId workspace identifier
      * @param user user identifier
      * @param attach attach member indicator
@@ -82,7 +83,7 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
 
     /**
      * Get workspace Nuxeo document.
-     * 
+     *
      * @param nuxeoSession Nuxeo session
      * @return Nuxeo document
      * @throws Exception
@@ -113,8 +114,16 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
         return workspace;
     }
 
-
+    
     /**
+	 * @return the workspaceId
+	 */
+	public String getWorkspaceId() {
+		return workspaceId;
+	}
+
+
+	/**
      * Generate updated members JSON content.
      *
      * @param members members
@@ -139,7 +148,7 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
                 array.add(object);
             }
         }
-        
+
         if (this.attach) {
             // Date format
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
@@ -150,7 +159,7 @@ public class UpdateWorkspaceCommand implements INuxeoCommand {
             object.put("joinedDate", dateFormat.format(new Date()));
             array.add(object);
         }
-        
+
         return array.toString();
     }
 

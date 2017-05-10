@@ -217,7 +217,6 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	}
 	
 	
-	@Override
 	public Object getEcmProfile(
 			PortalControllerContext portalControllerContext, Person person)
 			throws PortalException {
