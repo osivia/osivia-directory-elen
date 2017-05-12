@@ -22,6 +22,7 @@ import javax.naming.Name;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.PersonDao;
 import org.osivia.directory.v2.model.CollabProfile;
@@ -32,11 +33,15 @@ import org.osivia.directory.v2.repository.UpdateUserProfileCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.internationalization.Bundle;
+import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.api.urls.PortalUrlType;
 import org.osivia.portal.core.cms.CMSException;
+import org.osivia.portal.core.constants.InternalConstants;
+import org.osivia.portal.core.constants.InternationalizationConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
@@ -75,6 +80,9 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 
 	@Autowired
 	protected IPortalUrlFactory urlFactory;
+	
+	@Autowired
+	protected IBundleFactory bundleFactory;
 	
 	@Override
 	public Person getEmptyPerson() {
@@ -208,11 +216,35 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
 		Map<String, String> windowProperties = new HashMap<String, String>();
 		windowProperties.put("osivia.ajaxLink", "1");
-		windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
-		windowProperties.put("osivia.title", person.getDisplayName());
+		windowProperties.put("osivia.hideTitle", "1");
+		windowProperties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, "true");
+		windowProperties.put(InternalConstants.PROP_WINDOW_TITLE, person.getDisplayName());
 		windowProperties.put("uidFichePersonne", person.getUid());
 		
-        String url = urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, PortalUrlType.DEFAULT);
+		Map<String, String> parameters = new HashMap<String, String>();
+		
+        String url = urlFactory.getStartPortletInNewPage(portalControllerContext, "profile-"+person.getUid(), person.getDisplayName(), getCardInstance(), windowProperties, parameters);
+        return new Link(url,false);
+	}
+	
+	/**
+	 * Generate a portlet url for person card
+	 */
+	public Link getMyCardUrl(PortalControllerContext portalControllerContext) throws PortalException {
+		
+		Bundle bundle = bundleFactory.getBundle(portalControllerContext.getHttpServletRequest().getLocale());
+		
+		Map<String, String> properties = new HashMap<String, String>();
+        properties.put(InternalConstants.PROP_WINDOW_TITLE, bundle.getString(InternationalizationConstants.KEY_MY_PROFILE));
+        properties.put("osivia.hideTitle", "1");
+        properties.put("osivia.ajaxLink", "1");
+        properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));		
+		
+        Map<String, String> parameters = new HashMap<String, String>();
+
+        String url = this.urlFactory.getStartPortletInNewPage(portalControllerContext, "myprofile",
+                bundle.getString(InternationalizationConstants.KEY_MY_PROFILE), getCardInstance(), properties, parameters);        
+
         return new Link(url,false);
 	}
 	
@@ -248,4 +280,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	}
 
 
+	protected String getCardInstance() {
+		return CARD_INSTANCE;
+	}
 }
