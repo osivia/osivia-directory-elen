@@ -4,14 +4,14 @@
     
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.4.3</version>
+    <version>4.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
     
     
     <properties>
-        <toutatice.version>4.4.5</toutatice.version>
+        <toutatice.version>4.4-SNAPSHOT</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
@@ -169,7 +169,7 @@
     
     
     <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/tags/4.4.3</developerConnection>
+        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/branches/4.4-maintenance</developerConnection>
     </scm>
     
     
