@@ -69,6 +69,14 @@
         </div>
     </div>
     
+    <!-- Institution -->
+    <div class="form-group">
+        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.institution" /></label>
+        <div class="col-sm-9 col-md-10">
+            <p class="form-control-static">${card.nxProfile.institution}</p>
+        </div>
+    </div>    
+    
     <!-- Phone -->
     <div class="form-group">
         <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.phone" /></label>

@@ -27,6 +27,8 @@ public class NuxeoProfile {
 	private String mobilePhone;
 	
 	private String occupation;
+	
+	private String institution;
 
 	/**
 	 * @return the bio
@@ -82,6 +84,20 @@ public class NuxeoProfile {
 	 */
 	public void setOccupation(String occupation) {
 		this.occupation = occupation;
+	}
+
+	/**
+	 * @return the institution
+	 */
+	public String getInstitution() {
+		return institution;
+	}
+
+	/**
+	 * @param institution the institution to set
+	 */
+	public void setInstitution(String institution) {
+		this.institution = institution;
 	}
 
 

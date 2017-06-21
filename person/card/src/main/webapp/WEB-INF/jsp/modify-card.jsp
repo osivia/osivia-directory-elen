@@ -147,6 +147,13 @@
 	            <form:input path="occupation" cssClass="form-control" />
 	        </div>
 	    </div>
+	    
+	    <div class="form-group">
+	        <form:label path="institution" cssClass="col-md-2 control-label"><op:translate key="label.institution" /></form:label>
+	        <div class="col-md-10">
+	            <form:input path="institution" cssClass="form-control" />
+	        </div>
+	    </div>	    
 	
 		<div class="form-group"> 	
 			<form:label path="phone" cssClass="col-md-2 control-label">
