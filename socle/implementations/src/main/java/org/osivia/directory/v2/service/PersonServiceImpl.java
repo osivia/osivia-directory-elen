@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.nuxeo.ecm.automation.client.model.Document;
+import org.osivia.directory.v2.LDAPUtil;
 import org.osivia.directory.v2.dao.PersonDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.Avatar;
@@ -38,7 +39,6 @@ import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
-import org.osivia.portal.api.urls.PortalUrlType;
 import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
@@ -115,6 +115,8 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	 */
 	@Override
 	public Person getPerson(String uid) {
+	    
+        uid = LDAPUtil.sanitizeRfc2253Complient(uid);
 
         Name dn = sample.buildDn(uid);
 
