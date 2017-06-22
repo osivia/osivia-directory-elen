@@ -70,7 +70,7 @@
 		<div class="col-md-8">
 			<div class="btn-toolbar">
 				<button class="btn btn-primary" onclick="form.submit"> 
-					<i class="glyphicons user_add"></i>
+					<i class="glyphicons glyphicons-user_add"></i>
 					<span><op:translate  key="label.btn.ok" /></span>
 				</button>
 				

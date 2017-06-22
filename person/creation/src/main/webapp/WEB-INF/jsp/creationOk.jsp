@@ -10,13 +10,13 @@
 		<div class="col-md-8">
 			<div class="btn-toolbar">
 				<a class="btn btn-default" href="${creerPersonne}">
-					<i class="glyphicons user_add"></i>
+					<i class="glyphicons glyphicons-user_add"></i>
 					
 					<span><op:translate  key="label.btn.create" /></span>
 				</a>
 				
 				<a class="btn btn-primary" href="${urlFichePersonne}">
-					<i class="glyphicons user"></i>
+					<i class="glyphicons glyphicons-user"></i>
 					<span><op:translate  key="label.btn.edit" /></span>
 				</a>				
 			</div>
