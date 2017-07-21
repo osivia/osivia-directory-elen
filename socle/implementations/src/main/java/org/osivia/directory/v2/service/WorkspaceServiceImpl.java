@@ -15,17 +15,26 @@ package org.osivia.directory.v2.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.automation.client.model.Document;
+import org.nuxeo.ecm.automation.client.model.Documents;
+import org.nuxeo.ecm.automation.client.model.PropertyList;
+import org.nuxeo.ecm.automation.client.model.PropertyMap;
 import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
+import org.osivia.directory.v2.repository.GetWorkspaceCommand;
 import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -39,6 +48,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.forms.FormFilterException;
+import fr.toutatice.portail.cms.nuxeo.api.forms.IFormsService;
 import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 
 /**
@@ -52,6 +63,9 @@ import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 @Service
 public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceService, ApplicationContextAware {
 
+
+	private final static Log logger_integrity = LogFactory.getLog("ldap.integrity");
+	
     /** Person service. */
     @Autowired
     private PersonUpdateService personService;
@@ -460,6 +474,26 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         nuxeoController.executeNuxeoCommand(command);
     }
 
+    
+    /**
+     * Update workspace.
+     * 
+     * @param workspaceId workspace identifier
+     * @param user user identifier
+     * @param attach true if user is attached, false if user is detached
+     */
+    private Document getWorkspaceDocument(String workspaceId) {
+        // Nuxeo controller
+        NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
+        nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
+
+        // Nuxeo command
+        INuxeoCommand command = this.applicationContext.getBean(GetWorkspaceCommand.class, workspaceId);
+        Documents documents = (Documents) nuxeoController.executeNuxeoCommand(command);
+        
+        return documents.get(0);
+    }
+
 
     /**
      * {@inheritDoc}
@@ -604,6 +638,74 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     }
 
 
+    @Override
+    public boolean checkGroups(String workspaceId) {
+    	
+    	boolean ret = false;
+    	
+    	logger_integrity.info("checkGroups starts for "+workspaceId+".");
+    	
+    	Map<Name, Boolean> names = new HashMap<Name, Boolean>();
+    	
+    	List<WorkspaceMember> allMembers = getAllMembers(workspaceId);
+    	for(WorkspaceMember member : allMembers) {
+    		names.put(member.getMember().getDn(), Boolean.FALSE);
+    	}
+    	
+    	Document workspaceDocument = getWorkspaceDocument(workspaceId);
+    	
+    	PropertyList spaceMembers = workspaceDocument.getProperties().getList("ttcs:spaceMembers");
+    	for (int i = 0; i < spaceMembers.size(); i++) {
+    		PropertyMap member = spaceMembers.getMap(i);
+    		
+    		String login = member.getString("login");
+    		Name dn = personSample.buildDn(login);
+    		
+    		// if found
+    		Boolean found = names.get(dn);
+    		if(found != null) {
+
+    	    	logger_integrity.debug(dn.toString() +" found.");
+    			
+    			names.put(dn, Boolean.TRUE);
+    		}
+    		else {
+    			// if not found, report a problem
+    			logger_integrity.error("No member found in workspace with dn "+dn);
+    			ret = true;
+    		}
+    		
+    	}
+    	
+    	for(Map.Entry<Name, Boolean>  entry : names.entrySet()) {
+    		if(entry.getValue() == Boolean.FALSE) {
+    			logger_integrity.error("Orphan member found in workspace with dn "+entry.getKey().toString());
+    			ret = true;
+    		}
+    	}
+    	
+    	return ret;
+    	
+    }
+    
+    @Override
+    public void sendIntegrityAlert(PortalControllerContext pcc) {
+    	
+		NuxeoController nuxeoController = new NuxeoController(pcc.getPortletCtx());
+
+        IFormsService formsService = nuxeoController.getNuxeoCMSService().getFormsService();
+        
+        Map<String, String> variables = new HashMap<>();
+        
+		try {
+			formsService.start(pcc, "ldap_integrity", variables);
+		} catch (PortalException | FormFilterException e) {
+			logger_integrity.error("Unable to send notification", e);
+		}
+        
+    }
+    
+    
     /**
      * {@inheritDoc}
      */

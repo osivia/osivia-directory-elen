@@ -13,11 +13,15 @@
  */
 package org.osivia.directory.v2;
 
+import java.text.ParseException;
+
 import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 
 import org.osivia.directory.v2.service.LdapServiceImpl;
+import org.osivia.portal.api.PortalException;
+import org.osivia.portal.api.batch.IBatchService;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
 import org.osivia.portal.api.directory.v2.IDirProvider;
 import org.osivia.portal.api.locator.Locator;
@@ -38,6 +42,9 @@ public class DirProviderPortlet extends CMSPortlet {
 
 	/** The delegate (in this webapp). */
 	private DirDelegate deletagate;
+	
+	/** Batch coherence */
+	private DirectoryIntegrity batch = new DirectoryIntegrity();
 
     @Override
     public void init(PortletConfig config) throws PortletException {
@@ -58,6 +65,21 @@ public class DirProviderPortlet extends CMSPortlet {
         provider.registerDelegate(iface);
 
         LdapServiceImpl.setPortletContext(portletContext);
+        
+        
+        // add coherence batch in scheduler
+        if(batch.isEnabled()) {
+	        IBatchService batchService = Locator.findMBean(IBatchService.class, IBatchService.MBEAN_NAME);
+	
+			try {
+				batch.setPortletContext(getPortletContext());
+				
+				batchService.addBatch(batch);
+			} catch (ParseException | PortalException e) {
+				throw new PortletException(e);
+			} 
+        }
+        
     }
 
 
@@ -67,6 +89,12 @@ public class DirProviderPortlet extends CMSPortlet {
         super.destroy();
 
         provider.unregisterDelegate(deletagate);
+        
+        if(batch.isEnabled()) {
+	        IBatchService batchService = Locator.findMBean(IBatchService.class, IBatchService.MBEAN_NAME);
+	        batchService.removeBatch(batch);
+        }
+        
     }
 
 }

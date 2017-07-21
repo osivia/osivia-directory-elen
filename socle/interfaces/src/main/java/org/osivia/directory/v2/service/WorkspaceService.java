@@ -16,6 +16,7 @@ package org.osivia.directory.v2.service;
 import java.util.List;
 
 import javax.naming.Name;
+import javax.portlet.PortletContext;
 
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
@@ -227,6 +228,19 @@ public interface WorkspaceService extends IDirService {
      * @param memberUid member UID
      */
     void removeMemberFromLocalGroup(String workspaceId, String localGroupCn, String memberUid);
+
+
+    /**
+     * Check group integrity
+     * @param workspaceId
+     * @return false if there is no warning
+     */
+	boolean checkGroups(String workspaceId);
+
+	/**
+	 * Send alert about directory bugs
+	 */
+	void sendIntegrityAlert(PortalControllerContext pcc);
 
 
 
