@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.Name;
+import javax.portlet.PortletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -271,11 +274,18 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	public Object getEcmProfile(
 			PortalControllerContext portalControllerContext, Person person)
 			throws PortalException {
-		NuxeoController controller = new NuxeoController(portalControllerContext);
 		
-		return controller.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
+        // HTTP servlet request
+        HttpServletRequest servletRequest = portalControllerContext.getHttpServletRequest();
+
+        // Nuxeo controller
+        NuxeoController nuxeoController = new NuxeoController(getPortletContext());
+        nuxeoController.setServletRequest(servletRequest);
+		
+		return nuxeoController.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
 		
 	}
+
 
 	/* (non-Javadoc)
 	 * @see org.osivia.directory.v2.service.PersonUpdateService#delete(org.osivia.portal.api.directory.v2.model.Person)
