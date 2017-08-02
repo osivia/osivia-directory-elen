@@ -42,6 +42,8 @@ public class FormEdition {
 	private String mobilePhone;
 	
 	private String occupation;
+	
+	private String institution;
 
 	/**
 	 * @return the avatar
@@ -172,6 +174,20 @@ public class FormEdition {
 	 */
 	public void setOccupation(String occupation) {
 		this.occupation = occupation;
+	}
+
+	/**
+	 * @return the institution
+	 */
+	public String getInstitution() {
+		return institution;
+	}
+
+	/**
+	 * @param institution the institution to set
+	 */
+	public void setInstitution(String institution) {
+		this.institution = institution;
 	}
 
 	

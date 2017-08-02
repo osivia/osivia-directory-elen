@@ -59,6 +59,11 @@ public class PersonCardServiceImpl implements PersonCardService {
 	 * 
 	 */
 	private static final String BIO = "ttc_userprofile:bio";
+
+	/**
+	 * 
+	 */
+	private static final String INSTITUTION = "ttc_userprofile:institution";
 	
 
 	@Autowired
@@ -195,6 +200,7 @@ public class PersonCardServiceImpl implements PersonCardService {
 		profile.setPhone(docNxProfile.getString(PHONE_NUMBER));
 		profile.setMobilePhone(docNxProfile.getString(MOBILE));
 		profile.setOccupation(docNxProfile.getString(PROFESSION));
+		profile.setInstitution(docNxProfile.getString(INSTITUTION));
 		
 		return profile;
 	}
@@ -295,6 +301,7 @@ public class PersonCardServiceImpl implements PersonCardService {
 		nxProperties.put(PHONE_NUMBER, form.getPhone());
 		nxProperties.put(MOBILE, form.getMobilePhone());
 		nxProperties.put(PROFESSION, form.getOccupation());
+		nxProperties.put(INSTITUTION,  form.getInstitution());
 		
 	}
 
