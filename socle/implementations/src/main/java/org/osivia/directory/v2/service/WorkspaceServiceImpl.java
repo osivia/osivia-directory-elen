@@ -66,6 +66,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
 	private final static Log logger_integrity = LogFactory.getLog("ldap.integrity");
 	
+    private static final String LDAP_INTEGRITY_MODEL_WEBID = IFormsService.FORMS_WEB_ID_PREFIX + "ldap_integrity";
+
     /** Person service. */
     @Autowired
     private PersonUpdateService personService;
@@ -698,7 +700,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         Map<String, String> variables = new HashMap<>();
         
 		try {
-			formsService.start(pcc, "ldap_integrity", variables);
+            formsService.start(pcc, LDAP_INTEGRITY_MODEL_WEBID, variables);
 		} catch (PortalException | FormFilterException e) {
 			logger_integrity.error("Unable to send notification", e);
 		}
