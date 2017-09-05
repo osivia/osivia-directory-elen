@@ -1,0 +1,13 @@
+dn: ds-cfg-attribute=portalCollabWorkspaceId,cn=Index,ds-cfg-backend-id=userRoot,cn=Backends,cn=config
+objectClass: ds-cfg-backend-index
+objectClass: top
+ds-cfg-index-type: equality
+ds-cfg-attribute: portalCollabWorkspaceId
+
+dn: ds-cfg-attribute=portalPersonProfile,cn=Index,ds-cfg-backend-id=userRoot,cn=Backends,cn=config
+objectClass: ds-cfg-backend-index
+objectClass: top
+ds-cfg-index-type: equality
+ds-cfg-attribute: portalPersonProfile
+
+
