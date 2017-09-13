@@ -66,5 +66,12 @@ public interface PersonDao {
 	 * @param userConsulte
 	 */
 	void delete(Person userConsulte);
+	
+	/**
+	 * Get a person and bypass the cache (used for updating profiles).
+	 * @param dn the person DN
+	 * @return the person
+	 */
+	Person getPersonNoCache(Name dn);
 
 }

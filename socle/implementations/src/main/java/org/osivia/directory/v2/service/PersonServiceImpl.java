@@ -100,6 +100,23 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 		return p;
 		
 	}
+	
+	@Override
+	public Person getPersonNoCache(Name dn) {
+		
+		Person p;
+		try {
+			p = dao.getPersonNoCache(dn);
+			appendAvatar(p);
+			
+		} catch (NameNotFoundException e) {
+			logger.warn("Person with dn "+dn+" not found");
+			return null;
+		}
+
+		return p;
+		
+	}
 
 	
 	/* (non-Javadoc)

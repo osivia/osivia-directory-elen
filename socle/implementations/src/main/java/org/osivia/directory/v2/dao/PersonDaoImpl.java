@@ -64,6 +64,14 @@ public class PersonDaoImpl implements PersonDao {
 		return person;
 
 	}
+
+
+	@Override
+	public Person getPersonNoCache(Name dn) {
+
+		Person person = template.findByDn(dn, sample.getClass());
+		return person;
+	}
 	
 
 	@Override
@@ -155,6 +163,6 @@ public class PersonDaoImpl implements PersonDao {
 		template.delete(p);
 		
 	}
-	
+
 	
 }

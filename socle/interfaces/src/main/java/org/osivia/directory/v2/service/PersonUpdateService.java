@@ -15,6 +15,8 @@ package org.osivia.directory.v2.service;
 
 import java.util.Map;
 
+import javax.naming.Name;
+
 import org.osivia.directory.v2.model.ext.Avatar;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -70,5 +72,12 @@ public interface PersonUpdateService extends PersonService {
 	 * @param userConsulte
 	 */
 	public void delete(Person userConsulte);
+
+	/**
+	 * Get a person and bypass the cache (used for updating profiles).
+	 * @param dn the person DN
+	 * @return the person
+	 */
+	public Person getPersonNoCache(Name dn);
 
 }

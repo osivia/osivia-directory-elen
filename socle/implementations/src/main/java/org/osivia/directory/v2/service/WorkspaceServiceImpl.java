@@ -236,6 +236,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         members.setType(WorkspaceGroupType.space_group);
         members.setDn(this.sample.buildDn(cn));
 
+        // Get a fresh copy of the owner in the directory
+        owner = personService.getPersonNoCache(owner.getDn());
+        
         this.dao.create(members);
 
         // The owner is a member of the workspace
@@ -388,7 +391,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
      * @param cp collab profile
      */
     private void attachPerson(Name memberDn, CollabProfile cp) {
-        Person person = this.personService.getPerson(memberDn);
+        Person person = this.personService.getPersonNoCache(memberDn);
         this.attachPerson(person, cp);
     }
 
@@ -435,7 +438,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
      * @param cp collab profile
      */
     private void detachPerson(Name memberDn, CollabProfile cp) {
-        Person person = this.personService.getPerson(memberDn);
+        Person person = this.personService.getPersonNoCache(memberDn);
         this.detachPerson(person, cp);
     }
 
