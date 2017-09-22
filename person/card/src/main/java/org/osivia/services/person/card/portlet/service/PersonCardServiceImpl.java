@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.model.ext.Avatar;
@@ -119,7 +120,8 @@ public class PersonCardServiceImpl implements PersonCardService {
             level = LevelChgPwd.DENY;
         } else if (config.getRoleAdministrator() != null && roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator())) {
             level = LevelChgPwd.OVERWRITE;
-        } else if (userConnecte.getUid().equals(userConsulte.getUid()) && config.getPersonCanChangePassword()) {
+        } else if (userConnecte.getUid().equals(userConsulte.getUid()) && BooleanUtils.isNotTrue(userConnecte.getExternal())
+                && config.getPersonCanChangePassword()) {
             level = LevelChgPwd.ALLOW;
         } else {
             level = LevelChgPwd.DENY;
