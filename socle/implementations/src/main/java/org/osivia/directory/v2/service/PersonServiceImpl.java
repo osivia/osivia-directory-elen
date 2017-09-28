@@ -19,12 +19,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.naming.Name;
-import javax.portlet.PortletContext;
+import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.portal.common.invocation.Scope;
+import org.jboss.portal.core.controller.ControllerContext;
 import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.LDAPUtil;
@@ -45,6 +47,7 @@ import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
+import org.osivia.portal.core.context.ControllerContextAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
@@ -312,4 +315,38 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	protected String getCardInstance() {
 		return CARD_INSTANCE;
 	}
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isPortalAdministrator(PortalControllerContext portalControllerContext) throws PortalException {
+        // Controller context & portlet request
+        ControllerContext controllerContext;
+        PortletRequest request;
+        if (portalControllerContext == null) {
+            controllerContext = null;
+            request = null;
+        } else {
+            controllerContext = ControllerContextAdapter.getControllerContext(portalControllerContext);
+            request = portalControllerContext.getRequest();
+        }
+
+        // Portal administrator indicator attribute value
+        Boolean attribute;
+        if (controllerContext == null) {
+            attribute = null;
+        } else {
+            // Search attribute value in principal scope
+            attribute = (Boolean) controllerContext.getAttribute(Scope.PRINCIPAL_SCOPE, "osivia.isAdmin");
+        }
+        if ((attribute == null) && (request != null)) {
+            // Search attribute value in portlet request
+            attribute = (Boolean) request.getAttribute(InternalConstants.ADMINISTRATOR_INDICATOR_ATTRIBUTE_NAME);
+        }
+
+        return BooleanUtils.toBoolean(attribute);
+    }
+
 }
