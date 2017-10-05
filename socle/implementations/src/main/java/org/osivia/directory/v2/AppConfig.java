@@ -12,9 +12,12 @@
  * Lesser General Public License for more details.
  */
 package org.osivia.directory.v2;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osivia.directory.v2.model.converter.DateToGeneralizedTime;
+import org.osivia.directory.v2.model.converter.GeneralizedTimeToDate;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
@@ -25,9 +28,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.odm.core.ObjectDirectoryMapper;
+import org.springframework.ldap.odm.core.impl.DefaultObjectDirectoryMapper;
+import org.springframework.ldap.odm.typeconversion.ConverterManager;
+import org.springframework.ldap.odm.typeconversion.impl.ConversionServiceConverterManager;
+import org.springframework.ldap.odm.typeconversion.impl.ConversionServiceConverterManager.StringToNameConverter;
 import org.springframework.ldap.pool.factory.PoolingContextSource;
 import org.springframework.ldap.pool.validation.DefaultDirContextValidator;
 import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManager;
@@ -49,8 +59,18 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 @ComponentScan(basePackages = "org.osivia.directory.v2")
 public class AppConfig {
 	
+    /** Application context. */
 	@Autowired
-	private ApplicationContext context;
+	private ApplicationContext applicationContext;
+
+    /** Generalized time to date converter. */
+    @Autowired
+    private GeneralizedTimeToDate generalizedTimeToDateConverter;
+
+    /** Date to generalized time converter. */
+    @Autowired
+    private DateToGeneralizedTime dateToGeneralizedTimeConverter;
+
 
 	@Bean(name="contextSourceTransactionAwareProxy")
 	public TransactionAwareContextSourceProxy txProxy() {
@@ -105,14 +125,64 @@ public class AppConfig {
 		return poolingContextSource;
 	}	
 	
+
+    /**
+     * Get conversion service.
+     * 
+     * @return conversion service
+     */
+    @Bean
+    public GenericConversionService getConversionService() {
+        GenericConversionService conversionService = new DefaultConversionService();
+        conversionService.addConverter(new StringToNameConverter());
+        conversionService.addConverter(this.generalizedTimeToDateConverter);
+        conversionService.addConverter(this.dateToGeneralizedTimeConverter);
+        return conversionService;
+    }
+
+
+    /**
+     * Get converter manager.
+     * 
+     * @param conversionService conversion service
+     * @return converter manager
+     */
+    @Bean
+    public ConverterManager getConverterManager(GenericConversionService conversionService) {
+        return new ConversionServiceConverterManager(conversionService);
+    }
+
+
+    /**
+     * Get object directory mapper.
+     * 
+     * @param converterManager converter manager
+     * @return object directory mapper
+     */
+    @Bean
+    public ObjectDirectoryMapper getObjectDirectoryMapper(ConverterManager converterManager) {
+        DefaultObjectDirectoryMapper objectDirectoryMapper = new DefaultObjectDirectoryMapper();
+        objectDirectoryMapper.setConverterManager(converterManager);
+        return objectDirectoryMapper;
+    }
+
+
+    /**
+     * Get LDAP template
+     * 
+     * @param contextSource context source
+     * @param objectDirectoryMapper object directory mapper
+     * @return LDAP template
+     */
 	@Bean(name="ldapTemplate")
 	@Primary
-	public LdapTemplate getLdapTemplate() {
-		
-		TransactionAwareContextSourceProxy contextSource = context.getBean(TransactionAwareContextSourceProxy.class);
-		return new LdapTemplate(contextSource);
+	public LdapTemplate getLdapTemplate(TransactionAwareContextSourceProxy contextSource, ObjectDirectoryMapper objectDirectoryMapper) {
+        LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+        ldapTemplate.setObjectDirectoryMapper(objectDirectoryMapper);
+        return ldapTemplate;
 	}
 	
+
 	@Bean(name="authenticateLdapTemplate")
 	public LdapTemplate getAuthenticateLdapTemplate() {
 		
@@ -132,7 +202,7 @@ public class AppConfig {
 	@Bean
 	public ContextSourceTransactionManager getTxManager() {
 		ContextSourceTransactionManager txManager = new ContextSourceTransactionManager();
-		txManager.setContextSource((ContextSource) context.getBean("contextSourceTransactionAwareProxy"));
+		txManager.setContextSource((ContextSource) applicationContext.getBean("contextSourceTransactionAwareProxy"));
 		txManager.setRenamingStrategy(new DefaultTempEntryRenamingStrategy());		
 		
 		return txManager;
@@ -145,7 +215,7 @@ public class AppConfig {
 	@Bean(name="ldapTransactionManagerDelegate")
 	public ContextSourceTransactionManagerDelegate getTxManagerDelegate() {
 		ContextSourceTransactionManagerDelegate txManagerDelegate = new ContextSourceTransactionManagerDelegate();
-		txManagerDelegate.setContextSource((ContextSource) context.getBean("contextSourceTransactionAwareProxy"));
+		txManagerDelegate.setContextSource((ContextSource) applicationContext.getBean("contextSourceTransactionAwareProxy"));
 		
 		return txManagerDelegate;
 	}	

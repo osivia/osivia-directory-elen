@@ -15,9 +15,9 @@ package org.osivia.directory.v2.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +45,7 @@ public final class PersonImpl implements Person, Serializable {
 
     /** Default serial version UID. */
     private static final long serialVersionUID = 1L;
+
 
     /** DN. */
     @Id
@@ -90,6 +91,18 @@ public final class PersonImpl implements Person, Serializable {
     /** Avatar */
     @Transient
     private Link avatar;
+
+    /** External account indicator. */
+    @Attribute(name = "portalPersonExternal")
+    private Boolean external;
+
+    /** Account validity date. */
+    @Attribute(name = "portalPersonValidity")
+    private Date validity;
+
+    /** Last connection date. */
+    @Attribute(name = "portalPersonLastConnection")
+    private Date lastConnection;
 
 
     /**
@@ -286,19 +299,70 @@ public final class PersonImpl implements Person, Serializable {
      * {@inheritDoc}
      */
     @Override
+    public Boolean getExternal() {
+        return this.external;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setExternal(Boolean external) {
+        this.external = external;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getValidity() {
+        return this.validity;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setValidity(Date validity) {
+        this.validity = validity;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getLastConnection() {
+        return this.lastConnection;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setLastConnection(Date lastConnection) {
+        this.lastConnection = lastConnection;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Name buildBaseDn() {
         return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=users").build();
     }
 
     /**
      * {@inheritDoc}
-     * @throws InvalidNameException 
      */
     @Override
     public Name buildDn(String uid)  {
-    	
     	return LdapNameBuilder.newInstance(buildBaseDn()).add("uid=" + uid).build();
-    	    	
     }
 
 

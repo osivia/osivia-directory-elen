@@ -26,12 +26,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
-import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Component;
 
 /**
  * ODM of a collaborative group profile
+ * 
  * @author Loïc Billon
  * @since 4.4
  */
@@ -40,227 +40,249 @@ import org.springframework.stereotype.Component;
 @Entry(objectClasses = {"portalCollabProfile"})
 public final class CollabProfileImpl implements CollabProfile, Serializable {
 
+    /** Default serial version UID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7838307664620741006L;
 
-	@Id
-	private Name dn;
-	
-	@Attribute
-	private String cn;
-	
-	@Attribute
-	private String description;
-	
-	@Attribute
-	private List<Name> uniqueMember = new ArrayList<Name>();;
-	
-	@Attribute(name="portalExplicitMember")
-	private List<Name> explicitMember = new ArrayList<Name>();;	
-	
-	@Attribute(name="portalCollabWorkspaceId")
-	private String workspaceId;
-	
-	@Attribute(name="portalDisplayName")
-	private String displayName;
-	
-	@Attribute(name="portalExplicitManager")
-	private List<Name> explicitManager = new ArrayList<Name>();
-	
-	@Attribute(name="portalProfileType")
-	private WorkspaceGroupType type;
-	
-	@Attribute(name="portalCollabWorkspaceRole")
-	private WorkspaceRole role;
-	
-	@Attribute
-	@Transient
-	private Long modifyTimeStamp;
+    /** DN. */
+    @Id
+    private Name dn;
 
-	/**
-	 * @return the dn
-	 */
-	@Override
-	public Name getDn() {
-		return dn;
-	}
+    /** CN. */
+    @Attribute
+    private String cn;
 
-	/**
-	 * @param dn the dn to set
-	 */
-	@Override
-	public void setDn(Name dn) {
-		this.dn = dn;
-	}
+    /** Description. */
+    @Attribute
+    private String description;
 
-	/**
-	 * @return the cn
-	 */
-	@Override
-	public String getCn() {
-		return cn;
-	}
+    /** Unique member. */
+    @Attribute
+    private List<Name> uniqueMember;
 
-	/**
-	 * @param cn the cn to set
-	 */
-	@Override
-	public void setCn(String cn) {
-		this.cn = cn;
-	}
+    /** Explicit member. */
+    @Attribute(name = "portalExplicitMember")
+    private List<Name> explicitMember;
 
-	/**
-	 * @return the description
-	 */
-	@Override
-	public String getDescription() {
-		return description;
-	}
+    /** Workspace identifier. */
+    @Attribute(name = "portalCollabWorkspaceId")
+    private String workspaceId;
 
-	/**
-	 * @param description the description to set
-	 */
-	@Override
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /** Display name (useful for local group). */
+    @Attribute(name = "portalDisplayName")
+    private String displayName;
 
-	/**
-	 * @return the uniqueMembers
-	 */
-	@Override
-	public List<Name> getUniqueMember() {
-		return uniqueMember;
-	}
+    /** Explicit manager. */
+    @Attribute(name = "portalExplicitManager")
+    private List<Name> explicitManager;
 
-	/**
-	 * @param uniqueMembers the uniqueMembers to set
-	 */
-	@Override
-	public void setUniqueMember(List<Name> uniqueMember) {
-		this.uniqueMember = uniqueMember;
-	}
-	
-	
-	
-	/**
-	 * @return the explicitMember
-	 */
-	@Override
-	public List<Name> getExplicitMember() {
-		return explicitMember;
-	}
+    /** Profile type. */
+    @Attribute(name = "portalProfileType")
+    private WorkspaceGroupType type;
 
-	/**
-	 * @param explicitMember the explicitMember to set
-	 */
-	@Override
-	public void setExplicitMember(List<Name> explicitMember) {
-		this.explicitMember = explicitMember;
-	}
+    /** Profile role. */
+    @Attribute(name = "portalCollabWorkspaceRole")
+    private WorkspaceRole role;
 
-	/**
-	 * @return the workspaceId
-	 */
-	@Override
-	public String getWorkspaceId() {
-		return workspaceId;
-	}
 
-	/**
-	 * @param workspaceId the workspaceId to set
-	 */
-	@Override
-	public void setWorkspaceId(String workspaceId) {
-		this.workspaceId = workspaceId;
-	}
+    /**
+     * Constructor.
+     */
+    public CollabProfileImpl() {
+        super();
+        this.uniqueMember = new ArrayList<Name>();
+        this.explicitMember = new ArrayList<Name>();
+        this.explicitManager = new ArrayList<Name>();
+    }
 
-	/**
-	 * @return the displayName
-	 */
-	@Override
-	public String getDisplayName() {
-		return displayName;
-	}
 
-	/**
-	 * @param displayName the displayName to set
-	 */
-	@Override
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Name getDn() {
+        return dn;
+    }
 
-	/**
-	 * @return the explicitManager
-	 */
-	@Override
-	public List<Name> getExplicitManager() {
-		return explicitManager;
-	}
 
-	/**
-	 * @param explicitManager the explicitManager to set
-	 */
-	@Override
-	public void setExplicitManager(List<Name> explicitManager) {
-		this.explicitManager = explicitManager;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDn(Name dn) {
+        this.dn = dn;
+    }
 
-	/**
-	 * @return the type
-	 */
-	@Override
-	public WorkspaceGroupType getType() {
-		return type;
-	}
 
-	/**
-	 * @param type the type to set
-	 */
-	@Override
-	public void setType(WorkspaceGroupType type) {
-		this.type = type;
-	}
-	
-	
-	/**
-	 * @return the role
-	 */
-	public WorkspaceRole getRole() {
-		return role;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCn() {
+        return cn;
+    }
 
-	/**
-	 * @param role the role to set
-	 */
-	public void setRole(WorkspaceRole role) {
-		this.role = role;
-	}
-	
-	
 
-	/**
-	 * @return the modifyTimeStamp
-	 */
-	public Long getModifyTimeStamp() {
-		return modifyTimeStamp;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCn(String cn) {
+        this.cn = cn;
+    }
 
-	/**
-	 * @param modifyTimeStamp the modifyTimeStamp to set
-	 */
-	public void setModifyTimeStamp(Long modifyTimeStamp) {
-		this.modifyTimeStamp = modifyTimeStamp;
-	}
 
-	@Override
-	public Name buildDn(String cn) {
-		return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=groups").add("ou=collabProfiles").add("cn="+cn).build();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Name> getUniqueMember() {
+        return uniqueMember;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUniqueMember(List<Name> uniqueMember) {
+        this.uniqueMember = uniqueMember;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Name> getExplicitMember() {
+        return explicitMember;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setExplicitMember(List<Name> explicitMember) {
+        this.explicitMember = explicitMember;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Name> getExplicitManager() {
+        return explicitManager;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setExplicitManager(List<Name> explicitManager) {
+        this.explicitManager = explicitManager;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WorkspaceGroupType getType() {
+        return type;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setType(WorkspaceGroupType type) {
+        this.type = type;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WorkspaceRole getRole() {
+        return role;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setRole(WorkspaceRole role) {
+        this.role = role;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Name buildDn(String cn) {
+        return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=groups").add("ou=collabProfiles").add("cn=" + cn).build();
+    }
 
 
     /**
