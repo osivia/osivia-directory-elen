@@ -30,4 +30,12 @@ public interface GroupDao {
      */
     List<Group> find(Group criteria);
 
+
+    /**
+     * Delete group.
+     * 
+     * @param dn group DN
+     */
+    void delete(Name dn);
+
 }

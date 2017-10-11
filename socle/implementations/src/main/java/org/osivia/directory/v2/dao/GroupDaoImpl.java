@@ -66,4 +66,14 @@ public class GroupDaoImpl implements GroupDao {
         return new ArrayList<Group>(results);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Name dn) {
+        Group group = this.get(dn);
+        this.template.delete(group);
+    }
+
 }

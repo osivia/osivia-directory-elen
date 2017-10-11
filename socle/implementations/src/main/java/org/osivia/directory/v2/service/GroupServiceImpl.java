@@ -11,10 +11,8 @@ import org.osivia.portal.api.directory.v2.model.Group;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.GroupService;
 import org.osivia.portal.api.directory.v2.service.PersonService;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,10 +21,13 @@ import org.springframework.stereotype.Service;
  * @author Cédric Krommenhoek
  * @see LdapServiceImpl
  * @see GroupService
- * @see ApplicationContextAware
  */
 @Service
-public class GroupServiceImpl extends LdapServiceImpl implements GroupService, ApplicationContextAware {
+public class GroupServiceImpl extends LdapServiceImpl implements GroupService {
+
+    /** Application context. */
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     /** Group DAO. */
     @Autowired
@@ -35,10 +36,6 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
     /** Person service. */
     @Autowired
     private PersonService personService;
-
-
-    /** Application context. */
-    protected ApplicationContext applicationContext;
 
 
     /**
@@ -132,8 +129,8 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService, A
      * {@inheritDoc}
      */
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public void delete(Name dn) {
+        this.dao.delete(dn);
     }
 
 }
