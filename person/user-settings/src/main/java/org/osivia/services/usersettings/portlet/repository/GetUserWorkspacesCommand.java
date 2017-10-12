@@ -3,6 +3,7 @@ package org.osivia.services.usersettings.portlet.repository;
 import org.nuxeo.ecm.automation.client.Constants;
 import org.nuxeo.ecm.automation.client.OperationRequest;
 import org.nuxeo.ecm.automation.client.Session;
+import org.osivia.portal.core.constants.InternalConstants;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -47,8 +48,12 @@ public class GetUserWorkspacesCommand implements INuxeoCommand {
         clause.append("AND ttcs:spaceMembers/*/login = '").append(this.user).append("' ");
         clause.append("ORDER BY dc:title ASC");
 
+        // Query filter
+        NuxeoQueryFilterContext filter = new NuxeoQueryFilterContext(NuxeoQueryFilterContext.STATE_LIVE,
+                InternalConstants.PORTAL_CMS_REQUEST_FILTERING_POLICY_LOCAL);
+
         // Filtered clause
-        String filteredClause = NuxeoQueryFilter.addPublicationFilter(NuxeoQueryFilterContext.CONTEXT_LIVE, clause.toString());
+        String filteredClause = NuxeoQueryFilter.addPublicationFilter(filter, clause.toString());
 
         // Operation request
         OperationRequest request = nuxeoSession.newRequest("Document.QueryES");
