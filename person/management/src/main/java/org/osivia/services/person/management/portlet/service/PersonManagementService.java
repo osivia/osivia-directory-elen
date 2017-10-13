@@ -19,6 +19,10 @@ import org.osivia.services.person.management.portlet.model.User;
  */
 public interface PersonManagementService {
 
+    /** Region property. */
+    String REGION_PROPERTY = "template.auxiliary.region";
+
+
     /**
      * Get person management form.
      * 

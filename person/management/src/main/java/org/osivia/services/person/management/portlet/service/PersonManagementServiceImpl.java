@@ -12,6 +12,8 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.portal.theme.ThemeConstants;
 import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.osivia.portal.api.Constants;
@@ -21,10 +23,8 @@ import org.osivia.portal.api.windows.StartingWindowBean;
 import org.osivia.services.person.management.portlet.model.PersonManagementForm;
 import org.osivia.services.person.management.portlet.model.User;
 import org.osivia.services.person.management.portlet.repository.PersonManagementRepository;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -36,14 +36,13 @@ import org.springframework.web.servlet.view.JstlView;
  * @author Loïc Billon
  * @author Cédric Krommenhoek
  * @see PersonManagementService
- * @see ApplicationContextAware
  */
 @Service
-public class PersonManagementServiceImpl implements PersonManagementService, ApplicationContextAware {
+public class PersonManagementServiceImpl implements PersonManagementService {
 
     /** Application context. */
+    @Autowired
     private ApplicationContext applicationContext;
-
 
     /** Portlet repository. */
     @Autowired
@@ -54,11 +53,16 @@ public class PersonManagementServiceImpl implements PersonManagementService, App
     private InternalResourceViewResolver viewResolver;
 
 
+    /** Log. */
+    private final Log log;
+
+
     /**
      * Constructor.
      */
     public PersonManagementServiceImpl() {
         super();
+        this.log = LogFactory.getLog(this.getClass());
     }
 
 
@@ -114,13 +118,17 @@ public class PersonManagementServiceImpl implements PersonManagementService, App
         PortletRequest request = portalControllerContext.getRequest();
         // Selected user identifier
         String id = form.getSelectedUserId();
+        // Region
+        String region = System.getProperty(REGION_PROPERTY);
 
-        if (StringUtils.isNotEmpty(id)) {
+        if (region == null) {
+            this.log.error("Unable to start person card portlet: property '" + REGION_PROPERTY + "' is not defined.");
+        } else if (StringUtils.isNotEmpty(id)) {
             // Window properties
             Map<String, String> properties = new HashMap<>();
             properties.put("osivia.hideTitle", "1");
             properties.put("osivia.bootstrapPanelStyle", String.valueOf(true));
-            properties.put(ThemeConstants.PORTAL_PROP_REGION, "col-2");
+            properties.put(ThemeConstants.PORTAL_PROP_REGION, region);
             properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
             properties.put("osivia.ajaxLink", "1");
             properties.put("uidFichePersonne", id);
@@ -154,15 +162,6 @@ public class PersonManagementServiceImpl implements PersonManagementService, App
         }
 
         return path;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
 }
