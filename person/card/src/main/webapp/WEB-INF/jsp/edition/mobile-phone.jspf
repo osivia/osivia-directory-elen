@@ -1,0 +1,10 @@
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
+
+
+<div class="form-group">
+    <form:label path="mobilePhone" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="PERSON_CARD_MOBILE_PHONE" /></form:label>
+    <div class="col-sm-9 col-lg-10">
+        <form:input path="mobilePhone" cssClass="form-control" />
+    </div>
+</div>

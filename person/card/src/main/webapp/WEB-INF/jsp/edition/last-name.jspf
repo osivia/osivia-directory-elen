@@ -1,0 +1,20 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
+
+
+<spring:bind path="lastName">
+    <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
+        <form:label path="lastName" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="PERSON_CARD_LAST_NAME" /></form:label>
+        <div class="col-sm-9 col-lg-10">
+            <form:input path="lastName" cssClass="form-control" />
+            <c:if test="${status.error}">
+                <span class="form-control-feedback">
+                    <i class="glyphicons glyphicons-remove"></i>
+                </span>
+            </c:if>
+            <form:errors path="lastName" cssClass="help-block" />
+        </div>
+    </div>
+</spring:bind>

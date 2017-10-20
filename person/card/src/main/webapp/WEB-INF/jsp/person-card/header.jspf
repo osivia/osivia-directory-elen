@@ -1,0 +1,14 @@
+<div class="form-group">
+    <!-- Avatar -->
+    <div class="col-sm-3 col-lg-2">
+        <img src="${card.person.avatar.url}" alt="" class="avatar avatar-big pull-right">
+    </div>
+    
+    <!-- Display name -->
+    <div class="col-sm-9 col-lg-10">
+        <h3 class="h1">
+            <span>${card.person.title}</span>
+            <span>${card.person.displayName}</span>
+        </h3>
+    </div>
+</div>

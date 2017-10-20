@@ -13,46 +13,55 @@
  */
 package org.osivia.directory.v2.repository;
 
-
 import org.nuxeo.ecm.automation.client.Constants;
 import org.nuxeo.ecm.automation.client.OperationRequest;
 import org.nuxeo.ecm.automation.client.Session;
 
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 
-
 /**
- * Get a document representing the user profile
+ * Get user profile Nuxeo command.
+ *
+ * @see INuxeoCommand
  */
-public class GetUserProfileCommand  implements INuxeoCommand{
+public class GetUserProfileCommand implements INuxeoCommand {
 
-    private static final String UP_SCHEMAS = "common, dc, ttc_userprofile, userprofile";
+    /** Username. */
+    private String username;
 
-	private String username;
 
-	public GetUserProfileCommand(String username) {
-		this.username = username;
-	}
+    /**
+     * Constructor.
+     *
+     * @param username username
+     */
+    public GetUserProfileCommand(String username) {
+        this.username = username;
+    }
 
-	/**
-	 *
-	 * @return 
-	 */
-	public Object execute(Session automationSession) throws Exception {
-	
-		OperationRequest newRequest = automationSession.newRequest("Services.GetToutaticeUserProfile");
-		if (username != null) {
-			newRequest.set("username", username);
-		}
-        newRequest.setHeader(Constants.HEADER_NX_SCHEMAS, UP_SCHEMAS);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object execute(Session automationSession) throws Exception {
+        // Operation request
+        OperationRequest newRequest = automationSession.newRequest("Services.GetToutaticeUserProfile");
+        if (this.username != null) {
+            newRequest.set("username", this.username);
+        }
+        newRequest.setHeader(Constants.HEADER_NX_SCHEMAS, "*");
 
         return newRequest.execute();
-		
-	}
+    }
 
-	public String getId() {
-		return "GetUserProfileCommand/" + username;
-	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getId() {
+        return "GetUserProfileCommand/" + this.username;
+    }
 
 }
