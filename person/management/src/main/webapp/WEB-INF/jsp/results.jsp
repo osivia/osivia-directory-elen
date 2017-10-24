@@ -10,23 +10,23 @@
     <!-- Table header -->
     <div class="table-row table-header">
         <c:choose>
-            <c:when test="${empty users}">
+            <c:when test="${empty form.users}">
                 <span><op:translate key="PERSON_MANAGEMENT_NO_RESULT" /></span>
             </c:when>
             
-            <c:when test="${fn:length(users) eq 1}">
+            <c:when test="${fn:length(form.users) eq 1}">
                 <span><op:translate key="PERSON_MANAGEMENT_ONE_RESULT" /></span>
             </c:when>
             
             <c:otherwise>
-                <span><op:translate key="PERSON_MANAGEMENT_MULTIPLE_RESULTS" args="${fn:length(users)}"/></span>
+                <span><op:translate key="PERSON_MANAGEMENT_MULTIPLE_RESULTS" args="${fn:length(form.users)}"/></span>
             </c:otherwise>
         </c:choose>
     </div>
     
     <!-- Table body -->
-    <c:if test="${not empty users}">
-        <c:forEach items="${users}" var="user">
+    <c:if test="${not empty form.users}">
+        <c:forEach items="${form.users}" var="user">
             <div class="table-row">
                 <a href="#" class="person no-ajax-link ${user.id eq form.selectedUserId ? 'active' : ''}" data-id="${user.id}">
                     <!-- Avatar -->

@@ -1,13 +1,14 @@
 /**
- * 
+ *
  */
 package org.osivia.services.person.management.portlet.controller;
 
 import java.io.IOException;
-import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
@@ -20,7 +21,6 @@ import javax.portlet.ResourceResponse;
 
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.person.management.portlet.model.PersonManagementForm;
-import org.osivia.services.person.management.portlet.model.User;
 import org.osivia.services.person.management.portlet.service.PersonManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,26 +31,28 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
-import org.springframework.web.portlet.context.PortletContextAware;
 
 import fr.toutatice.portail.cms.nuxeo.api.CMSPortlet;
 
 /**
  * Person management portlet controller.
- * 
+ *
  * @author Loïc Billon
  * @author Cédric Krommenhoek
  * @see CMSPortlet
- * @see PortletContextAware
  */
 @Controller
 @RequestMapping("VIEW")
 @SessionAttributes("form")
-public class PersonManagementController implements PortletContextAware {
+public class PersonManagementController extends CMSPortlet {
 
     /** Portlet config. */
-    private PortletContext portletContext;
+    @Autowired
+    private PortletConfig portletConfig;
 
+    /** Portlet context. */
+    @Autowired
+    private PortletContext portletContext;
 
     /** Portlet service. */
     @Autowired
@@ -66,30 +68,33 @@ public class PersonManagementController implements PortletContextAware {
 
 
     /**
+     * Post-construct.
+     *
+     * @throws PortletException
+     */
+    @PostConstruct
+    public void postConstruct() throws PortletException {
+        super.init(this.portletConfig);
+    }
+
+
+    /**
      * View render mapping.
-     * 
+     *
      * @param request render request
      * @param response render response
-     * @param form form model attribute
      * @return view path
      * @throws PortletException
      */
     @RenderMapping
-    public String view(RenderRequest request, RenderResponse response, @ModelAttribute("form") PersonManagementForm form) throws PortletException {
-        // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
-
-        // Set users form in request
-        List<User> users = this.service.getUsers(portalControllerContext, form.getFilter());
-        request.setAttribute("users", users);
-
+    public String view(RenderRequest request, RenderResponse response) throws PortletException {
         return "view";
     }
 
-    
+
     /**
      * Select user action mapping.
-     * 
+     *
      * @param request action request
      * @param response action response
      * @param form form model attribute
@@ -98,7 +103,7 @@ public class PersonManagementController implements PortletContextAware {
     @ActionMapping(name = "select", params = "select")
     public void select(ActionRequest request, ActionResponse response, @ModelAttribute("form") PersonManagementForm form) throws PortletException {
         // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         this.service.select(portalControllerContext, form);
     }
@@ -106,20 +111,24 @@ public class PersonManagementController implements PortletContextAware {
 
     /**
      * Apply filter action mapping.
-     * 
+     *
      * @param request action request
      * @param response action response
      * @param form form model attribute
+     * @throws PortletException
      */
     @ActionMapping(name = "select", params = "apply-filter")
-    public void applyFilter(ActionRequest request, ActionResponse response, @ModelAttribute("form") PersonManagementForm form) {
-        // Do nothing
+    public void applyFilter(ActionRequest request, ActionResponse response, @ModelAttribute("form") PersonManagementForm form) throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        this.service.search(portalControllerContext, form);
     }
 
 
     /**
      * Search resource mapping.
-     * 
+     *
      * @param request resource request
      * @param response resource response
      * @param filter search filter request parameter
@@ -128,16 +137,14 @@ public class PersonManagementController implements PortletContextAware {
      * @throws IOException
      */
     @ResourceMapping("search")
-    public void search(ResourceRequest request, ResourceResponse response, @RequestParam(name = "filter", required = false) String filter,
+    public void search(ResourceRequest request, ResourceResponse response, @RequestParam(name = "filters", required = false) String filters,
             @ModelAttribute("form") PersonManagementForm form) throws PortletException, IOException {
         // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        // Set users in request
-        List<User> users = this.service.getUsers(portalControllerContext, filter);
-        request.setAttribute("users", users);
+        // Search
+        this.service.search(portalControllerContext, form, filters);
 
-        // Set form in request
         request.setAttribute("form", form);
 
         // View path
@@ -149,7 +156,7 @@ public class PersonManagementController implements PortletContextAware {
 
     /**
      * Get person management form model attribute.
-     * 
+     *
      * @param request portlet request
      * @param response portlet response
      * @return form
@@ -158,18 +165,9 @@ public class PersonManagementController implements PortletContextAware {
     @ModelAttribute("form")
     public PersonManagementForm getForm(PortletRequest request, PortletResponse response) throws PortletException {
         // Portal controller context
-        PortalControllerContext portalControllerContext = new PortalControllerContext(portletContext, request, response);
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         return this.service.getForm(portalControllerContext);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPortletContext(PortletContext portletContext) {
-        this.portletContext = portletContext;
     }
 
 }

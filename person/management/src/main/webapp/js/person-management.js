@@ -22,7 +22,7 @@ $JQry(function() {
 					"Cache-Control": "max-age=60, public"
 				},
 				data: {
-					filter: $target.val()
+					filters: $form.serialize()
 				},
 				dataType: "html",
 				success : function(data, status, xhr) {

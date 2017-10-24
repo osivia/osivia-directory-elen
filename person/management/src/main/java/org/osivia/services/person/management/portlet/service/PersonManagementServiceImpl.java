@@ -3,6 +3,8 @@
  */
 package org.osivia.services.person.management.portlet.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.Map;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +36,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 /**
- * Person management service implementation.
+ * Person management portlet service implementation.
  * 
  * @author Loïc Billon
  * @author Cédric Krommenhoek
@@ -79,17 +84,9 @@ public class PersonManagementServiceImpl implements PersonManagementService {
      * {@inheritDoc}
      */
     @Override
-    public List<User> getUsers(PortalControllerContext portalControllerContext, String filter) throws PortletException {
-        // Stripped filter
-        String strippedFilter = StringUtils.strip(filter, "*");
-
+    public void search(PortalControllerContext portalControllerContext, PersonManagementForm form) throws PortletException {
         // Persons
-        List<Person> persons;
-        if (StringUtils.isBlank(strippedFilter)) {
-            persons = new ArrayList<>(0);
-        } else {
-            persons = this.repository.searchPersons(portalControllerContext, strippedFilter);
-        }
+        List<Person> persons = this.repository.searchPersons(portalControllerContext, form);
 
         // Users
         List<User> users = new ArrayList<>(persons.size());
@@ -105,7 +102,61 @@ public class PersonManagementServiceImpl implements PersonManagementService {
             users.add(user);
         }
 
-        return users;
+        form.setUsers(users);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void search(PortalControllerContext portalControllerContext, PersonManagementForm form, String filters) throws PortletException {
+        // Filters map
+        Map<String, String> map = this.getFiltersMap(portalControllerContext, filters);
+
+        // Update form
+        String filter;
+        if (MapUtils.isEmpty(map)) {
+            filter = null;
+        } else {
+            filter = map.get("filter");
+        }
+        form.setFilter(filter);
+
+        this.search(portalControllerContext, form);
+    }
+
+
+    /**
+     * Get search filters map.
+     * 
+     * @param portalControllerContext portal controller context
+     * @param filters search filters
+     * @return search filters map
+     * @throws PortletException
+     */
+    protected Map<String, String> getFiltersMap(PortalControllerContext portalControllerContext, String filters) throws PortletException {
+        Map<String, String> map;
+        String[] arguments = StringUtils.split(filters, "&");
+        if (ArrayUtils.isEmpty(arguments)) {
+            map = null;
+        } else {
+            map = new HashMap<>(arguments.length);
+            for (String argument : arguments) {
+                String[] split = StringUtils.splitPreserveAllTokens(argument, "=");
+                if (split.length == 2) {
+                    try {
+                        String key = URLDecoder.decode(split[0], CharEncoding.UTF_8);
+                        String value = URLDecoder.decode(split[1], CharEncoding.UTF_8);
+                        map.put(key, value);
+                    } catch (UnsupportedEncodingException e) {
+                        throw new PortletException(e);
+                    }
+                }
+            }
+        }
+
+        return map;
     }
 
 

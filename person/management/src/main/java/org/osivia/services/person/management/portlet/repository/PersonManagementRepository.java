@@ -9,6 +9,7 @@ import javax.portlet.PortletException;
 
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.services.person.management.portlet.model.PersonManagementForm;
 
 /**
  * Person management portlet repository interface.
@@ -22,10 +23,10 @@ public interface PersonManagementRepository {
      * Search persons.
      * 
      * @param portalControllerContext portal controller context
-     * @param filter search filter
+     * @param form person management form
      * @return persons
      * @throws PortletException
      */
-    List<Person> searchPersons(PortalControllerContext portalControllerContext, String filter) throws PortletException;
+    List<Person> searchPersons(PortalControllerContext portalControllerContext, PersonManagementForm form) throws PortletException;
 
 }

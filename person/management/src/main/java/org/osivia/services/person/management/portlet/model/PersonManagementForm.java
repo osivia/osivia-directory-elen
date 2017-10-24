@@ -1,5 +1,7 @@
 package org.osivia.services.person.management.portlet.model;
 
+import java.util.List;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,9 @@ public class PersonManagementForm {
     /** Selected user identifier. */
     private String selectedUserId;
     
+    /** Users. */
+    private List<User> users;
+
     
     /**
      * Constructor.
@@ -61,6 +66,24 @@ public class PersonManagementForm {
      */
     public void setSelectedUserId(String selectedUserId) {
         this.selectedUserId = selectedUserId;
+    }
+
+    /**
+     * Getter for users.
+     * 
+     * @return the users
+     */
+    public List<User> getUsers() {
+        return users;
+    }
+
+    /**
+     * Setter for users.
+     * 
+     * @param users the users to set
+     */
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
 }
