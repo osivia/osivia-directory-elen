@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.naming.Name;
+import javax.naming.ldap.Rdn;
 
 import org.apache.commons.lang.StringUtils;
 import org.osivia.portal.api.directory.v2.model.Person;
@@ -362,7 +363,7 @@ public final class PersonImpl implements Person, Serializable {
      */
     @Override
     public Name buildDn(String uid)  {
-    	return LdapNameBuilder.newInstance(buildBaseDn()).add("uid=" + uid).build();
+        return LdapNameBuilder.newInstance(buildBaseDn()).add("uid=" + Rdn.escapeValue(uid)).build();
     }
 
 

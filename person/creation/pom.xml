@@ -5,22 +5,12 @@
     <parent>
         <groupId>org.osivia.services.directory.person</groupId>
         <artifactId>osivia-services-directory-person-parent</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>4.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>osivia-services-directory-person-creation</artifactId>
     <packaging>war</packaging>
-    
+
     <name>OSIVIA Services - Directory - Person creation</name>
-
-
-	<dependencies>
-
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-		</dependency>
-
-	</dependencies>
 
 </project>

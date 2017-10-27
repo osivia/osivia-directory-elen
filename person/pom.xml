@@ -20,7 +20,7 @@
         <module>user-settings</module>
         <module>first-connection</module>
         <module>management</module>
-        <!-- <module>creation</module>  -->
+        <module>creation</module>
     </modules>
     
     
