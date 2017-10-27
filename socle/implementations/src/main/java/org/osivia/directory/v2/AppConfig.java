@@ -16,6 +16,7 @@ package org.osivia.directory.v2;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.osivia.directory.v2.model.converter.BooleanToString;
 import org.osivia.directory.v2.model.converter.DateToGeneralizedTime;
 import org.osivia.directory.v2.model.converter.GeneralizedTimeToDate;
 import org.osivia.portal.api.internationalization.IBundleFactory;
@@ -63,6 +64,10 @@ public class AppConfig {
 	@Autowired
 	private ApplicationContext applicationContext;
 
+    /** Boolean to string converter. */
+    @Autowired
+    private BooleanToString booleanToStringConverter;
+
     /** Generalized time to date converter. */
     @Autowired
     private GeneralizedTimeToDate generalizedTimeToDateConverter;
@@ -72,9 +77,13 @@ public class AppConfig {
     private DateToGeneralizedTime dateToGeneralizedTimeConverter;
 
 
+    /**
+     * Get transaction proxy.
+     * 
+     * @return transaction proxy
+     */
 	@Bean(name="contextSourceTransactionAwareProxy")
-	public TransactionAwareContextSourceProxy txProxy() {
-		
+    public TransactionAwareContextSourceProxy getTransactionProxy() {
 		LdapContextSource source = new LdapContextSource();
 		source.setUrl(System.getProperty("ldap.url"));
 		
@@ -89,15 +98,17 @@ public class AppConfig {
 		source.setBaseEnvironmentProperties(baseEnvironmentProperties);
 		source.afterPropertiesSet();	
 		
-		
 		PoolingContextSource configurePooling = configurePooling(source);
 		
 		return new TransactionAwareContextSourceProxy(configurePooling);
 	}
 
+
 	/**
-	 * Pooling configuration
-	 */
+     * Pooling configuration.
+     * 
+     * @param source LDAP context source
+     */
 	private PoolingContextSource configurePooling(LdapContextSource source) {
 		// Enable pooling
 		PoolingContextSource poolingContextSource = new PoolingContextSource();
@@ -135,6 +146,7 @@ public class AppConfig {
     public GenericConversionService getConversionService() {
         GenericConversionService conversionService = new DefaultConversionService();
         conversionService.addConverter(new StringToNameConverter());
+        conversionService.addConverter(this.booleanToStringConverter);
         conversionService.addConverter(this.generalizedTimeToDateConverter);
         conversionService.addConverter(this.dateToGeneralizedTimeConverter);
         return conversionService;
@@ -183,9 +195,13 @@ public class AppConfig {
 	}
 	
 
+    /**
+     * Get authenticate LDAP template.
+     * 
+     * @return LDAP template
+     */
 	@Bean(name="authenticateLdapTemplate")
 	public LdapTemplate getAuthenticateLdapTemplate() {
-		
 		LdapContextSource source = new LdapContextSource();
 		source.setUrl(System.getProperty("ldap.url"));
 		
@@ -199,6 +215,11 @@ public class AppConfig {
 	}
 	
 	
+    /**
+     * Get transaction manager.
+     * 
+     * @return transaction manager
+     */
 	@Bean
 	public ContextSourceTransactionManager getTxManager() {
 		ContextSourceTransactionManager txManager = new ContextSourceTransactionManager();
@@ -208,6 +229,7 @@ public class AppConfig {
 		return txManager;
 	}	
 	
+
 	/**
 	 * For composite TM
 	 * @return
