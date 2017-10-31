@@ -29,7 +29,6 @@ import org.jboss.portal.common.invocation.Scope;
 import org.jboss.portal.core.controller.ControllerContext;
 import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.nuxeo.ecm.automation.client.model.Document;
-import org.osivia.directory.v2.LDAPUtil;
 import org.osivia.directory.v2.dao.PersonDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.Avatar;
@@ -59,262 +58,290 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
 import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 
 /**
- * Impl of the person service
+ * Person service implementation.
+ * 
  * @author Loïc Billon
  * @since 4.4
+ * @see LdapServiceImpl
+ * @see PersonUpdateService
  */
 @Service("personService")
 public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
-	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
+    /** Person card portlet instance. */
+    private static final String CARD_INSTANCE = "directory-person-card-instance";
 
 
-	private static final String CARD_INSTANCE = "directory-person-card-instance";
+    /** Application. */
+    @Autowired
+    protected ApplicationContext context;
 
-	
-	@Autowired
-	protected ApplicationContext context;
-	
-	@Autowired
-	protected Person sample;
-	
-	@Autowired
-	protected PersonDao dao;
-	
-	@Autowired
-	protected WorkspaceService workspaceService;
+    /** Sample person implementation. */
+    @Autowired
+    protected Person sample;
 
-	@Autowired
-	protected IPortalUrlFactory urlFactory;
-	
-	@Autowired
-	protected IBundleFactory bundleFactory;
-	
-	@Override
-	public Person getEmptyPerson() {
-		return context.getBean(sample.getClass());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(javax.naming.Name)
-	 */
-	@Override
-	public Person getPerson(Name dn) {
-		
-		Person p;
-		try {
-			p = dao.getPerson(dn);
-			appendAvatar(p);
-			
-		} catch (NameNotFoundException e) {
-			logger.warn("Person with dn "+dn+" not found");
-			return null;
-		}
+    /** Person DAO. */
+    @Autowired
+    protected PersonDao dao;
 
-		return p;
-		
-	}
-	
-	@Override
-	public Person getPersonNoCache(Name dn) {
-		
-		Person p;
-		try {
-			p = dao.getPersonNoCache(dn);
-			appendAvatar(p);
-			
-		} catch (NameNotFoundException e) {
-			logger.warn("Person with dn "+dn+" not found");
-			return null;
-		}
+    /** Workspace service. */
+    @Autowired
+    protected WorkspaceService workspaceService;
 
-		return p;
-		
-	}
+    /** Portal URL factory. */
+    @Autowired
+    protected IPortalUrlFactory urlFactory;
 
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
-	 */
-	@Override
-	public Person getPerson(String uid) {
-	    
-        uid = LDAPUtil.sanitizeRfc2253Complient(uid);
+    /** Internationalization bundle factory. */
+    @Autowired
+    protected IBundleFactory bundleFactory;
 
-        Name dn = sample.buildDn(uid);
 
-		return getPerson(dn);
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
-	 */
-	@Override
-	public List<Person> findByCriteria(Person search) {
+    /** Log. */
+    private final Log log;
 
-		List<Person> persons = dao.findByCriteria(search);
-		for(Person p : persons) {
-			appendAvatar(p);
-		}
-		return persons;
-	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	public void create(Person p) {
-		
-		dao.create(p);
-		
-	}
+    /**
+     * Constructor.
+     */
+    public PersonServiceImpl() {
+        super();
+        this.log = LogFactory.getLog(this.getClass());
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	public void update(Person p) {
-		dao.update(p);
-		
-	}
-	
-	@Transactional
-	public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
-		
-		update(p);
-		
-		NuxeoController controller = new NuxeoController(portalControllerContext);
-		
-		Document nuxeoProfile = (Document) getEcmProfile(portalControllerContext, p);
-		
-		UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile,properties, avatar);
-		controller.executeNuxeoCommand(updateCmd);
-		
-		if(avatar != null) {
-			controller.refreshUserAvatar(p.getUid());
-		}
-	}
-	
 
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#verifyPassword(java.lang.String)
-	 */
-	@Override
-	public boolean verifyPassword(String uid, String currentPassword) {
-		
-		return dao.verifyPassword(uid, currentPassword);
-		
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#updatePassword(org.osivia.portal.api.directory.v2.model.Person, java.lang.String)
-	 */
-	@Override
-	public void updatePassword(Person p, String newPassword) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Person getEmptyPerson() {
+        return this.context.getBean(this.sample.getClass());
+    }
 
-		dao.updatePassword(p, newPassword);
-	}
-	
-	/**
-	 * Get avatar url for a person
-	 * @param person the person
-	 */
-	protected void appendAvatar(Person person) {
-		// 	Append avatar
-		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
-		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
-		
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Person getPerson(Name dn) {
+        Person p;
+        try {
+            p = this.dao.getPerson(dn);
+            this.appendAvatar(p);
+
+        } catch (NameNotFoundException e) {
+            this.log.warn("Person with dn " + dn + " not found");
+            return null;
+        }
+
+        return p;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Person getPersonNoCache(Name dn) {
+        Person p;
+        try {
+            p = this.dao.getPersonNoCache(dn);
+            this.appendAvatar(p);
+        } catch (NameNotFoundException e) {
+            this.log.warn("Person with dn " + dn + " not found");
+            return null;
+        }
+
+        return p;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Person getPerson(String uid) {
+        Name dn = this.sample.buildDn(uid);
+
+        return this.getPerson(dn);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Person> findByCriteria(Person search) {
+        List<Person> persons = this.dao.findByCriteria(search);
+        for (Person p : persons) {
+            this.appendAvatar(p);
+        }
+        return persons;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void create(Person p) {
+        this.dao.create(p);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void update(Person p) {
+        this.dao.update(p);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
+        this.update(p);
+
+        NuxeoController controller = new NuxeoController(portalControllerContext);
+
+        Document nuxeoProfile = (Document) this.getEcmProfile(portalControllerContext, p);
+
+        UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile, properties, avatar);
+        controller.executeNuxeoCommand(updateCmd);
+
+        if (avatar != null) {
+            controller.refreshUserAvatar(p.getUid());
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean verifyPassword(String uid, String currentPassword) {
+        return this.dao.verifyPassword(uid, currentPassword);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updatePassword(Person p, String newPassword) {
+        this.dao.updatePassword(p, newPassword);
+    }
+
+
+    /**
+     * Get avatar url for a person
+     * 
+     * @param person the person
+     */
+    protected void appendAvatar(Person person) {
+        // Append avatar
+        INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
+        INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
+
         Link userAvatar = new Link("", false);
-		try {
-			userAvatar = cmsCustomizer.getUserAvatar(null, person.getUid());
-		} catch (CMSException e) {
-			
-		}
+        try {
+            userAvatar = cmsCustomizer.getUserAvatar(null, person.getUid());
+        } catch (CMSException e) {
+
+        }
         person.setAvatar(userAvatar);
-	}
-	
-	/**
-	 * Generate a portlet url for person card
-	 */
-	public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
-		Map<String, String> windowProperties = new HashMap<String, String>();
-		windowProperties.put("osivia.ajaxLink", "1");
-		windowProperties.put("osivia.hideTitle", "1");
-		windowProperties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, "true");
-		windowProperties.put(InternalConstants.PROP_WINDOW_TITLE, person.getDisplayName());
-		windowProperties.put("uidFichePersonne", person.getUid());
-		
-		Map<String, String> parameters = new HashMap<String, String>();
-		
-        String url = urlFactory.getStartPortletInNewPage(portalControllerContext, "profile-"+person.getUid(), person.getDisplayName(), getCardInstance(), windowProperties, parameters);
-        return new Link(url,false);
-	}
-	
-	/**
-	 * Generate a portlet url for person card
-	 */
-	public Link getMyCardUrl(PortalControllerContext portalControllerContext) throws PortalException {
-		
-		Bundle bundle = bundleFactory.getBundle(portalControllerContext.getHttpServletRequest().getLocale());
-		
-		Map<String, String> properties = new HashMap<String, String>();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
+        Map<String, String> windowProperties = new HashMap<String, String>();
+        windowProperties.put("osivia.ajaxLink", "1");
+        windowProperties.put("osivia.hideTitle", "1");
+        windowProperties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, "true");
+        windowProperties.put(InternalConstants.PROP_WINDOW_TITLE, person.getDisplayName());
+        windowProperties.put("uidFichePersonne", person.getUid());
+
+        Map<String, String> parameters = new HashMap<String, String>();
+
+        String url = this.urlFactory.getStartPortletInNewPage(portalControllerContext, "profile-" + person.getUid(), person.getDisplayName(),
+                this.getCardInstance(), windowProperties, parameters);
+        return new Link(url, false);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Link getMyCardUrl(PortalControllerContext portalControllerContext) throws PortalException {
+        Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getHttpServletRequest().getLocale());
+
+        Map<String, String> properties = new HashMap<String, String>();
         properties.put(InternalConstants.PROP_WINDOW_TITLE, bundle.getString(InternationalizationConstants.KEY_MY_PROFILE));
         properties.put("osivia.hideTitle", "1");
         properties.put("osivia.ajaxLink", "1");
-        properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));		
-		
+        properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
+
         Map<String, String> parameters = new HashMap<String, String>();
 
         String url = this.urlFactory.getStartPortletInNewPage(portalControllerContext, "myprofile",
-                bundle.getString(InternationalizationConstants.KEY_MY_PROFILE), getCardInstance(), properties, parameters);        
+                bundle.getString(InternationalizationConstants.KEY_MY_PROFILE), this.getCardInstance(), properties, parameters);
 
-        return new Link(url,false);
-	}
-	
-	
-	public Object getEcmProfile(
-			PortalControllerContext portalControllerContext, Person person)
-			throws PortalException {
-		
+        return new Link(url, false);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getEcmProfile(PortalControllerContext portalControllerContext, Person person) throws PortalException {
+
         // HTTP servlet request
         HttpServletRequest servletRequest = portalControllerContext.getHttpServletRequest();
 
         // Nuxeo controller
-        NuxeoController nuxeoController = new NuxeoController(getPortletContext());
+        NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
         nuxeoController.setServletRequest(servletRequest);
-		
-		return nuxeoController.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
-		
-	}
+
+        return nuxeoController.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
+
+    }
 
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.service.PersonUpdateService#delete(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	public void delete(Person userConsulte) {
-		
-		CollabProfile searchProfiles = workspaceService.getEmptyProfile();
-		searchProfiles.setType(WorkspaceGroupType.space_group);
-		List<Name> name = new ArrayList<Name>();
-		name.add(userConsulte.getDn());
-		searchProfiles.setUniqueMember(name);
-		
-		List<CollabProfile> spaces = workspaceService.findByCriteria(searchProfiles);
-		for(CollabProfile space : spaces) {
-			workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
-		}
-		
-		dao.delete(userConsulte);
-		
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Person userConsulte) {
+
+        CollabProfile searchProfiles = this.workspaceService.getEmptyProfile();
+        searchProfiles.setType(WorkspaceGroupType.space_group);
+        List<Name> name = new ArrayList<Name>();
+        name.add(userConsulte.getDn());
+        searchProfiles.setUniqueMember(name);
+
+        List<CollabProfile> spaces = this.workspaceService.findByCriteria(searchProfiles);
+        for (CollabProfile space : spaces) {
+            this.workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
+        }
+
+        this.dao.delete(userConsulte);
+
+    }
 
 
-	protected String getCardInstance() {
-		return CARD_INSTANCE;
-	}
+    protected String getCardInstance() {
+        return CARD_INSTANCE;
+    }
 
 
     /**
