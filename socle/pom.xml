@@ -31,16 +31,6 @@
 
 	<dependencies>
 
-		<!-- Toutatice -->
-		<dependency>
-			<groupId>toutatice-portail.cms</groupId>
-			<artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>toutatice-portail.cms</groupId>
-			<artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
-		</dependency>
-
 		<!-- SpringFramework LDAP -->
 		<dependency>
 			<groupId>org.springframework.ldap</groupId>

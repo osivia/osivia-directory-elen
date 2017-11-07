@@ -27,20 +27,6 @@
     
     <dependencyManagement>
         <dependencies>
-        
-            <!-- Toutatice -->
-            <dependency>
-                <groupId>toutatice-portail.cms</groupId>
-                <artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
-                <version>${toutatice.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>toutatice-portail.cms</groupId>
-                <artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
-                <version>${toutatice.version}</version>
-                <scope>test</scope>
-            </dependency>
             
             <!-- jsoup -->
             <dependency>
@@ -52,6 +38,25 @@
         
         </dependencies>
     </dependencyManagement>
+    
+    
+    <dependencies>
+    
+        <!-- Toutatice -->
+        <dependency>
+            <groupId>toutatice-portail.cms</groupId>
+            <artifactId>toutatice-portail-cms-nuxeo-dependencies</artifactId>
+            <version>${toutatice.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>toutatice-portail.cms</groupId>
+            <artifactId>toutatice-portail-cms-nuxeo-dependencies-test</artifactId>
+            <version>${toutatice.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+    </dependencies>
     
     
     <build>

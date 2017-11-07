@@ -7,25 +7,16 @@
         <artifactId>osivia-services-directory-parent</artifactId>
         <version>4.6-SNAPSHOT</version>
     </parent>
+
+    <groupId>org.osivia.services.directory.various</groupId>
+    <artifactId>osivia-services-directory-duplicated-groups-detector</artifactId>
+    <packaging>war</packaging>
     
-    <groupId>org.osivia.services.directory.person</groupId>
-    <artifactId>osivia-services-directory-person-parent</artifactId>
-    <packaging>pom</packaging>
-    
-    <name>OSIVIA Services - Directory - Person parent</name>
+    <name>OSIVIA Services - Directory - Duplicated groups detector</name>
 
 
-    <modules>  
-        <module>card</module>
-        <module>user-settings</module>
-        <module>first-connection</module>
-        <module>management</module>
-        <module>creation</module>
-    </modules>
-    
-    
     <dependencies>
-        
+    
         <!-- Socle -->
         <dependency>
             <groupId>org.osivia.services.directory.socle</groupId>
@@ -33,8 +24,7 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+    
     </dependencies>
 
 </project>
-
