@@ -3,28 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.osivia.services.directory</groupId>
-        <artifactId>osivia-services-directory-parent</artifactId>
+        <groupId>org.osivia.services.directory.various</groupId>
+        <artifactId>osivia-services-directory-various-parent</artifactId>
         <version>4.6-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.osivia.services.directory.various</groupId>
     <artifactId>osivia-services-directory-duplicated-groups-detector</artifactId>
     <packaging>war</packaging>
     
     <name>OSIVIA Services - Directory - Duplicated groups detector</name>
-
-
-    <dependencies>
-    
-        <!-- Socle -->
-        <dependency>
-            <groupId>org.osivia.services.directory.socle</groupId>
-            <artifactId>osivia-services-directory-socle-interfaces</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-    
-    </dependencies>
 
 </project>
