@@ -50,14 +50,12 @@
 
         
         <!-- Person creation -->
-        <!-- 
         <dependency>
             <groupId>org.osivia.services.directory.person</groupId>
             <artifactId>osivia-services-directory-person-creation</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-         -->
          
          <!-- Person first connection -->
          <dependency>
@@ -114,13 +112,13 @@
                             <groupId>org.osivia.services.directory.person</groupId>
                             <artifactId>osivia-services-directory-person-management</artifactId>
                             <contextRoot>/osivia-services-directory-person-management</contextRoot>
-                        </webModule> <!-- 
+                        </webModule> 
                         <webModule>
                             <groupId>org.osivia.services.directory.person</groupId>
                             <artifactId>osivia-services-directory-person-creation</artifactId>
                             <contextRoot>/osivia-services-directory-person-creation</contextRoot>
-                        </webModule> 
-                        <webModule>
+                        </webModule>
+                         <!-- <webModule>
 							<groupId>org.osivia.services.directory.role</groupId>
 							<artifactId>osivia-services-directory-role-management</artifactId>
                             <contextRoot>/osivia-services-directory-role-management</contextRoot>
