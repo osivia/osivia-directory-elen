@@ -66,6 +66,13 @@
          </dependency>
          
          
+         <!-- Group card -->
+         <dependency>
+            <groupId>org.osivia.services.directory.group</groupId>
+            <artifactId>osivia-services-directory-group-card</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+         </dependency>
          <!-- Role management -->
          <!--
          <dependency>

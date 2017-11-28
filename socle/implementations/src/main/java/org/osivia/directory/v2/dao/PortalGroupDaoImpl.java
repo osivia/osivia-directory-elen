@@ -6,23 +6,16 @@ import java.util.List;
 import javax.naming.Name;
 
 import org.osivia.directory.v2.MappingHelper;
-import org.osivia.portal.api.directory.v2.model.Group;
+import org.osivia.directory.v2.model.PortalGroup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Repository;
 
-/**
- * LDAP group DAO implementation.
- *
- * @author Cédric Krommenhoek
- * @see GroupDao
- */
-@Repository
-@Primary
-public class GroupDaoImpl implements GroupDao {
+@Repository("portalGroupDao")
+public class PortalGroupDaoImpl extends GroupDaoImpl implements PortalGroupDao {
 
     /** LDAP template. */
     @Autowired
@@ -30,22 +23,18 @@ public class GroupDaoImpl implements GroupDao {
 
     /** Group sample. */
     @Autowired
-    private Group sample;
-
-
-    /**
-     * Constructor.
-     */
-    public GroupDaoImpl() {
+    @Qualifier("portalGroup")  
+    private PortalGroup sample;
+    
+    public PortalGroupDaoImpl() {
         super();
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Group get(Name dn) {
+    public PortalGroup get(Name dn) {
         return this.template.findByDn(dn, this.sample.getClass());
     }
 
@@ -54,7 +43,7 @@ public class GroupDaoImpl implements GroupDao {
      * {@inheritDoc}
      */
     @Override
-    public List<Group> find(Group criteria) {
+    public List<PortalGroup> find(PortalGroup criteria) {
         // LDAP query
         LdapQueryBuilder query = LdapQueryBuilder.query();
         query.base(System.getProperty("ldap.base"));
@@ -64,18 +53,8 @@ public class GroupDaoImpl implements GroupDao {
         query.filter(filter);
 
         // Search results
-        List<? extends Group> results = this.template.find(query, this.sample.getClass());
-        return new ArrayList<Group>(results);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Name dn) {
-        Group group = this.get(dn);
-        this.template.delete(group);
+        List<? extends PortalGroup> results = this.template.find(query, this.sample.getClass());
+        return new ArrayList<PortalGroup>(results);
     }
 
 }

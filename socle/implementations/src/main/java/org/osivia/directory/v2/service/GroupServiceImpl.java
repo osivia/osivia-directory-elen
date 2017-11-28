@@ -13,6 +13,7 @@ import org.osivia.portal.api.directory.v2.service.GroupService;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
  * @see GroupService
  */
 @Service
+@Primary
 public class GroupServiceImpl extends LdapServiceImpl implements GroupService {
 
     /** Application context. */
