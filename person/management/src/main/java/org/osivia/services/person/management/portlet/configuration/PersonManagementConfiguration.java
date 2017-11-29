@@ -19,7 +19,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 /**
- * Person maangement configuration.
+ * Person management configuration.
  * 
  * @author Loïc Billon
  * @author Cédric Krommenhoek

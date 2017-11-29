@@ -8,7 +8,6 @@ import javax.naming.Name;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.portal.api.directory.v2.model.Group;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.query.LdapQueryBuilder;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Repository;
  * @see GroupDao
  */
 @Repository
-@Primary
 public class GroupDaoImpl implements GroupDao {
 
     /** LDAP template. */

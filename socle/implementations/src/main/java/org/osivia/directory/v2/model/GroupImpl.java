@@ -8,7 +8,6 @@ import javax.naming.Name;
 
 import org.osivia.portal.api.directory.v2.model.Group;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Entry;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"groupOfUniqueNames"})
-@Primary
 public final class GroupImpl implements Group, Serializable {
 
     /** Default serial version identifier. */

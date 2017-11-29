@@ -12,7 +12,14 @@ import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
 import org.springframework.stereotype.Component;
 
-@Component("portalGroup")
+/**
+ * Portal group implementation.
+ * 
+ * @author Cédric Krommenhoek
+ * @see PortalGroup
+ * @see Serializable
+ */
+@Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"portalProfile"})
 public final class PortalGroupImpl implements PortalGroup, Serializable {
@@ -20,106 +27,119 @@ public final class PortalGroupImpl implements PortalGroup, Serializable {
     /** Default serial version identifier. */
     private static final long serialVersionUID = 1L;
 
-    /** Group DN. */
+
+    /** Portal group DN. */
     @Id
     private Name dn;
 
-    /** Group CN. */
+    /** Portal group CN. */
     @Attribute
     private String cn;
 
+    /** Portal group display name. */
     @Attribute(name = "portalDisplayName")
     private String displayName;
 
+    /** Portal group description. */
     @Attribute
     private String description;
 
-    /** Group member names. */
+    /** Portal group members. */
     @Attribute(name = "uniqueMember")
     private List<Name> members;
 
+
+    /**
+     * Constructor.
+     */
     public PortalGroupImpl() {
         super();
     }
 
+
     /**
-     * @return the dn
+     * {@inheritDoc}
      */
     @Override
     public Name getDn() {
-        return dn;
+        return this.dn;
     }
 
+
     /**
-     * @param dn
-     *            the dn to set
+     * {@inheritDoc}
      */
+    @Override
     public void setDn(Name dn) {
         this.dn = dn;
     }
 
+
     /**
-     * @return the cn
+     * {@inheritDoc}
      */
     @Override
     public String getCn() {
-        return cn;
+        return this.cn;
     }
 
+
     /**
-     * @param cn
-     *            the cn to set
+     * {@inheritDoc}
      */
     @Override
     public void setCn(String cn) {
         this.cn = cn;
     }
 
+
     /**
-     * @return the displayName
+     * {@inheritDoc}
      */
     @Override
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
+
     /**
-     * @param displayName
-     *            the displayName to set
+     * {@inheritDoc}
      */
     @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
+
     /**
-     * @return the description
+     * {@inheritDoc}
      */
     @Override
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
+
     /**
-     * @param description
-     *            the description to set
+     * {@inheritDoc}
      */
     @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+
     /**
-     * @return the members
+     * {@inheritDoc}
      */
     @Override
     public List<Name> getMembers() {
-        return members;
+        return this.members;
     }
 
+
     /**
-     * @param members
-     *            the members to set
+     * {@inheritDoc}
      */
     @Override
     public void setMembers(List<Name> members) {
