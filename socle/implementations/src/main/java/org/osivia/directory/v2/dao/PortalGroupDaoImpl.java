@@ -63,7 +63,7 @@ public class PortalGroupDaoImpl implements PortalGroupDao {
      */
     @Override
     public PortalGroup find(Name dn) {
-        return this.template.findByDn(dn, PortalGroup.class);
+        return this.template.findByDn(dn, this.sample.getClass());
     }
 
 

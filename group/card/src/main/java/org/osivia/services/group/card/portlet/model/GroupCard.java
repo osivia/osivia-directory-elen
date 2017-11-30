@@ -1,15 +1,15 @@
 package org.osivia.services.group.card.portlet.model;
 
-import org.osivia.directory.v2.model.PortalGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class GroupCard {
 
     /** Portal group*/
-    @Autowired
-    @Qualifier("portalGroup")
-    private PortalGroup group;
+    private Group group;
     
     public GroupCard() {
         super();
@@ -20,7 +20,7 @@ public class GroupCard {
      * Getter for group.
      * @return the group
      */
-    public PortalGroup getGroup() {
+    public Group getGroup() {
         return group;
     }
 
@@ -29,7 +29,7 @@ public class GroupCard {
      * Setter for group.
      * @param group the group to set
      */
-    public void setGroup(PortalGroup group) {
+    public void setGroup(Group group) {
         this.group = group;
     }
 

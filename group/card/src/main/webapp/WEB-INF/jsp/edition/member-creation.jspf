@@ -1,0 +1,51 @@
+<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
+
+<%@ page contentType="text/html" isELIgnored="false"%>
+
+
+<portlet:actionURL name="addMember" var="addMemberUrl">
+</portlet:actionURL>
+
+<portlet:resourceURL id="search" var="searchUrl" />
+
+
+<c:set var="namespace"><portlet:namespace /></c:set>
+
+
+<div class="well clearfix relative">
+    <div id="shadowbox-${namespace}" class="ajax-shadowbox">
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped active" role="progressbar">
+                <strong><op:translate key="AJAX_REFRESH" /></strong>
+            </div>
+        </div>
+    </div>
+
+    <fieldset>
+        <div class="row">
+            <div class="col-sm-9 col-lg-9">
+                <!-- Invitations -->
+                <c:set var="placeholder"><op:translate key="GROUP_CARD_SEARCH_PERSON_PLACEHOLDER" /></c:set>
+                <c:set var="inputTooShort"><op:translate key="SELECT2_INPUT_TOO_SHORT" args="3" /></c:set>
+                <c:set var="noResults"><op:translate key="SELECT2_NO_RESULTS" /></c:set>
+                <c:set var="searching"><op:translate key="SELECT2_SEARCHING" /></c:set>
+                <c:set var="loadingMore"><op:translate key="SELECT2_LOADING_MORE"/></c:set>
+                <spring:bind path="searchResultMembers">
+                    <div class="form-group ${status.error ? 'has-error' : (editionForm.warning ? 'has-warning' : '')}">
+                        <form:label path="searchResultMembers" cssClass="control-label"><op:translate key="GROUP_CARD_SEARCH_ADD_PERSONS_LABEL" /></form:label>
+                        <form:select path="searchResultMembers" cssClass="form-control select2" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-no-results="${noResults}" data-searching="${searching}" data-loading-more="${loadingMore}">
+                            <c:forEach var="member" items="${editionForm.searchResultMembers}">
+                                <form:option value="${member.id}" data-avatar="${member.avatar.url}">${member.displayName}</form:option>
+                            </c:forEach>
+                        </form:select>
+                        <form:errors path="searchResultMembers" cssClass="help-block" />
+                    </div>
+                </spring:bind>
+            </div>
+        </div>
+    </fieldset>
+</div>

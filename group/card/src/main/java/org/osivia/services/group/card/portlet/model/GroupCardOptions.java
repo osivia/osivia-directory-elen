@@ -1,7 +1,9 @@
 package org.osivia.services.group.card.portlet.model;
 
 
-import org.osivia.portal.api.directory.v2.model.Group;
+import javax.naming.Name;
+
+import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.portlet.Refreshable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -14,12 +16,16 @@ public class GroupCardOptions {
 
     /** Group UID. */
     private String uid;
+    /** CN */
+    private String cn;
+    
+    private Name dn;
     /** Display Name */
     private String displayName;
     /** Description */
     private String description;
     /** Group */
-    private Group group;
+    private PortalGroup group;
     /** Editable group indicator. */
     private boolean editable;
     /** Deletable group indicator. */
@@ -91,7 +97,7 @@ public class GroupCardOptions {
      * Getter for group.
      * @return the group
      */
-    public Group getGroup() {
+    public PortalGroup getGroup() {
         return group;
     }
 
@@ -100,7 +106,7 @@ public class GroupCardOptions {
      * Setter for group.
      * @param group the group to set
      */
-    public void setGroup(Group group) {
+    public void setGroup(PortalGroup group) {
         this.group = group;
     }
 
@@ -138,6 +144,38 @@ public class GroupCardOptions {
      */
     public void setDeletable(boolean deletable) {
         this.deletable = deletable;
+    }
+
+    /**
+     * Getter for cn.
+     * @return the cn
+     */
+    public String getCn() {
+        return cn;
+    }
+    
+    /**
+     * Setter for cn.
+     * @param cn the cn to set
+     */
+    public void setCn(String cn) {
+        this.cn = cn;
+    }
+
+    /**
+     * Getter for dn.
+     * @return the dn
+     */
+    public Name getDn() {
+        return dn;
+    }
+
+    /**
+     * Setter for dn.
+     * @param dn the dn to set
+     */
+    public void setDn(Name dn) {
+        this.dn = dn;
     }
 
 }
