@@ -65,7 +65,6 @@
         	<type>war</type>
          </dependency>
          
-         
          <!-- Group card -->
          <dependency>
             <groupId>org.osivia.services.directory.group</groupId>
@@ -73,14 +72,14 @@
             <version>${project.version}</version>
             <type>war</type>
          </dependency>
-         <!-- Role management -->
-         <!--
+         
+         <!-- Group management -->
          <dependency>
-         	<groupId>org.osivia.services.directory.role</groupId>
-			<artifactId>osivia-services-directory-role-management</artifactId>
+            <groupId>org.osivia.services.directory.group</groupId>
+            <artifactId>osivia-services-directory-group-management</artifactId>
             <version>${project.version}</version>
             <type>war</type>
-         </dependency> -->
+         </dependency>
         
     </dependencies>
     
@@ -125,11 +124,16 @@
                             <artifactId>osivia-services-directory-person-creation</artifactId>
                             <contextRoot>/osivia-services-directory-person-creation</contextRoot>
                         </webModule>
-                         <!-- <webModule>
-							<groupId>org.osivia.services.directory.role</groupId>
-							<artifactId>osivia-services-directory-role-management</artifactId>
-                            <contextRoot>/osivia-services-directory-role-management</contextRoot>
-                        </webModule> -->                       
+                        <webModule>
+                            <groupId>org.osivia.services.directory.group</groupId>
+                            <artifactId>osivia-services-directory-group-card</artifactId>
+                            <contextRoot>/osivia-services-directory-group-card</contextRoot>
+                        </webModule>
+                        <webModule>
+                            <groupId>org.osivia.services.directory.group</groupId>
+                            <artifactId>osivia-services-directory-group-management</artifactId>
+                            <contextRoot>/osivia-services-directory-group-management</contextRoot>
+                        </webModule>
                     </modules>
                 </configuration>
             </plugin>

@@ -124,13 +124,4 @@ public class GroupServiceImpl extends LdapServiceImpl implements GroupService {
         return this.dao.find(criteria);
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Name dn) {
-        this.dao.delete(dn);
-    }
-
 }

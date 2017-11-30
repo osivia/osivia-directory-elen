@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.Name;
+import javax.naming.directory.SearchControls;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.directory.v2.model.PortalGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.Filter;
-import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +32,10 @@ public class PortalGroupDaoImpl implements PortalGroupDao {
     @Autowired
     private PortalGroup sample;
     
+
+    /** Search controls. */
+    private SearchControls searchControls;
+
 
     /**
      * Constructor.
@@ -67,17 +72,40 @@ public class PortalGroupDaoImpl implements PortalGroupDao {
      */
     @Override
     public List<PortalGroup> find(PortalGroup criteria) {
-        // LDAP query
-        LdapQueryBuilder query = LdapQueryBuilder.query();
-        query.base(this.getBaseDn());
-
         // Filter
-        Filter filter = MappingHelper.generateAndFilter(criteria);
-        query.filter(filter);
+        Filter filter = MappingHelper.generateOrFilter(criteria);
 
         // Search results
-        List<? extends PortalGroup> results = this.template.find(query, this.sample.getClass());
+        List<? extends PortalGroup> results = this.template.find(this.getBaseDn(), filter, this.getSearchControls(), this.sample.getClass());
         return new ArrayList<PortalGroup>(results);
+    }
+
+
+    /**
+     * Get search controls.
+     * 
+     * @return search controls
+     */
+    protected SearchControls getSearchControls() {
+        if (this.searchControls == null) {
+            this.searchControls = new SearchControls();
+
+            // Time limit
+            int timeLimit = NumberUtils.toInt(System.getProperty(SEARCH_TIME_LIMIT_PROPERTY));
+            if (timeLimit < 1) {
+                timeLimit = DEFAULT_SEARCH_TIME_LIMIT;
+            }
+            this.searchControls.setTimeLimit(timeLimit);
+
+            // Count limit
+            long countLimit = NumberUtils.toLong(System.getProperty(SEARCH_COUNT_LIMIT_PROPERTY));
+            if (countLimit < 1) {
+                countLimit = DEFAULT_SEARCH_COUNT_LIMIT;
+            }
+            this.searchControls.setCountLimit(countLimit);
+        }
+
+        return this.searchControls;
     }
 
 

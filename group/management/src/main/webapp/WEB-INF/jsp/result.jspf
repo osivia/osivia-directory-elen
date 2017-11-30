@@ -1,0 +1,3 @@
+<a href="javascript:;" class="group person no-ajax-link ${group.cn eq form.selected ? 'bg-primary' : ''}" data-id="${group.cn}">
+    <span>${empty group.displayName ? group.cn : group.displayName}</span>
+</a>

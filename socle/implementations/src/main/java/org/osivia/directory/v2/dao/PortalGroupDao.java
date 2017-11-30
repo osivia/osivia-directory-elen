@@ -13,6 +13,16 @@ import org.osivia.directory.v2.model.PortalGroup;
  */
 public interface PortalGroupDao {
 
+    /** Search time limit property. */
+    String SEARCH_TIME_LIMIT_PROPERTY = "ldap.group.search.timeLimit";
+    /** Default search time limit, in milliseconds. */
+    int DEFAULT_SEARCH_TIME_LIMIT = 5000;
+    /** Search count limit property. */
+    String SEARCH_COUNT_LIMIT_PROPERTY = "ldap.group.search.countLimit";
+    /** Default search count limit. */
+    long DEFAULT_SEARCH_COUNT_LIMIT = 100;
+
+
     /**
      * Get portal groups base DN
      * 
