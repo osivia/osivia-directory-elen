@@ -96,7 +96,7 @@ public class GroupManagementServiceImpl implements GroupManagementService {
             properties.put(ThemeConstants.PORTAL_PROP_REGION, region);
             properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
             properties.put("osivia.ajaxLink", "1");
-            // TODO other properties
+            properties.put("osivia.group.cn", selected);
 
             StartingWindowBean window = new StartingWindowBean("GROUP", "directory-group-card-instance", properties);
             request.setAttribute(Constants.PORTLET_ATTR_START_WINDOW, window);
