@@ -1,5 +1,7 @@
 package org.osivia.services.group.card.portlet.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -11,6 +13,8 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 
 import org.apache.commons.collections.MapUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -25,12 +29,15 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.portlet.bind.PortletRequestDataBinder;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+
+import net.sf.json.JSONObject;
 
 @Controller
 @RequestMapping(path = "VIEW", params = "view=edit")
@@ -76,7 +83,7 @@ public class GroupEditionController {
      * @param session session status
      * @throws PortletException
      */
-    @ActionMapping(name = "save")
+    @ActionMapping(name = "save", params="save")
     public void save(ActionRequest request, ActionResponse response, @ModelAttribute("options") GroupCardOptions options,
             @Validated @ModelAttribute("editionForm") GroupEditionForm form, BindingResult result, SessionStatus session) throws PortletException {
         // Portal controller context
@@ -114,10 +121,16 @@ public class GroupEditionController {
      * @param response portlet response
      * @param session session status
      */
-    @ActionMapping("addMember")
-    public void addMember(ActionRequest request, ActionResponse response, SessionStatus session) {
+    @ActionMapping(name = "save", params="addMember")
+    public void addMember(ActionRequest request, ActionResponse response, @ModelAttribute("editionForm") GroupEditionForm form,
+            @ModelAttribute("options") GroupCardOptions options) throws PortletException{
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
         
-        //TODO A ecrire
+        this.service.addMember(portalControllerContext, form, options.getGroup());
+        
+        //Stay on the edit page
+        response.setRenderParameter("view","edit");
     }
     
     /**
@@ -126,11 +139,24 @@ public class GroupEditionController {
      * @param request portlet request
      * @param response portlet response
      * @param session session status
+     * @throws IOException 
      */
     @ResourceMapping("search")
-    public void search(ActionRequest request, ActionResponse response, SessionStatus session) {
-        
-        //TODO A ecrire
+    public void search(ResourceRequest request, ResourceResponse response, @ModelAttribute("options") GroupCardOptions options,
+            @RequestParam(value = "filter", required = false) String filter) throws PortletException, IOException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        // Search results
+        JSONObject results = this.service.searchPersons(portalControllerContext, options, filter);
+
+        // Content type
+        response.setContentType("application/json");
+
+        // Content
+        PrintWriter printWriter = new PrintWriter(response.getPortletOutputStream());
+        printWriter.write(results.toString());
+        printWriter.close();
     }
     
     /**

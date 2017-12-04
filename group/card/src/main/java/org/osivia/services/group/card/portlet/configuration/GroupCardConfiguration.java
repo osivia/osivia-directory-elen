@@ -2,10 +2,10 @@ package org.osivia.services.group.card.portlet.configuration;
 
 import javax.portlet.PortletContext;
 
-import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.directory.v2.service.PortalGroupService;
 import org.osivia.directory.v2.service.RoleService;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
+import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
@@ -59,8 +59,8 @@ public class GroupCardConfiguration implements PortletContextAware{
      * @return person service
      */
     @Bean
-    public PersonUpdateService getPersonService() {
-        return DirServiceFactory.getService(PersonUpdateService.class);
+    public PersonService getPersonService() {
+        return DirServiceFactory.getService(PersonService.class);
     }
     
     

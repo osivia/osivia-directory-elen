@@ -1,8 +1,6 @@
 package org.osivia.services.group.card.portlet.model;
 
 
-import javax.naming.Name;
-
 import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.portlet.Refreshable;
 import org.springframework.context.annotation.Scope;
@@ -14,16 +12,8 @@ import org.springframework.web.context.WebApplicationContext;
 @Refreshable
 public class GroupCardOptions {
 
-    /** Group UID. */
-    private String uid;
     /** CN */
     private String cn;
-    
-    private Name dn;
-    /** Display Name */
-    private String displayName;
-    /** Description */
-    private String description;
     /** Group */
     private PortalGroup group;
     /** Editable group indicator. */
@@ -33,63 +23,6 @@ public class GroupCardOptions {
     
     public GroupCardOptions() {
         super();
-    }
-
-    
-    /**
-     * Getter for uid.
-     * @return the uid
-     */
-    public String getUid() {
-        return uid;
-    }
-
-    
-    /**
-     * Setter for uid.
-     * @param uid the uid to set
-     */
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-    
-    
-    /**
-     * Getter for displayName.
-     * @return the displayName
-     */
-    public String getDisplayName() {
-        return displayName;
-    }
-
-
-    
-    /**
-     * Setter for displayName.
-     * @param displayName the displayName to set
-     */
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-
-    
-    /**
-     * Getter for description.
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-
-    
-    /**
-     * Setter for description.
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
 
@@ -160,22 +93,6 @@ public class GroupCardOptions {
      */
     public void setCn(String cn) {
         this.cn = cn;
-    }
-
-    /**
-     * Getter for dn.
-     * @return the dn
-     */
-    public Name getDn() {
-        return dn;
-    }
-
-    /**
-     * Setter for dn.
-     * @param dn the dn to set
-     */
-    public void setDn(Name dn) {
-        this.dn = dn;
     }
 
 }

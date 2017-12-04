@@ -7,9 +7,6 @@
 <%@ page contentType="text/html" isELIgnored="false"%>
 
 
-<portlet:actionURL name="addMember" var="addMemberUrl">
-</portlet:actionURL>
-
 <portlet:resourceURL id="search" var="searchUrl" />
 
 
@@ -34,17 +31,16 @@
                 <c:set var="noResults"><op:translate key="SELECT2_NO_RESULTS" /></c:set>
                 <c:set var="searching"><op:translate key="SELECT2_SEARCHING" /></c:set>
                 <c:set var="loadingMore"><op:translate key="SELECT2_LOADING_MORE"/></c:set>
-                <spring:bind path="searchResultMembers">
-                    <div class="form-group ${status.error ? 'has-error' : (editionForm.warning ? 'has-warning' : '')}">
-                        <form:label path="searchResultMembers" cssClass="control-label"><op:translate key="GROUP_CARD_SEARCH_ADD_PERSONS_LABEL" /></form:label>
-                        <form:select path="searchResultMembers" cssClass="form-control select2" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-no-results="${noResults}" data-searching="${searching}" data-loading-more="${loadingMore}">
-                            <c:forEach var="member" items="${editionForm.searchResultMembers}">
-                                <form:option value="${member.id}" data-avatar="${member.avatar.url}">${member.displayName}</form:option>
-                            </c:forEach>
-                        </form:select>
-                        <form:errors path="searchResultMembers" cssClass="help-block" />
-                    </div>
-                </spring:bind>
+                <div class="form-group ${status.error ? 'has-error' : (editionForm.warning ? 'has-warning' : '')}">
+                    <form:label path="addedMember" cssClass="control-label"><op:translate key="GROUP_CARD_SEARCH_ADD_PERSONS_LABEL" /></form:label>
+                    <form:select path="addedMember" cssClass="form-control select2" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-no-results="${noResults}" data-searching="${searching}" data-loading-more="${loadingMore}">
+                        <c:forEach var="member" items="${editionForm.addedMember}">
+                            <form:option value="${member.id}">${member.displayName}</form:option>
+                        </c:forEach>
+                    </form:select>
+                    <form:errors path="addedMember" cssClass="help-block" />
+                </div>
+                <input type="submit" name="addMember" class="hidden"/>
             </div>
         </div>
     </fieldset>

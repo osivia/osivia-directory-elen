@@ -2,10 +2,13 @@ package org.osivia.services.group.card.portlet.service;
 
 import javax.portlet.PortletException;
 
+import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.group.card.portlet.model.GroupCard;
 import org.osivia.services.group.card.portlet.model.GroupCardOptions;
 import org.osivia.services.group.card.portlet.model.GroupEditionForm;
+
+import net.sf.json.JSONObject;
 
 public interface GroupCardService {
 
@@ -60,5 +63,23 @@ public interface GroupCardService {
      */
     void saveGroup(PortalControllerContext portalControllerContext, GroupCardOptions options, GroupEditionForm form) throws PortletException;
 
+    
+    /**
+     * Search persons
+     * @param portalControllerContext
+     * @param options
+     * @param filter
+     * @return
+     * @throws PortletException
+     */
+    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, String filter) throws PortletException;
+    
+    /**
+     * Add member
+     * @param portalControllerContext
+     * @param form
+     * @throws PortletException
+     */
+    public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException;
     
 }

@@ -2,6 +2,7 @@ package org.osivia.services.group.card.portlet.model;
 
 import javax.naming.Name;
 
+import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class Member {
 
+    /** Identifier. */
+    private final String id;
+    
     private String displayName;
     
     private Name dn;
@@ -20,9 +24,28 @@ public class Member {
     
     /** Deleted indicator. */
     private boolean deleted;
+
+    /** Person. */
+    private final Person person;
     
-    public Member() {
+    public Member(Person person) {
         super();
+        this.person = person;
+        this.id = person.getUid();
+        this.displayName = person.getDisplayName();
+        if (person.getAvatar() != null) this.avatarUrl = person.getAvatar().getUrl();
+        this.dn = person.getDn();
+    }
+    
+    /**
+     * Constructor used with select2 when Member its member is selected
+     * 
+     * @param uid person UID
+     */
+    public Member(String uid) {
+        super();
+        this.id = uid;
+        this.person = null;
     }
 
     
@@ -120,6 +143,26 @@ public class Member {
      */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+
+    
+    /**
+     * Getter for id.
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+
+    
+    /**
+     * Getter for person.
+     * @return the person
+     */
+    public Person getPerson() {
+        return person;
     }
 
 }

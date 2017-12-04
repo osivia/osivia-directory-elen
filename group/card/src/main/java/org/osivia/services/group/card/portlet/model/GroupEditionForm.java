@@ -1,6 +1,7 @@
 package org.osivia.services.group.card.portlet.model;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +25,9 @@ public class GroupEditionForm {
     /** Last name. */
     private List<Member> members;
     
-    private List<Member> searchResultMembers;
+    private List<Member> addedMember;
+    /** Member identifiers. */
+    private Set<String> memberIdentifiers;
     
     private boolean warning;
 
@@ -100,22 +103,22 @@ public class GroupEditionForm {
         this.cn = cn;
     }
 
-    
+ 
     /**
-     * Getter for searchResultMembers.
-     * @return the searchResultMembers
+     * Getter for memberIdentifiers.
+     * @return the memberIdentifiers
      */
-    public List<Member> getSearchResultMembers() {
-        return searchResultMembers;
+    public Set<String> getMemberIdentifiers() {
+        return memberIdentifiers;
     }
 
     
     /**
-     * Setter for searchResultMembers.
-     * @param searchResultMembers the searchResultMembers to set
+     * Setter for memberIdentifiers.
+     * @param memberIdentifiers the memberIdentifiers to set
      */
-    public void setSearchResultMembers(List<Member> searchResultMembers) {
-        this.searchResultMembers = searchResultMembers;
+    public void setMemberIdentifiers(Set<String> memberIdentifiers) {
+        this.memberIdentifiers = memberIdentifiers;
     }
 
     /**
@@ -133,6 +136,24 @@ public class GroupEditionForm {
      */
     public void setWarning(boolean warning) {
         this.warning = warning;
+    }
+
+    
+    /**
+     * Getter for addedMember.
+     * @return the addedMember
+     */
+    public List<Member> getAddedMember() {
+        return addedMember;
+    }
+
+    
+    /**
+     * Setter for addedMember.
+     * @param addedMember the addedMember to set
+     */
+    public void setAddedMember(List<Member> addedMember) {
+        this.addedMember = addedMember;
     }
 
 }
