@@ -268,6 +268,20 @@ public class GroupCardServiceImpl implements GroupCardService {
         return object;
     }
     
+    public void updateMemberList(GroupEditionForm form)
+    {
+        String[] parts;
+        if (StringUtils.isBlank(form.getListMemberToDelete())) {
+            parts = new String[]{};
+        } else {
+            parts = StringUtils.split(form.getListMemberToDelete(), ",");
+        }
+        for (String part : parts) {
+            form.getMembers().remove(Integer.parseInt(part));
+        }
+        form.setListMemberToDelete("");
+    }
+    
     public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup)
     {
         if (form.getAddedMember().size() ==1)
@@ -278,6 +292,7 @@ public class GroupCardServiceImpl implements GroupCardService {
             {
                 Person person = this.personService.getPerson(uid);
                 Member member = new Member(person);
+                member.setExtra(person.getMail());
                 form.getMembers().add(member);
             }
         }
@@ -324,6 +339,8 @@ public class GroupCardServiceImpl implements GroupCardService {
             PortalGroup group = options.getGroup();
 
             if (group != null) {
+                
+                this.updateMemberList(form);
                 // LDAP properties
                 this.setLdapProperties(form, group);
 
@@ -460,14 +477,6 @@ public class GroupCardServiceImpl implements GroupCardService {
         List<Member> members = setMemberList(group.getMembers());
         form.setMembers(members);
 
-        //        Member member1 = new Member();
-        //        member1.setDisplayName("Personne 1");
-        //        Member member2 = new Member();
-        //        member2.setDisplayName("Personne 2");
-        //        ArrayList<Member> members = new ArrayList<>();
-        //        members.add(member1);
-        //        members.add(member2);
-
         // Member identifiers
         Set<String> identifiers = new HashSet<>();
         for (Member member : members) {
@@ -485,6 +494,7 @@ public class GroupCardServiceImpl implements GroupCardService {
         {
             Person person = this.personService.getPerson(name);
             Member member = new Member(person);
+            member.setExtra(person.getMail());
             members.add(member);
         }
         return members;

@@ -2,8 +2,6 @@ package org.osivia.services.group.card.portlet.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -16,7 +14,6 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
-import org.apache.commons.collections.MapUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.group.card.portlet.model.GroupCardOptions;
 import org.osivia.services.group.card.portlet.model.GroupEditionForm;
@@ -90,8 +87,9 @@ public class GroupEditionController {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         if (result.hasErrors()) {
-            // Copy render parameters
-            this.copyRenderParameters(request, response);
+            this.service.updateMemberList(form);
+            //Stay on the edit page
+            response.setRenderParameter("view","edit");
         } else {
             this.service.saveGroup(portalControllerContext, options, form);
 
@@ -127,6 +125,8 @@ public class GroupEditionController {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
         
+        this.service.updateMemberList(form);
+        
         this.service.addMember(portalControllerContext, form, options.getGroup());
         
         //Stay on the edit page
@@ -143,13 +143,15 @@ public class GroupEditionController {
      */
     @ResourceMapping("search")
     public void search(ResourceRequest request, ResourceResponse response, @ModelAttribute("options") GroupCardOptions options,
-            @RequestParam(value = "filter", required = false) String filter) throws PortletException, IOException {
+            @ModelAttribute("editionForm") GroupEditionForm form, @RequestParam(value = "filter", required = false) String filter) throws PortletException, IOException {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         // Search results
         JSONObject results = this.service.searchPersons(portalControllerContext, options, filter);
 
+        this.service.updateMemberList(form);
+        
         // Content type
         response.setContentType("application/json");
 
@@ -201,21 +203,6 @@ public class GroupEditionController {
     @InitBinder("editionForm")
     public void editionFormInitBinder(PortletRequestDataBinder binder) {
         binder.addValidators(this.editionFormValidator);
-    }
-    
-    /**
-     * Copy render parameters.
-     * 
-     * @param request action request
-     * @param response action response
-     */
-    private void copyRenderParameters(ActionRequest request, ActionResponse response) {
-        Map<String, String[]> parameters = request.getPrivateParameterMap();
-        if (MapUtils.isNotEmpty(parameters)) {
-            for (Entry<String, String[]> entry : parameters.entrySet()) {
-                response.setRenderParameter(entry.getKey(), entry.getValue());
-            }
-        }
     }
 
 }

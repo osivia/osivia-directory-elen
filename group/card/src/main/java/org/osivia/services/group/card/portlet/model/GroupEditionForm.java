@@ -29,6 +29,8 @@ public class GroupEditionForm {
     /** Member identifiers. */
     private Set<String> memberIdentifiers;
     
+    private String listMemberToDelete;
+    
     private boolean warning;
 
 
@@ -154,6 +156,24 @@ public class GroupEditionForm {
      */
     public void setAddedMember(List<Member> addedMember) {
         this.addedMember = addedMember;
+    }
+
+    
+    /**
+     * Getter for listMemberToDelete.
+     * @return the listMemberToDelete
+     */
+    public String getListMemberToDelete() {
+        return listMemberToDelete;
+    }
+
+    
+    /**
+     * Setter for listMemberToDelete.
+     * @param listMemberToDelete the listMemberToDelete to set
+     */
+    public void setListMemberToDelete(String listMemberToDelete) {
+        this.listMemberToDelete = listMemberToDelete;
     }
 
 }

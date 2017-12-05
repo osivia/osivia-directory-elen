@@ -1,11 +1,14 @@
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ page contentType="text/html" isELIgnored="false"%>
             
 <div class="table table-hover">
+
+<h4><op:translate key="GROUP_CARD_MEMBER_LIST" /></h4>
     <!-- Table body -->
     <c:forEach items="${card.group.members}" var="member">
-        <div class="table-row">
+        <div class="table-row person">
             <!-- Avatar -->
             <span class="person-avatar">
                 <c:choose>
@@ -25,9 +28,9 @@
             </span>
             
             <!-- Extra -->
-            <!--<c:if test="${not empty member.extra}">
+            <c:if test="${not empty member.extra}">
                 <span class="person-extra">${member.extra}</span>
-            </c:if>-->
+            </c:if>
         </div>
     </c:forEach>
 </div>

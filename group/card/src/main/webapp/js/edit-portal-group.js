@@ -174,18 +174,22 @@ $JQry(function() {
 		var $target = $JQry(event.target),
 			$row = $target.closest(".row"),
 			$fieldset = $target.closest("fieldset"),
-			$deleted = $row.find("input[type=hidden][id$='.deleted']"),
+			//$deleted = $row.find("input[type=hidden][id$='.deleted']"),
+			$index = $row.find("input[type=hidden][id='index']"),
+			$listToDelete = $JQry("input#listMemberToDelete"),
 			$buttons = $row.find("button"),
-			$form = $fieldset.closest("form"),
-			$collapse = $form.find(".collapse");
+			$form = $fieldset.closest("form");
 		
-		$deleted.val(true);
+		//$deleted.val(true);
+		if (!!$listToDelete.val())
+		{
+			$listToDelete.val($listToDelete.val()+ "," +$index.val());
+		} else 
+		{
+			$listToDelete.val($index.val());
+		}
 		$buttons.hide();
 		$fieldset.hide();
-		
-		if (!$collapse.hasClass("in")) {
-			$collapse.collapse("show");
-		}
 	});
 	
 	

@@ -82,4 +82,10 @@ public interface GroupCardService {
      */
     public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException;
     
+    /**
+     * Update member list removing member that where removed before searching for other members
+     * @param form
+     */
+    public void updateMemberList(GroupEditionForm form);
+    
 }
