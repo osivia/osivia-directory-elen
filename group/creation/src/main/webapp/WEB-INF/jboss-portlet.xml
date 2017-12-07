@@ -1,0 +1,11 @@
+<!DOCTYPE portlet-app PUBLIC "-//JBoss Portal//DTD JBoss Portlet 2.6//EN" "http://www.jboss.org/portal/dtd/jboss-portlet_2_6.dtd">
+
+<portlet-app>
+
+	<service>
+        <service-name>CustomizationModulesRepository</service-name>
+        <service-class>org.osivia.portal.api.customization.ICustomizationModulesRepository</service-class>
+        <service-ref>osivia:service=CustomizationService</service-ref>
+    </service>
+    
+</portlet-app>
