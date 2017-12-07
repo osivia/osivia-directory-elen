@@ -17,6 +17,7 @@
 
     <modules>  
         <module>card</module>
+        <module>creation</module>
         <module>management</module>
         <!-- <module>creation</module> -->
     </modules>
