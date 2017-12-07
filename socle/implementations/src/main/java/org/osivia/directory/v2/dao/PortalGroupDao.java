@@ -3,6 +3,7 @@ package org.osivia.directory.v2.dao;
 import java.util.List;
 
 import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 
 import org.osivia.directory.v2.model.PortalGroup;
 
@@ -36,8 +37,9 @@ public interface PortalGroupDao {
      * 
      * @param dn portal group DN
      * @return portal group
+     * @throws NameNotFoundException
      */
-    PortalGroup find(Name dn);
+    PortalGroup find(Name dn) throws NameNotFoundException;
 
 
     /**

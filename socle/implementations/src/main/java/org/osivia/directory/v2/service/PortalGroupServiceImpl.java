@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osivia.directory.v2.dao.PortalGroupDao;
 import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.directory.v2.model.Person;
@@ -41,11 +44,16 @@ public class PortalGroupServiceImpl implements PortalGroupService {
     private PortalGroup sample;
 
 
+    /** Log. */
+    private final Log log;
+
+
     /**
      * Constructor.
      */
     public PortalGroupServiceImpl() {
         super();
+        this.log = LogFactory.getLog(this.getClass());
     }
 
 
@@ -65,7 +73,16 @@ public class PortalGroupServiceImpl implements PortalGroupService {
      */
     @Override
     public PortalGroup get(Name dn) {
-        return this.dao.find(dn);
+        PortalGroup group;
+        try {
+            group = this.dao.find(dn);
+        } catch (NameNotFoundException e) {
+            group = null;
+
+            this.log.warn("Group with dn " + dn + " not found");
+        }
+
+        return group;
     }
 
 
@@ -111,30 +128,32 @@ public class PortalGroupServiceImpl implements PortalGroupService {
         Name group = portalGroup.getDn();
         
         // Original portal group
-        PortalGroup original = this.dao.find(group);
+        PortalGroup original = this.get(group);
 
-        // Removed members
-        Set<Name> removedMembers;
-        if (CollectionUtils.isEmpty(original.getMembers())) {
-            removedMembers = new HashSet<>(0);
-        } else {
-            removedMembers = new HashSet<>(original.getMembers());
-        }
+        if (original != null) {
+            // Removed members
+            Set<Name> removedMembers;
+            if (CollectionUtils.isEmpty(original.getMembers())) {
+                removedMembers = new HashSet<>(0);
+            } else {
+                removedMembers = new HashSet<>(original.getMembers());
+            }
 
-        if (CollectionUtils.isNotEmpty(portalGroup.getMembers())) {
-            for (Name member : portalGroup.getMembers()) {
-                if (removedMembers.contains(member)) {
-                    removedMembers.remove(member);
-                } else {
-                    this.addMember(group, member);
+            if (CollectionUtils.isNotEmpty(portalGroup.getMembers())) {
+                for (Name member : portalGroup.getMembers()) {
+                    if (removedMembers.contains(member)) {
+                        removedMembers.remove(member);
+                    } else {
+                        this.addMember(group, member);
+                    }
                 }
             }
-        }
-        for (Name member : removedMembers) {
-            this.removeMember(group, member);
-        }
+            for (Name member : removedMembers) {
+                this.removeMember(group, member);
+            }
 
-        this.dao.update(portalGroup);
+            this.dao.update(portalGroup);
+        }
 
         return portalGroup;
     }

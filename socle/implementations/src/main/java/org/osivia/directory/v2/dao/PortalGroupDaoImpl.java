@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.Name;
+import javax.naming.NameNotFoundException;
 import javax.naming.directory.SearchControls;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -62,7 +63,7 @@ public class PortalGroupDaoImpl implements PortalGroupDao {
      * {@inheritDoc}
      */
     @Override
-    public PortalGroup find(Name dn) {
+    public PortalGroup find(Name dn) throws NameNotFoundException {
         return this.template.findByDn(dn, this.sample.getClass());
     }
 
