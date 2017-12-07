@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.NameNotFoundException;
 import javax.naming.directory.SearchControls;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.directory.v2.model.PortalGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.support.LdapNameBuilder;

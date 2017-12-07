@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.naming.Name;
-import javax.naming.NameNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -15,6 +14,7 @@ import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Service;
 

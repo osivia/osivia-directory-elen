@@ -3,9 +3,9 @@ package org.osivia.directory.v2.dao;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.NameNotFoundException;
 
 import org.osivia.directory.v2.model.PortalGroup;
+import org.springframework.ldap.NameNotFoundException;
 
 /**
  * Portal group DAO interface.
