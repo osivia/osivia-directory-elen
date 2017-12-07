@@ -1,5 +1,6 @@
 package org.osivia.services.group.creation.plugin.service;
 
+import java.text.Normalizer;
 import java.util.Map;
 
 import javax.naming.Name;
@@ -19,7 +20,7 @@ import fr.toutatice.portail.cms.nuxeo.api.forms.FormFilterExecutor;
 
 /**
  * Group creation plugin service implementation.
- * 
+ *
  * @author Julien Barberet
  * @see GroupCreationPluginService
  */
@@ -55,47 +56,96 @@ public class GroupCreationPluginServiceImpl implements GroupCreationPluginServic
         // Variables
         Map<String, String> variables = context.getVariables();
 
-        // DisplayName
+        // Display name
         String displayNameVariableName = context.getParamValue(executor, DISPLAYNAME_FILTER_VARIABLE_NAME);
         String displayName = StringUtils.trim(variables.get(displayNameVariableName));
-        
+
+        // Description
         String descriptionVariableName = context.getParamValue(executor, DESCRIPTION_FILTER_VARIABLE_NAME);
         String description = StringUtils.trim(variables.get(descriptionVariableName));
 
-        String cn = StringUtils.deleteWhitespace(displayName);
-        
-        if (cn.length()==0)
-        {
+        // CN
+        String cn = this.generateCn(displayName);
+
+        if (StringUtils.isEmpty(cn)) {
             String message = bundle.getString("GROUP_CREATION_FORM_FILTER_MESSAGE_EMPTY_DISPLAYNAME");
             throw new FormFilterException(message);
-        } else
-        {
+        } else {
             int i = 1;
             boolean created = false;
-            PortalGroup portalGroup;
-            // PortalGroup
-            while (!created)
-            {
-                Name dn = this.service.buildDn(cn+(i==1? "" : Integer.toString(i)));
-                portalGroup = this.service.get(dn);
-        
+            while (!created) {
+                // Suffixed CN
+                String suffixedCn = cn;
+                if (i > 1) {
+                    suffixedCn += "-" + i;
+                }
+
+                Name dn = this.service.buildDn(suffixedCn);
+                PortalGroup portalGroup = this.service.get(dn);
+
                 if (portalGroup == null) {
-                    create(cn+(i==1? "" : Integer.toString(i)), displayName, description);
+                    this.create(suffixedCn, displayName, description);
                     created = true;
                 }
+
                 i++;
             }
         }
     }
-    
-    private void create(String cn, String displayName, String description)
-    {
+
+
+    /**
+     * Create group.
+     * 
+     * @param cn group CN
+     * @param displayName group display name
+     * @param description group description
+     */
+    private void create(String cn, String displayName, String description) {
         PortalGroup portalGroup = this.service.create(cn);
 
         portalGroup.setDisplayName(displayName);
-        portalGroup.setDescription(description);
+        portalGroup.setDescription(StringUtils.trimToNull(description));
 
         this.service.update(portalGroup);
+    }
+
+
+    /**
+     * Generate CN from display name.
+     *
+     * @param displayName display name
+     * @return CN
+     */
+    private String generateCn(String displayName) {
+        String name = displayName;
+
+        // Lower case
+        name = StringUtils.lowerCase(name);
+
+        // Remove accents
+        name = Normalizer.normalize(name, Normalizer.Form.NFD);
+        name = name.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+
+        // Remove special characters
+        name = name.replaceAll("[^a-z0-9]", "-");
+
+        // Remove "-" prefix
+        while (StringUtils.startsWith(name, "-")) {
+            name = StringUtils.removeStart(name, "-");
+        }
+
+        // Remove "-" suffix
+        while (StringUtils.endsWith(name, "-")) {
+            name = StringUtils.removeEnd(name, "-");
+        }
+
+        // Remove consecutive "-"
+        while (StringUtils.contains(name, "--")) {
+            name = StringUtils.replace(name, "--", "-");
+        }
+
+        return name;
     }
 
 }
