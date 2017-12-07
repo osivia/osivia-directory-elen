@@ -10,6 +10,7 @@ import javax.naming.Name;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.directory.v2.service.PortalGroupService;
@@ -26,6 +27,7 @@ import org.osivia.portal.api.windows.WindowFactory;
 import org.osivia.services.group.card.portlet.model.Group;
 import org.osivia.services.group.card.portlet.model.GroupCard;
 import org.osivia.services.group.card.portlet.model.GroupCardOptions;
+import org.osivia.services.group.card.portlet.model.GroupCardSettings;
 import org.osivia.services.group.card.portlet.model.GroupEditionForm;
 import org.osivia.services.group.card.portlet.model.Member;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,11 @@ import org.springframework.stereotype.Service;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+/**
+ * Group card portlet service implementation.
+ * 
+ * @see GroupCardService
+ */
 @Service
 public class GroupCardServiceImpl implements GroupCardService {
 
@@ -67,6 +74,10 @@ public class GroupCardServiceImpl implements GroupCardService {
     /** Administrator role. */
     private final String administratorRole;
 
+
+    /**
+     * Constructor.
+     */
     public GroupCardServiceImpl() {
         super();
 
@@ -74,6 +85,37 @@ public class GroupCardServiceImpl implements GroupCardService {
         this.administratorRole = System.getProperty(ADMINISTRATOR_ROLE_PROPERTY);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String doView(PortalControllerContext portalControllerContext, GroupCardOptions options) throws PortletException {
+        // Portlet request
+        PortletRequest request = portalControllerContext.getRequest();
+
+        // Portlet settings
+        GroupCardSettings settings = this.getSettings(portalControllerContext);
+
+        if (settings.isStub()) {
+            request.setAttribute("osivia.emptyResponse", "1");
+        }
+
+        // View path
+        String path;
+        if (options.getGroup() == null) {
+            path = "deleted";
+        } else {
+            path = "view";
+        }
+
+        return path;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GroupCardOptions getOptions(PortalControllerContext portalControllerContext) throws PortletException {
         GroupCardOptions options = this.applicationContext.getBean(GroupCardOptions.class);
@@ -501,6 +543,38 @@ public class GroupCardServiceImpl implements GroupCardService {
         }
         Collections.sort(members);;
         return members;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GroupCardSettings getSettings(PortalControllerContext portalControllerContext) throws PortletException {
+        // Window
+        PortalWindow window = WindowFactory.getWindow(portalControllerContext.getRequest());
+
+        // Settings
+        GroupCardSettings settings = this.applicationContext.getBean(GroupCardSettings.class);
+
+        // Resource loader stub indicator
+        boolean stub = BooleanUtils.toBoolean(window.getProperty(STUB_WINDOW_PROPERTY));
+        settings.setStub(stub);
+
+        return settings;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveSettings(PortalControllerContext portalControllerContext, GroupCardSettings settings) {
+        // Window
+        PortalWindow window = WindowFactory.getWindow(portalControllerContext.getRequest());
+
+        // Resource loader stub indicator
+        window.setProperty(STUB_WINDOW_PROPERTY, String.valueOf(settings.isStub()));
     }
 
 }

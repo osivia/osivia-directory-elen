@@ -1,0 +1,15 @@
+<%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
+
+
+<div class="form-group">
+    <div class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+        <button type="submit" class="btn btn-primary">
+            <i class="glyphicons glyphicons-floppy-disk"></i>
+            <span><op:translate key="SAVE" /></span>
+        </button>
+        
+        <button type="button" class="btn btn-default" onclick="closeFancybox()">
+            <span><op:translate key="CANCEL" /></span>
+        </button>
+    </div>
+</div>

@@ -20,6 +20,7 @@
 		<supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>view</portlet-mode>
+            <portlet-mode>admin</portlet-mode>
         </supports>
         
 		<portlet-info>

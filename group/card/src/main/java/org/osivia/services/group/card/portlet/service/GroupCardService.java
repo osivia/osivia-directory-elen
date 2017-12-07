@@ -6,6 +6,7 @@ import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.group.card.portlet.model.GroupCard;
 import org.osivia.services.group.card.portlet.model.GroupCardOptions;
+import org.osivia.services.group.card.portlet.model.GroupCardSettings;
 import org.osivia.services.group.card.portlet.model.GroupEditionForm;
 
 import net.sf.json.JSONObject;
@@ -15,7 +16,21 @@ public interface GroupCardService {
     /** Group cn window property. */
     String GROUP_CN_WINDOW_PROPERTY = "osivia.group.cn";
     
+    /** Resource loader stub indicator window property. */
+    String STUB_WINDOW_PROPERTY = "osivia.group.stub";
+
     
+    /**
+     * Do view.
+     * 
+     * @param portalControllerContext portal controller context
+     * @param options portlet options
+     * @return view path
+     * @throws PortletException
+     */
+    String doView(PortalControllerContext portalControllerContext, GroupCardOptions options) throws PortletException;
+
+
     /**
      * Get portlet options.
      * 
@@ -82,5 +97,24 @@ public interface GroupCardService {
      * @throws PortletException
      */
     public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException;
+
+
+    /**
+     * Get portlet settings.
+     * 
+     * @param portalControllerContext portal controller context
+     * @return portlet settings
+     * @throws PortletException
+     */
+    GroupCardSettings getSettings(PortalControllerContext portalControllerContext) throws PortletException;
+
+
+    /**
+     * Save portlet settings.
+     * 
+     * @param portalControllerContext portal controller context
+     * @param settings portlet settings
+     */
+    void saveSettings(PortalControllerContext portalControllerContext, GroupCardSettings settings);
     
 }

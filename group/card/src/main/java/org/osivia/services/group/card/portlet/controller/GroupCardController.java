@@ -1,9 +1,7 @@
 package org.osivia.services.group.card.portlet.controller;
 
-import javax.annotation.PostConstruct;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
@@ -24,11 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-import fr.toutatice.portail.cms.nuxeo.api.CMSPortlet;
-
+/**
+ * Group card portlet controller.
+ * 
+ * @author Julien Barberet
+ */
 @Controller
 @RequestMapping("VIEW")
-public class GroupCardController{
+public class GroupCardController {
 
     /** Portlet context. */
     @Autowired
@@ -38,14 +39,20 @@ public class GroupCardController{
     @Autowired
     private GroupCardService service;
     
+
     /** Log. */
     private final Log log;
     
+
+    /**
+     * Constructor.
+     */
     public GroupCardController() {
         super();
         this.log = LogFactory.getLog(this.getClass());
     }
     
+
     /**
      * View render mapping.
      *
@@ -53,21 +60,17 @@ public class GroupCardController{
      * @param response render response
      * @param options portlet options model attribute
      * @return view path
+     * @throws PortletException
      */
     @RenderMapping
-    public String view(RenderRequest request, RenderResponse response, @ModelAttribute("options") GroupCardOptions options) {
-        // View path
-        String path;
-        log.info("View GroupCard controller");
-        if (options.getGroup() == null) {
-            path = "deleted";
-        } else {
-            path = "view";
-        }
+    public String view(RenderRequest request, RenderResponse response, @ModelAttribute("options") GroupCardOptions options) throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
-        return path;
+        return this.service.doView(portalControllerContext, options);
     }
     
+
     /**
      * Delete group action mapping.
      * 
@@ -102,6 +105,7 @@ public class GroupCardController{
         return this.service.getOptions(portalControllerContext);
     }
     
+
     /**
      * Get group card model attribute.
      * 
@@ -117,4 +121,5 @@ public class GroupCardController{
 
         return this.service.getGroupCard(portalControllerContext);
     }
+
 }

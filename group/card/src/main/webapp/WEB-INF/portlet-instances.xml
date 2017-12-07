@@ -2,6 +2,7 @@
 <!DOCTYPE deployments PUBLIC "-//JBoss Portal//DTD Portlet Instances 2.6//EN" "http://www.jboss.org/portlet/dtd/portlet-instances_2_6.dtd">
 
 <deployments>
+
     <deployment>
         <if-exists>overwrite</if-exists>
         <instance>
@@ -11,10 +12,15 @@
             <portlet-ref>directory-group-card</portlet-ref>
             <security-constraint>
                 <policy-permission>
+                    <action-name>admin</action-name>
+                    <role-name>Administrators</role-name>
+                </policy-permission>
+                <policy-permission>
                     <action-name>view</action-name>
                     <unchecked />
                 </policy-permission>
             </security-constraint>
         </instance>
     </deployment>
+    
 </deployments>
