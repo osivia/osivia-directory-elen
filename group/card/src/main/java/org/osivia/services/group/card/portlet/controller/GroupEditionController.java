@@ -144,8 +144,25 @@ public class GroupEditionController {
         //Stay on the edit page
         response.setRenderParameter("view","edit");
     }
-    
  
+    /**
+     * Update form after removing an added member
+     * This member is removed from the list
+     * 
+     * @param request portlet request
+     * @param response portlet response
+     * @param session session status
+     */
+    @ActionMapping(name = "save", params="updateForm")
+    public void updateForm(ActionRequest request, ActionResponse response, @ModelAttribute("editionForm") GroupEditionForm form,
+            @ModelAttribute("options") GroupCardOptions options) throws PortletException{
+
+        this.service.updateMemberList(form);
+        
+        //Stay on the edit page
+        response.setRenderParameter("view","edit");
+    }
+    
     /**
      * Search persons action mapping.
      * 

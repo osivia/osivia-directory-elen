@@ -32,9 +32,6 @@ $JQry(function() {
 				
 				return {
 					results: data.items,
-					/**pagination: {
-						more: (params.page * data.pageSize) < data.total
-					}*/
 				};
 			},
 			cache: true
@@ -158,6 +155,11 @@ $JQry(function() {
 		displayAlert(event);
 	});
 	
+	$JQry(".edit-portal-group button[data-type=restore-member]").click(function(event) {
+		
+		restoreMember(event);
+	});
+	
 	$JQry(".group-edition-description").change(function(event){
 		displayAlert(event);
 	});
@@ -172,17 +174,49 @@ function removeMember(event)
 {
 	var $target = $JQry(event.target),
 	$row = $target.closest(".row"),
+	$form = $target.closest("form"),
 	$fieldset = $target.closest("fieldset"),
 	$deleted = $row.find("input[type=hidden][id$='.deleted']"),
-	$buttons = $row.find("button");
-	
+	$added = $row.find("input[type=hidden][id='added']"),
+	$buttonRestore = $row.find("button[data-type=restore-member]"),
+	$buttonDelete = $row.find("button[data-type=remove-member]");
 	$deleted.val(true);
-	$buttons.hide();
-	//$fieldset.find("span.person-title").wrap("<del></del>");
-	//$fieldset.find("span.person-extra").wrap("<del></del>");
-	$fieldset.prop("disabled", true);
 	
-	displayAlert(event);
+	if ($added.val())
+	{
+		$row.closest("div[data-type=member-element]").hide();
+		$submit = $form.find("input[type=submit][name=updateForm]");
+		$submit.click();
+	} else
+	{
+		$buttonDelete.addClass("hidden");
+		$buttonRestore.removeClass("hidden");
+		$fieldset.find("span.person-title").addClass("text-del text-muted");
+		//$fieldset.find("span.person-title").addClass("text-muted");
+		//$fieldset.prop("disabled", true);
+		
+		displayAlert(event);
+	}
+}
+
+function restoreMember(event)
+{
+	var $target = $JQry(event.target),
+	$row = $target.closest(".row"),
+	$fieldset = $target.closest("fieldset"),
+	$deleted = $row.find("input[type=hidden][id$='.deleted']"),
+	$buttonRestore = $row.find("button[data-type=restore-member]"),
+	$buttonDelete = $row.find("button[data-type=remove-member]");
+	
+	
+	$deleted.val(false);
+	$buttonDelete.removeClass("hidden");
+	$buttonRestore.addClass("hidden");
+	//$fieldset.find("span.person-title").removeClass("text-muted");
+	//$fieldset.find("span.person-extra").removeClass("text-muted");
+	$fieldset.find("span.person-title").removeClass("text-del text-muted");
+	//$fieldset.find("span.person-title").parent().unwrap("<del class='text-muted'></del>");
+	//$fieldset.prop("disabled", false);
 }
 
 //Display warning message to alert user to save

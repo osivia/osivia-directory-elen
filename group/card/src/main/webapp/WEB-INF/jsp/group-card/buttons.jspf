@@ -22,7 +22,7 @@
             </a>
     
             <!-- Deletion -->
-            <c:if test="${options.deletable}">
+            <c:if test="${options.editable}">
                 <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#${namespace}-delete-modal">
                     <i class="glyphicons glyphicons-bin"></i>
                     <span><op:translate key="DELETE" /></span>

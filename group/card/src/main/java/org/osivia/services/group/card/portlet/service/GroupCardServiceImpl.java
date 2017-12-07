@@ -2,8 +2,10 @@ package org.osivia.services.group.card.portlet.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.Name;
@@ -44,9 +46,8 @@ import net.sf.json.JSONObject;
  */
 @Service
 public class GroupCardServiceImpl implements GroupCardService {
-
-    /** Administrator role system property. */
-    private static final String ADMINISTRATOR_ROLE_PROPERTY = "groupcard.roles.roleAdministrator";
+    
+    private static final String ROLE_ADMIN = "role_admin";
 
     /** Application context. */
     @Autowired
@@ -71,18 +72,12 @@ public class GroupCardServiceImpl implements GroupCardService {
     @Autowired
     private INotificationsService notificationsService;
 
-    /** Administrator role. */
-    private final String administratorRole;
-
 
     /**
      * Constructor.
      */
     public GroupCardServiceImpl() {
         super();
-
-        // Administrator role
-        this.administratorRole = System.getProperty(ADMINISTRATOR_ROLE_PROPERTY);
     }
 
 
@@ -142,11 +137,6 @@ public class GroupCardServiceImpl implements GroupCardService {
             // Editable group card indicator
             boolean editable = this.isEditable(portalControllerContext);
             options.setEditable(editable);
-
-            // Deletable group indicator
-            boolean deletable = this.isDeletable(portalControllerContext);
-            options.setDeletable(deletable);
-
         }
         return options;
     }
@@ -190,9 +180,9 @@ public class GroupCardServiceImpl implements GroupCardService {
 
         // Member identifiers
      // Member identifiers
-        Set<String> memberIdentifiers = new HashSet<>();
+        Map<String, Member> memberIdentifiers = new HashMap();
         for (Member member : form.getMembers()) {
-            memberIdentifiers.add(member.getId());
+            memberIdentifiers.put(member.getId(),member);
         }
 
         // JSON objects
@@ -213,9 +203,10 @@ public class GroupCardServiceImpl implements GroupCardService {
             List<Person> persons = this.personService.findByCriteria(pCriteria);
             for (Person person : persons) {
                 // Already member indicator
-                boolean alreadyMember = memberIdentifiers.contains(person.getUid());
+                boolean alreadyMember = memberIdentifiers.containsKey(person.getUid());
+                boolean added = (alreadyMember? memberIdentifiers.get(person.getUid()).isAdded() : false); 
                 // Search result
-                JSONObject object = this.getSearchResult(person, alreadyMember, bundle);
+                JSONObject object = this.getSearchResult(person, alreadyMember, added, bundle);
 
                 objects.add(object);
                 total++;
@@ -271,7 +262,7 @@ public class GroupCardServiceImpl implements GroupCardService {
      * @param bundle internationalization bundle
      * @return JSON object
      */
-    protected JSONObject getSearchResult(Person person, boolean alreadyMember, Bundle bundle) {
+    protected JSONObject getSearchResult(Person person, boolean alreadyMember, boolean added, Bundle bundle) {
         JSONObject object = new JSONObject();
         object.put("id", person.getUid());
 
@@ -293,7 +284,7 @@ public class GroupCardServiceImpl implements GroupCardService {
         }
 
         if (alreadyMember) {
-            displayName += " " + bundle.getString("GROUP_CARD_ALREADY_MEMBER_INDICATOR");
+            displayName += " " + (added ? bundle.getString("GROUP_CARD_ALREADY_ADDED_INDICATOR") : bundle.getString("GROUP_CARD_ALREADY_MEMBER_INDICATOR"));
             object.put("disabled", true);
         }
 
@@ -312,7 +303,7 @@ public class GroupCardServiceImpl implements GroupCardService {
      * @param form
      * @return
      */
-    private List<Member> updateMemberList(GroupEditionForm form)
+    private List<Member> getMemberListToSave(GroupEditionForm form)
     {
         List<Member> membersToSave = new ArrayList<>();
         for(Member member : form.getMembers())
@@ -320,6 +311,19 @@ public class GroupCardServiceImpl implements GroupCardService {
             if (!member.isDeleted()) membersToSave.add(member);
         }
         return membersToSave;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void updateMemberList(GroupEditionForm form)
+    {
+        List<Member> newList = new ArrayList<>();
+        for(Member member : form.getMembers())
+        {
+            if (!member.isAdded() || !member.isDeleted()) newList.add(member);
+        }
+        form.setMembers(newList);
     }
     
     public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException
@@ -348,7 +352,7 @@ public class GroupCardServiceImpl implements GroupCardService {
         // Internationalization bundle
         Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
 
-        if (options.isDeletable()) {
+        if (options.isEditable()) {
             // Group
             PortalGroup group = options.getGroup();
 
@@ -382,7 +386,7 @@ public class GroupCardServiceImpl implements GroupCardService {
 
             if (group != null) {
                 
-                List<Member> membersToSave = this.updateMemberList(form);
+                List<Member> membersToSave = this.getMemberListToSave(form);
                 // LDAP properties
                 this.setLdapProperties(form, group, membersToSave);
 
@@ -444,41 +448,10 @@ public class GroupCardServiceImpl implements GroupCardService {
         {
             // Current user DN
             Name dn = this.personService.getEmptyPerson().buildDn(uid);
-
             // Check if the current user has administration role
-            //            editable =  StringUtils.isNotEmpty(this.administratorRole) && this.roleService.hasRole(dn, this.administratorRole);
-            editable = true;
+            editable = this.roleService.hasRole(dn, ROLE_ADMIN);
         }
         return editable;
-    }
-
-    /**
-     * Check if the group can be deleted by the current user.
-     *
-     * @param portalControllerContext portal controller context
-     * @return true if the portalGroup can be deleted
-     */
-    protected boolean isDeletable(PortalControllerContext portalControllerContext) {
-        // Portlet request
-        PortletRequest request = portalControllerContext.getRequest();
-        // Current user UID
-        String uid = request.getRemoteUser();
-
-        // Deletable person indicator
-        boolean deletable;
-
-        if (StringUtils.isEmpty(uid)) {
-            deletable = false;
-        } else {
-            // Current user DN
-            Name dn = this.personService.getEmptyPerson().buildDn(uid);
-
-            // Check if the current user has administration role
-            //            deletable = StringUtils.isNotEmpty(this.administratorRole) && this.roleService.hasRole(dn, this.administratorRole);
-            deletable = true;
-        }
-
-        return deletable;
     }
 
     /**

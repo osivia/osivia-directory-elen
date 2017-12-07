@@ -117,4 +117,10 @@ public interface GroupCardService {
      */
     void saveSettings(PortalControllerContext portalControllerContext, GroupCardSettings settings);
     
+    /**
+     * Update member list to remove member that were first added and then removed
+     * @param form
+     */
+    public void updateMemberList(GroupEditionForm form);
+    
 }

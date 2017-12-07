@@ -18,8 +18,6 @@ public class GroupCardOptions {
     private PortalGroup group;
     /** Editable group indicator. */
     private boolean editable;
-    /** Deletable group indicator. */
-    private boolean deletable;
     
     public GroupCardOptions() {
         super();
@@ -59,24 +57,6 @@ public class GroupCardOptions {
      */
     public void setEditable(boolean editable) {
         this.editable = editable;
-    }
-
-    
-    /**
-     * Getter for deletable.
-     * @return the deletable
-     */
-    public boolean isDeletable() {
-        return deletable;
-    }
-
-    
-    /**
-     * Setter for deletable.
-     * @param deletable the deletable to set
-     */
-    public void setDeletable(boolean deletable) {
-        this.deletable = deletable;
     }
 
     /**

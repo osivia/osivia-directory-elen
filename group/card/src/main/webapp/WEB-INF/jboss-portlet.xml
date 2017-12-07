@@ -10,6 +10,7 @@
         
         <header-content>
             <script type="text/javascript" src="/js/edit-portal-group.js" ></script>
+            <link rel="stylesheet" type="text/css" href="/css/group-card.min.css" />
         </header-content>
     </portlet>
 </portlet-app>
