@@ -68,11 +68,12 @@ public interface GroupCardService {
      * Search persons
      * @param portalControllerContext
      * @param options
+     * @param form
      * @param filter
      * @return
      * @throws PortletException
      */
-    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, String filter) throws PortletException;
+    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, GroupEditionForm form, String filter) throws PortletException;
     
     /**
      * Add member
@@ -81,11 +82,5 @@ public interface GroupCardService {
      * @throws PortletException
      */
     public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException;
-    
-    /**
-     * Update member list removing member that where removed before searching for other members
-     * @param form
-     */
-    public void updateMemberList(GroupEditionForm form);
     
 }

@@ -5,48 +5,53 @@
 
 <%@ page contentType="text/html" isELIgnored="false"%>
 
-<div class="table table-hover member-list-table">
+<div class="form-group">
 <!-- Table body -->
 
-<form:hidden path="listMemberToDelete" />
-
-    <c:forEach items="${editionForm.members}" var="member" varStatus="status">
-        <div class="table-row">
-        <fieldset>
-	        <div class="row person">
-	            <input type="hidden" id="index" name="index" value="${status.index}" />
-	            <!-- Avatar -->
-	            <div class="col-xs-12 col-sm-10">
-		            <span class="person-avatar">
-		                <c:choose>
-		                    <c:when test="${empty member.avatarUrl}">
-		                        <i class="glyphicons glyphicons-user"></i>
-		                    </c:when>
-		                    
-		                    <c:otherwise>
-		                        <img src="${member.avatarUrl}" alt="">
-		                    </c:otherwise>
-		                </c:choose>
-		            </span>
-			        <!-- Display name -->
-		            <span class="person-title">
-		                ${member.displayName}
-		            </span>
-		            <!-- Extra -->
-		            <c:if test="${not empty member.extra}">
-		                <span class="person-extra">${member.extra}</span>
-		            </c:if>
-	            </div>
-	           
-	            
-	            <div class="col-sm-2 actions">
-	                <button type="button" class="btn btn-default" data-type="remove-member">
-	                    <i class="glyphicons glyphicons-remove"></i>
-	                    <span class="sr-only"><op:translate key="REMOVE" /></span>
-	                </button>
-	            </div>
-	        </div>
-        </fieldset>
-        </div>
-    </c:forEach>
+    <label class="col-sm-3 col-lg-2 control-label"><op:translate key="GROUP_CARD_MEMBER_LIST" /></label>
+    <div class="col-sm-9 col-lg-10 panel">
+        <div class="table table-hover member-list-table">
+	    
+	       <c:forEach items="${editionForm.members}" var="member" varStatus="status">
+		        <div class="table-row">
+		        <fieldset ${member.deleted ? 'disabled' : ''}>
+			        <div class="row person">
+			            <input type="hidden" id="added" name="added" value="${member.added}" />
+			            <form:hidden path="members[${status.index}].deleted" />
+			            <!-- Avatar -->
+			            <div class="col-xs-12 col-sm-10">
+				            <span class="person-avatar">
+				                <c:choose>
+				                    <c:when test="${empty member.avatarUrl}">
+				                        <i class="glyphicons glyphicons-user"></i>
+				                    </c:when>
+				                    
+				                    <c:otherwise>
+				                        <img src="${member.avatarUrl}" alt="">
+				                    </c:otherwise>
+				                </c:choose>
+				            </span>
+					        <!-- Display name -->
+				            <span class="person-title ${member.added ? 'text-info' : ''}">
+				                ${member.displayName}
+				            </span>
+				            <!-- Extra -->
+				            <c:if test="${not empty member.extra}">
+				                <span class="person-extra">${member.extra}</span>
+				            </c:if>
+			            </div>
+			           
+			            
+			            <div class="col-sm-2 actions ${member.deleted ? 'hidden' : ''}">
+			                <button type="button" class="btn btn-default" data-type="remove-member">
+			                    <i class="glyphicons glyphicons-remove"></i>
+			                    <span class="sr-only"><op:translate key="REMOVE" /></span>
+			                </button>
+			            </div>
+			        </div>
+		        </fieldset>
+		        </div>
+		    </c:forEach>
+	    </div>
+	</div>
 </div>

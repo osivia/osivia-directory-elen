@@ -1,5 +1,5 @@
 $JQry(function() {
-
+	
 	$JQry(".edit-portal-group select.select2").each(function(index, element) {
 		var $element = $JQry(element),
 		url = $element.data("url"),
@@ -22,15 +22,13 @@ $JQry(function() {
 					result = window[ajaxDataFunction]($element, params);
 				} else {
 					result = {
-						filter: params.term,
-						//page: params.page
+						filter: params.term
 					};
 				}
 				
 				return result;
 			},
 			processResults: function(data, params) {
-				//params.page = params.page || 1;
 				
 				return {
 					results: data.items,
@@ -86,25 +84,11 @@ $JQry(function() {
 			
 		// Selection template
 		options["templateSelection"] = function(params) {
-			var displayName = params.displayName,
-				avatar = params.avatar;
+			var displayName = params.displayName;
 			
 			// Selection
 			$selection = $JQry(document.createElement("div"));
 			$selection.addClass("workspace-member-selection");
-			
-			if (avatar) {
-				// Person avatar
-				$personAvatar = $JQry(document.createElement("div"));
-				$personAvatar.addClass("person-avatar");
-				$personAvatar.appendTo($selection);
-				
-				// Avatar
-				$avatar = $JQry(document.createElement("img"));
-				$avatar.attr("src", params.avatar);
-				$avatar.attr("alt", "");
-				$avatar.appendTo($personAvatar);
-			}
 			
 			// Person title
 			$personTitle = $JQry(document.createElement("div"));
@@ -156,41 +140,61 @@ $JQry(function() {
 		$element.on("select2:select", function(event) {
 			var $target = $JQry(event.target),
 				$form = $target.closest("form"),
+				$warning = $JQry("input#warning"),
 				$submit = $form.find("input[type=submit][name=addMember]");
+			
+			//Set warning to true to prevent user to save the group after adding a member
+			$warning.val(true);
 			
 			$submit.click();
         });
 	});
 	
-	
-	/**var table = $JQry(".member-list-table");
-	$(table).find(".fieldset").each(function(index, element) {
-		$(element).find("input[type=hidden][value='true'").hide();
-	});*/
-	
-	
 	//Fuction to execute when click on Remove member button
 	$JQry(".edit-portal-group button[data-type=remove-member]").click(function(event) {
-		var $target = $JQry(event.target),
-			$row = $target.closest(".row"),
-			$fieldset = $target.closest("fieldset"),
-			//$deleted = $row.find("input[type=hidden][id$='.deleted']"),
-			$index = $row.find("input[type=hidden][id='index']"),
-			$listToDelete = $JQry("input#listMemberToDelete"),
-			$buttons = $row.find("button"),
-			$form = $fieldset.closest("form");
 		
-		//$deleted.val(true);
-		if (!!$listToDelete.val())
-		{
-			$listToDelete.val($listToDelete.val()+ "," +$index.val());
-		} else 
-		{
-			$listToDelete.val($index.val());
-		}
-		$buttons.hide();
-		$fieldset.hide();
+		removeMember(event);
+		
+		displayAlert(event);
 	});
 	
+	$JQry(".group-edition-description").change(function(event){
+		displayAlert(event);
+	});
+	
+	$JQry(".group-edition-displayname").change(function(event){
+		displayAlert(event);
+	});
 	
 });
+
+function removeMember(event)
+{
+	var $target = $JQry(event.target),
+	$row = $target.closest(".row"),
+	$fieldset = $target.closest("fieldset"),
+	$deleted = $row.find("input[type=hidden][id$='.deleted']"),
+	$buttons = $row.find("button");
+	
+	$deleted.val(true);
+	$buttons.hide();
+	//$fieldset.find("span.person-title").wrap("<del></del>");
+	//$fieldset.find("span.person-extra").wrap("<del></del>");
+	$fieldset.prop("disabled", true);
+	
+	displayAlert(event);
+}
+
+//Display warning message to alert user to save
+function displayAlert(event)
+{
+	var $target = $JQry(event.target),
+	$form = $target.closest("form"),
+	$warning = $form.find("warning-to-save"),
+	$collapse = $form.find(".group-save-warning");
+	
+	$warning.val(true);
+	if (!$collapse.hasClass("in")) {
+		$collapse.collapse("show");
+	}
+}

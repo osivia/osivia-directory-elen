@@ -1,6 +1,7 @@
 package org.osivia.services.group.card.portlet.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -130,15 +131,6 @@ public class GroupCardServiceImpl implements GroupCardService {
 
             List<Member> members = setMemberList(portalGroup.getMembers());
             group.setMembers(members);
-            //            //TODO pour tests
-            //            Member member1 = new Member();
-            //            member1.setDisplayName("Personne 1");
-            //            Member member2 = new Member();
-            //            member2.setDisplayName("Personne 2");
-            //            ArrayList<Member> memberList = new ArrayList<>();
-            //            memberList.add(member1);
-            //            memberList.add(member2);
-            //            group.setMembers(memberList);
 
             card.setGroup(group);
         }
@@ -150,12 +142,16 @@ public class GroupCardServiceImpl implements GroupCardService {
      * {@inheritDoc}
      */
     @Override
-    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, String filter) throws PortletException {
+    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, GroupEditionForm form, String filter) throws PortletException {
         // Internationalization bundle
         Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
 
         // Member identifiers
-        Set<String> memberIdentifiers = this.getEditionForm(portalControllerContext).getMemberIdentifiers();
+     // Member identifiers
+        Set<String> memberIdentifiers = new HashSet<>();
+        for (Member member : form.getMembers()) {
+            memberIdentifiers.add(member.getId());
+        }
 
         // JSON objects
         List<JSONObject> objects = new ArrayList<>();
@@ -268,21 +264,23 @@ public class GroupCardServiceImpl implements GroupCardService {
         return object;
     }
     
-    public void updateMemberList(GroupEditionForm form)
+    /**
+     * Update member list removing member that where removed before searching for other members
+     * 
+     * @param form
+     * @return
+     */
+    private List<Member> updateMemberList(GroupEditionForm form)
     {
-        String[] parts;
-        if (StringUtils.isBlank(form.getListMemberToDelete())) {
-            parts = new String[]{};
-        } else {
-            parts = StringUtils.split(form.getListMemberToDelete(), ",");
+        List<Member> membersToSave = new ArrayList<>();
+        for(Member member : form.getMembers())
+        {
+            if (!member.isDeleted()) membersToSave.add(member);
         }
-        for (String part : parts) {
-            form.getMembers().remove(Integer.parseInt(part));
-        }
-        form.setListMemberToDelete("");
+        return membersToSave;
     }
     
-    public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup)
+    public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException
     {
         if (form.getAddedMember().size() ==1)
         {
@@ -293,7 +291,12 @@ public class GroupCardServiceImpl implements GroupCardService {
                 Person person = this.personService.getPerson(uid);
                 Member member = new Member(person);
                 member.setExtra(person.getMail());
+                member.setIndex((form.getMembers() != null)? Integer.toString(form.getMembers().size()) : "0");
+                member.setAdded(true);
                 form.getMembers().add(member);
+                //Sort list
+                Collections.sort(form.getMembers());
+                this.getEditionForm(portalControllerContext).setMembers(form.getMembers());;
             }
         }
     }
@@ -340,9 +343,9 @@ public class GroupCardServiceImpl implements GroupCardService {
 
             if (group != null) {
                 
-                this.updateMemberList(form);
+                List<Member> membersToSave = this.updateMemberList(form);
                 // LDAP properties
-                this.setLdapProperties(form, group);
+                this.setLdapProperties(form, group, membersToSave);
 
                 //TODO commenté pour tests
                 // Update group
@@ -446,11 +449,11 @@ public class GroupCardServiceImpl implements GroupCardService {
      * @param person person
      * @throws PortletException
      */
-    protected void setLdapProperties(GroupEditionForm form, PortalGroup group) throws PortletException {
+    protected void setLdapProperties(GroupEditionForm form, PortalGroup group, List<Member> membersToSave) throws PortletException {
         group.setDisplayName(StringUtils.trimToNull(form.getDisplayName()));
         group.setDescription(StringUtils.trim(form.getDescription()));
         List<Name> listName = new ArrayList<>();
-        for (Member member : form.getMembers())
+        for (Member member : membersToSave)
         {
             listName.add(member.getDn());
         }
@@ -482,7 +485,6 @@ public class GroupCardServiceImpl implements GroupCardService {
         for (Member member : members) {
             identifiers.add(member.getId());
         }
-        form.setMemberIdentifiers(identifiers);
 
 
     }
@@ -490,13 +492,17 @@ public class GroupCardServiceImpl implements GroupCardService {
     private List<Member> setMemberList(List<Name> names)
     {
         ArrayList<Member> members = new ArrayList<>();
+        int i = 0;
         for (Name name : names)
         {
             Person person = this.personService.getPerson(name);
             Member member = new Member(person);
             member.setExtra(person.getMail());
+            member.setIndex(Integer.toString(i));
+            i++;
             members.add(member);
         }
+        Collections.sort(members);;
         return members;
     }
 

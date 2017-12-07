@@ -2,8 +2,8 @@
 
 
 <div class="form-horizontal">
-    <!-- Title- -->
-    <%@ include file="group-card/displayname.jspf" %>
+    <!-- Header- -->
+    <%@ include file="group-card/header.jspf" %>
     
     <!-- Description -->
     <%@ include file="group-card/description.jspf" %>

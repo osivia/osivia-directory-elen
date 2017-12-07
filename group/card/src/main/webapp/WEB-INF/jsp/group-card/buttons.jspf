@@ -14,7 +14,7 @@
 
 <c:if test="${options.editable}">
     <div class="form-group">
-        <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10">
+        <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10 panel-default">
             <!-- Edition -->
             <a href="${editUrl}" class="btn btn-primary">
                 <i class="glyphicons glyphicons-pencil"></i>

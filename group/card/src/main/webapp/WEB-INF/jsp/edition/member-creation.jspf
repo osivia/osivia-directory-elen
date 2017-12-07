@@ -13,38 +13,24 @@
 <c:set var="namespace"><portlet:namespace /></c:set>
 
 
-<div class="well clearfix relative">
-    <div id="shadowbox-${namespace}" class="ajax-shadowbox">
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped active" role="progressbar">
-                <strong><op:translate key="AJAX_REFRESH" /></strong>
+<div class="form-group">
+     <form:label path="addedMember" cssClass="control-label col-sm-3 col-lg-2"><op:translate key="GROUP_CARD_SEARCH_ADD_PERSONS_LABEL" /></form:label>
+        <div class="col-sm-9 col-lg-10">
+            <!-- Invitations -->
+            <c:set var="placeholder"><op:translate key="GROUP_CARD_SEARCH_PERSON_PLACEHOLDER" /></c:set>
+            <c:set var="inputTooShort"><op:translate key="SELECT2_INPUT_TOO_SHORT" args="3" /></c:set>
+            <c:set var="noResults"><op:translate key="SELECT2_NO_RESULTS" /></c:set>
+            <c:set var="searching"><op:translate key="SELECT2_SEARCHING" /></c:set>
+            <c:set var="loadingMore"><op:translate key="SELECT2_LOADING_MORE"/></c:set>
+            <div class="${status.error ? 'has-error' : (editionForm.warning ? 'has-warning' : '')}">
+                
+                <form:select path="addedMember" cssClass="form-control select2" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-no-results="${noResults}" data-searching="${searching}" data-loading-more="${loadingMore}">
+                    <c:forEach var="member" items="${editionForm.addedMember}">
+                        <form:option value="${member.id}">${member.displayName}</form:option>
+                    </c:forEach>
+                </form:select>
+                <form:errors path="addedMember" cssClass="help-block" />
             </div>
+            <input type="submit" name="addMember" class="hidden"/>
         </div>
-    </div>
-
-    <fieldset>
-        <div class="row">
-	        <div class="col-sm-3 col-lg-2">
-	            <form:label path="addedMember" cssClass="control-label"><op:translate key="GROUP_CARD_SEARCH_ADD_PERSONS_LABEL" /></form:label>
-	        </div>
-            <div class="col-sm-9 col-lg-10">
-                <!-- Invitations -->
-                <c:set var="placeholder"><op:translate key="GROUP_CARD_SEARCH_PERSON_PLACEHOLDER" /></c:set>
-                <c:set var="inputTooShort"><op:translate key="SELECT2_INPUT_TOO_SHORT" args="3" /></c:set>
-                <c:set var="noResults"><op:translate key="SELECT2_NO_RESULTS" /></c:set>
-                <c:set var="searching"><op:translate key="SELECT2_SEARCHING" /></c:set>
-                <c:set var="loadingMore"><op:translate key="SELECT2_LOADING_MORE"/></c:set>
-                <div class="form-group ${status.error ? 'has-error' : (editionForm.warning ? 'has-warning' : '')}">
-                    
-                    <form:select path="addedMember" cssClass="form-control select2" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-no-results="${noResults}" data-searching="${searching}" data-loading-more="${loadingMore}">
-                        <c:forEach var="member" items="${editionForm.addedMember}">
-                            <form:option value="${member.id}">${member.displayName}</form:option>
-                        </c:forEach>
-                    </form:select>
-                    <form:errors path="addedMember" cssClass="help-block" />
-                </div>
-                <input type="submit" name="addMember" class="hidden"/>
-            </div>
-        </div>
-    </fieldset>
 </div>

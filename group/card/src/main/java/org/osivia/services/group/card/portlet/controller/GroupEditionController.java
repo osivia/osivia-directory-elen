@@ -15,6 +15,8 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import org.osivia.portal.api.context.PortalControllerContext;
+import org.osivia.portal.api.internationalization.Bundle;
+import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.services.group.card.portlet.model.GroupCardOptions;
 import org.osivia.services.group.card.portlet.model.GroupEditionForm;
 import org.osivia.services.group.card.portlet.model.validator.GroupEditionFormValidator;
@@ -52,6 +54,10 @@ public class GroupEditionController {
     /** Form validator */
     @Autowired
     private GroupEditionFormValidator editionFormValidator;
+
+    /** Internationalization bundle factory. */
+    @Autowired
+    private IBundleFactory bundleFactory;
     
     public GroupEditionController() {
         super();
@@ -66,6 +72,12 @@ public class GroupEditionController {
      */
     @RenderMapping
     public String view(RenderRequest request, RenderResponse response) {
+     // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+        
+        // Internationalization bundle
+        Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
+        response.setTitle(bundle.getString("GROUP_CARD_EDITION_TITLE"));
         return "edit";
     }
     
@@ -87,7 +99,7 @@ public class GroupEditionController {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         if (result.hasErrors()) {
-            this.service.updateMemberList(form);
+            //this.service.updateMemberList(form);
             //Stay on the edit page
             response.setRenderParameter("view","edit");
         } else {
@@ -125,7 +137,7 @@ public class GroupEditionController {
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
         
-        this.service.updateMemberList(form);
+        //this.service.updateMemberList(form);
         
         this.service.addMember(portalControllerContext, form, options.getGroup());
         
@@ -133,6 +145,7 @@ public class GroupEditionController {
         response.setRenderParameter("view","edit");
     }
     
+ 
     /**
      * Search persons action mapping.
      * 
@@ -148,9 +161,9 @@ public class GroupEditionController {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         // Search results
-        JSONObject results = this.service.searchPersons(portalControllerContext, options, filter);
+        JSONObject results = this.service.searchPersons(portalControllerContext, options, form, filter);
 
-        this.service.updateMemberList(form);
+        //this.service.updateMemberList(form);
         
         // Content type
         response.setContentType("application/json");

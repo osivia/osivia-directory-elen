@@ -3,34 +3,38 @@
 
 <%@ page contentType="text/html" isELIgnored="false"%>
             
-<div class="table table-hover">
+<div class="form-group">
 
-<h4><op:translate key="GROUP_CARD_MEMBER_LIST" /></h4>
-    <!-- Table body -->
-    <c:forEach items="${card.group.members}" var="member">
-        <div class="table-row person">
-            <!-- Avatar -->
-            <span class="person-avatar">
-                <c:choose>
-                    <c:when test="${empty member.avatarUrl}">
-                        <i class="glyphicons glyphicons-user"></i>
-                    </c:when>
-                    
-                    <c:otherwise>
-                        <img src="${member.avatarUrl}" alt="">
-                    </c:otherwise>
-                </c:choose>
-            </span>
-            
-            <!-- Display name -->
-            <span class="person-title">
-                ${not empty member.displayName? member.displayName : member.uid}
-            </span>
-            
-            <!-- Extra -->
-            <c:if test="${not empty member.extra}">
-                <span class="person-extra">${member.extra}</span>
-            </c:if>
-        </div>
-    </c:forEach>
+    <label class="col-sm-3 col-lg-2 control-label"><op:translate key="GROUP_CARD_MEMBER_LIST" /></label>
+    <div class="col-sm-9 col-lg-10">
+        <div class="table table-hover">
+		    <!-- Table body -->
+		    <c:forEach items="${card.group.members}" var="member">
+		        <div class="table-row person">
+		            <!-- Avatar -->
+		            <span class="person-avatar">
+		                <c:choose>
+		                    <c:when test="${empty member.avatarUrl}">
+		                        <i class="glyphicons glyphicons-user"></i>
+		                    </c:when>
+		                    
+		                    <c:otherwise>
+		                        <img src="${member.avatarUrl}" alt="">
+		                    </c:otherwise>
+		                </c:choose>
+		            </span>
+		            
+		            <!-- Display name -->
+		            <span class="person-title">
+		                ${not empty member.displayName? member.displayName : member.uid}
+		            </span>
+		            
+		            <!-- Extra -->
+		            <c:if test="${not empty member.extra}">
+		                <span class="person-extra">${member.extra}</span>
+		            </c:if>
+		        </div>
+		    </c:forEach>
+	    </div>
+    </div>
 </div>

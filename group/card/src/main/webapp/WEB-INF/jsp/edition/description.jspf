@@ -4,6 +4,6 @@
 <div class="form-group">
     <form:label path="description" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="GROUP_CARD_DESCRIPTION" /></form:label>
     <div class="col-sm-9 col-lg-10">
-        <form:textarea path="description" cssClass="form-control" />
+        <form:textarea path="description" cssClass="form-control group-edition-description" />
     </div>
 </div>

@@ -1,7 +1,6 @@
 package org.osivia.services.group.card.portlet.model;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -26,10 +25,6 @@ public class GroupEditionForm {
     private List<Member> members;
     
     private List<Member> addedMember;
-    /** Member identifiers. */
-    private Set<String> memberIdentifiers;
-    
-    private String listMemberToDelete;
     
     private boolean warning;
 
@@ -105,24 +100,6 @@ public class GroupEditionForm {
         this.cn = cn;
     }
 
- 
-    /**
-     * Getter for memberIdentifiers.
-     * @return the memberIdentifiers
-     */
-    public Set<String> getMemberIdentifiers() {
-        return memberIdentifiers;
-    }
-
-    
-    /**
-     * Setter for memberIdentifiers.
-     * @param memberIdentifiers the memberIdentifiers to set
-     */
-    public void setMemberIdentifiers(Set<String> memberIdentifiers) {
-        this.memberIdentifiers = memberIdentifiers;
-    }
-
     /**
      * Getter for warning.
      * @return the warning
@@ -156,24 +133,6 @@ public class GroupEditionForm {
      */
     public void setAddedMember(List<Member> addedMember) {
         this.addedMember = addedMember;
-    }
-
-    
-    /**
-     * Getter for listMemberToDelete.
-     * @return the listMemberToDelete
-     */
-    public String getListMemberToDelete() {
-        return listMemberToDelete;
-    }
-
-    
-    /**
-     * Setter for listMemberToDelete.
-     * @param listMemberToDelete the listMemberToDelete to set
-     */
-    public void setListMemberToDelete(String listMemberToDelete) {
-        this.listMemberToDelete = listMemberToDelete;
     }
 
 }
