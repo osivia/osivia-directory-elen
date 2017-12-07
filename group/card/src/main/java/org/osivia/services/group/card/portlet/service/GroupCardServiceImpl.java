@@ -463,7 +463,7 @@ public class GroupCardServiceImpl implements GroupCardService {
      */
     protected void setLdapProperties(GroupEditionForm form, PortalGroup group, List<Member> membersToSave) throws PortletException {
         group.setDisplayName(StringUtils.trimToNull(form.getDisplayName()));
-        group.setDescription(StringUtils.trim(form.getDescription()));
+        group.setDescription(StringUtils.trimToNull(form.getDescription()));
         List<Name> listName = new ArrayList<>();
         for (Member member : membersToSave)
         {
