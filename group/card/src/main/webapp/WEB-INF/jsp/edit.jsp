@@ -27,7 +27,7 @@
 			    <!-- Member creation -->
 	            <%@ include file="edition/member-creation.jspf" %>
 		    </div>
-		    <div class="panel margin-bottom-0">
+		    <div class="margin-bottom-0">
 			    <!-- Buttons -->
 			    <%@ include file="edition/buttons.jspf" %>
 		    </div>
