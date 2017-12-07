@@ -160,11 +160,11 @@ $JQry(function() {
 		restoreMember(event);
 	});
 	
-	$JQry(".group-edition-description").change(function(event){
+	$JQry(".group-edition-description").keyup(function(event){
 		displayAlert(event);
 	});
 	
-	$JQry(".group-edition-displayname").change(function(event){
+	$JQry(".group-edition-displayname").keyup(function(event){
 		displayAlert(event);
 	});
 	
