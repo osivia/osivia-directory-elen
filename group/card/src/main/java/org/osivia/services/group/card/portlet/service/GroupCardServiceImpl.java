@@ -282,22 +282,19 @@ public class GroupCardServiceImpl implements GroupCardService {
     
     public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException
     {
-        if (form.getAddedMember().size() ==1)
+         
+        String uid = form.getAddedMember().getId();
+        if (!StringUtils.isEmpty(uid))
         {
-            
-            String uid = form.getAddedMember().get(0).getId();
-            if (!StringUtils.isEmpty(uid))
-            {
-                Person person = this.personService.getPerson(uid);
-                Member member = new Member(person);
-                member.setExtra(person.getMail());
-                member.setIndex((form.getMembers() != null)? Integer.toString(form.getMembers().size()) : "0");
-                member.setAdded(true);
-                form.getMembers().add(member);
-                //Sort list
-                Collections.sort(form.getMembers());
-                this.getEditionForm(portalControllerContext).setMembers(form.getMembers());;
-            }
+            Person person = this.personService.getPerson(uid);
+            Member member = new Member(person);
+            member.setExtra(person.getMail());
+            member.setIndex((form.getMembers() != null)? Integer.toString(form.getMembers().size()) : "0");
+            member.setAdded(true);
+            form.getMembers().add(member);
+            //Sort list
+            Collections.sort(form.getMembers());
+            this.getEditionForm(portalControllerContext).setMembers(form.getMembers());;
         }
     }
 

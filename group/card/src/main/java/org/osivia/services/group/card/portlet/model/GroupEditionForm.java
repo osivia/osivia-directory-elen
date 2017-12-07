@@ -24,7 +24,7 @@ public class GroupEditionForm {
     /** Last name. */
     private List<Member> members;
     
-    private List<Member> addedMember;
+    private Member addedMember;
     
     private boolean warning;
 
@@ -122,7 +122,7 @@ public class GroupEditionForm {
      * Getter for addedMember.
      * @return the addedMember
      */
-    public List<Member> getAddedMember() {
+    public Member getAddedMember() {
         return addedMember;
     }
 
@@ -131,7 +131,7 @@ public class GroupEditionForm {
      * Setter for addedMember.
      * @param addedMember the addedMember to set
      */
-    public void setAddedMember(List<Member> addedMember) {
+    public void setAddedMember(Member addedMember) {
         this.addedMember = addedMember;
     }
 

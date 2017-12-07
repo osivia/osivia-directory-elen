@@ -25,9 +25,7 @@
             <div class="${status.error ? 'has-error' : (editionForm.warning ? 'has-warning' : '')}">
                 
                 <form:select path="addedMember" cssClass="form-control select2" data-placeholder="${placeholder}" data-url="${searchUrl}" data-input-too-short="${inputTooShort}" data-no-results="${noResults}" data-searching="${searching}" data-loading-more="${loadingMore}">
-                    <c:forEach var="member" items="${editionForm.addedMember}">
-                        <form:option value="${member.id}">${member.displayName}</form:option>
-                    </c:forEach>
+                        <form:option value="${addedMember.id}">${addedMember.displayName}</form:option>
                 </form:select>
                 <form:errors path="addedMember" cssClass="help-block" />
             </div>
