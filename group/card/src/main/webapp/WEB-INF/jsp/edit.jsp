@@ -10,7 +10,7 @@
 <portlet:actionURL name="save" var="saveUrl" copyCurrentRenderParameters="true" />
 
 
-<div class="edit-portal-group portlet-filler">
+<div class="edit-portal-group">
 	<form:form action="${saveUrl}" method="post" modelAttribute="editionForm" cssClass="form-horizontal" role="form">
 	   <fieldset>
 		       <legend><op:translate key="GROUP_CARD_EDITION_LEGEND" /></legend>

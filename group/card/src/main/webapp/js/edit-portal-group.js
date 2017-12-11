@@ -182,7 +182,7 @@ function removeMember(event)
 	$buttonDelete = $row.find("button[data-type=remove-member]");
 	$deleted.val(true);
 	
-	if ($added.val())
+	if ($added.val()=="true")
 	{
 		$row.closest("div[data-type=member-element]").hide();
 		$submit = $form.find("input[type=submit][name=updateForm]");
@@ -224,7 +224,7 @@ function displayAlert(event)
 {
 	var $target = $JQry(event.target),
 	$form = $target.closest("form"),
-	$warning = $form.find("warning-to-save"),
+	$warning = $form.find("input.warning-to-save"),
 	$collapse = $form.find(".group-save-warning");
 	
 	$warning.val(true);
