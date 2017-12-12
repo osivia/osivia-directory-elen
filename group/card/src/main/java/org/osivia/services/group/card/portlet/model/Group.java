@@ -2,6 +2,10 @@ package org.osivia.services.group.card.portlet.model;
 
 import java.util.List;
 
+/**
+ * 
+ * @author Julien Barberet
+ */
 public class Group {
 
     /** Dipslay name */

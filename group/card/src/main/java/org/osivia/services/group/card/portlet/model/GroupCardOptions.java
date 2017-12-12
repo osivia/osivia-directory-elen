@@ -1,6 +1,8 @@
 package org.osivia.services.group.card.portlet.model;
 
 
+import javax.naming.Name;
+
 import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.portal.api.portlet.Refreshable;
 import org.springframework.context.annotation.Scope;
@@ -14,6 +16,8 @@ public class GroupCardOptions {
 
     /** CN */
     private String cn;
+    /** DN */
+    private Name dn;
     /** Group */
     private PortalGroup group;
     /** Editable group indicator. */
@@ -73,6 +77,22 @@ public class GroupCardOptions {
      */
     public void setCn(String cn) {
         this.cn = cn;
+    }
+    
+    /**
+     * Getter for dn.
+     * @return the dn
+     */
+    public Name getDn() {
+        return dn;
+    }
+    
+    /**
+     * Setter for dn.
+     * @param dn the dn to set
+     */
+    public void setDn(Name dn) {
+        this.dn = dn;
     }
 
 }

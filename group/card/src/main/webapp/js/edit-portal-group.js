@@ -191,7 +191,7 @@ function removeMember(event)
 	{
 		$buttonDelete.addClass("hidden");
 		$buttonRestore.removeClass("hidden");
-		$fieldset.find("span.person-title").addClass("text-del text-muted");
+		$fieldset.find("span.span-member-title").addClass("text-del text-muted");
 		//$fieldset.find("span.person-title").addClass("text-muted");
 		//$fieldset.prop("disabled", true);
 		
@@ -214,7 +214,7 @@ function restoreMember(event)
 	$buttonRestore.addClass("hidden");
 	//$fieldset.find("span.person-title").removeClass("text-muted");
 	//$fieldset.find("span.person-extra").removeClass("text-muted");
-	$fieldset.find("span.person-title").removeClass("text-del text-muted");
+	$fieldset.find("span.span-member-title").removeClass("text-del text-muted");
 	//$fieldset.find("span.person-title").parent().unwrap("<del class='text-muted'></del>");
 	//$fieldset.prop("disabled", false);
 }

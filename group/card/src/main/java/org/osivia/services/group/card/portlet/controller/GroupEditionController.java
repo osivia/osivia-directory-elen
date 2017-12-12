@@ -72,7 +72,7 @@ public class GroupEditionController {
      */
     @RenderMapping
     public String view(RenderRequest request, RenderResponse response) {
-     // Portal controller context
+        // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
         
         // Internationalization bundle
@@ -99,7 +99,6 @@ public class GroupEditionController {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         if (result.hasErrors()) {
-            //this.service.updateMemberList(form);
             //Stay on the edit page
             response.setRenderParameter("view","edit");
         } else {
@@ -136,8 +135,6 @@ public class GroupEditionController {
             @ModelAttribute("options") GroupCardOptions options) throws PortletException{
         // Portal controller context
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
-        
-        //this.service.updateMemberList(form);
         
         this.service.addMember(portalControllerContext, form, options.getGroup());
         
@@ -179,8 +176,6 @@ public class GroupEditionController {
 
         // Search results
         JSONObject results = this.service.searchPersons(portalControllerContext, options, form, filter);
-
-        //this.service.updateMemberList(form);
         
         // Content type
         response.setContentType("application/json");
