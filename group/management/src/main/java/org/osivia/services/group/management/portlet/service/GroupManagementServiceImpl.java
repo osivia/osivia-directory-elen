@@ -150,7 +150,7 @@ public class GroupManagementServiceImpl implements GroupManagementService {
             // Stripped filter
             String strippedFilter = StringUtils.strip(StringUtils.trim(filter), "*");
             // Tokenized filter
-            String tokenizedFilter = strippedFilter + "*";
+            String tokenizedFilter = "*" + strippedFilter + "*";
 
             criteria.setCn(tokenizedFilter);
             criteria.setDisplayName(tokenizedFilter);
