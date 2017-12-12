@@ -6,6 +6,7 @@ import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -38,7 +39,7 @@ public class Member implements Comparable<Member>{
         super();
         this.person = person;
         this.id = person.getUid();
-        this.displayName = person.getDisplayName();
+        this.displayName = (StringUtils.isEmpty(person.getTitle())? "" : person.getTitle()+" ")+person.getDisplayName();
         this.givenName = person.getGivenName();
         if (person.getAvatar() != null) this.avatarUrl = person.getAvatar().getUrl();
         this.dn = person.getDn();

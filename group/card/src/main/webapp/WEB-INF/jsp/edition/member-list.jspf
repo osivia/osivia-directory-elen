@@ -41,7 +41,7 @@
                                     <!-- Display name -->
                                     <div>
                                         <div class="person-title">
-                                            <span class="span-member-title ${member.added ? 'text-info' : ''} ${member.deleted ? 'text-del text-muted' : ''}">${member.displayName}</span>
+                                            <span class="span-member-title ${member.added ? 'text-info' : ''} ${member.deleted ? 'text-del text-muted' : ''}">${not empty member.person.displayName? member.displayName : member.id}</span>
                                             <button type="button" class="btn btn-link btn-sm ${member.deleted ? 'hidden' : ''}" data-type="remove-member">
                                                 <i class="glyphicons glyphicons-remove"></i>
                                                 <span><op:translate key="GROUP_CARD_MEMBER_REMOVE" /></span>

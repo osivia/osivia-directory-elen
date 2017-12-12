@@ -31,7 +31,7 @@
                             </span>
 
                             <!-- Display name -->
-                            <span class="person-title"> ${not empty member.displayName? member.displayName : member.id} </span>
+                            <span class="person-title"> ${not empty member.person.displayName? member.displayName : member.id} </span>
 
                             <!-- Extra -->
                             <c:if test="${not empty member.extra}">
