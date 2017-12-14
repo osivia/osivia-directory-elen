@@ -24,38 +24,41 @@
                     <c:forEach items="${editionForm.members}" var="member" varStatus="status">
                         <div class="table-row" data-type="member-element">
                             <fieldset>
-                                <div class="row person">
+                                <div class="row person media">
                                     <input type="hidden" id="added" name="added" value="${member.added}" />
                                     <form:hidden path="members[${status.index}].deleted" />
                                     <!-- Avatar -->
-                                    <span class="person-avatar"> <c:choose>
-                                            <c:when test="${empty member.avatarUrl}">
-                                                <i class="glyphicons glyphicons-user"></i>
-                                            </c:when>
+                                    <div class="media-body">
+                                        <span class="person-avatar"> <c:choose>
+                                                <c:when test="${empty member.avatarUrl}">
+                                                    <i class="glyphicons glyphicons-user"></i>
+                                                </c:when>
 
-                                            <c:otherwise>
-                                                <img src="${member.avatarUrl}" alt="">
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </span>
-                                    <!-- Display name -->
-                                    <div>
-                                        <div class="person-title">
-                                            <span class="span-member-title ${member.added ? 'text-info' : ''} ${member.deleted ? 'text-del text-muted' : ''}">${not empty member.person.displayName? member.displayName : member.id}</span>
-                                            <button type="button" class="btn btn-link btn-sm ${member.deleted ? 'hidden' : ''}" data-type="remove-member">
-                                                <i class="glyphicons glyphicons-remove"></i>
-                                                <span><op:translate key="GROUP_CARD_MEMBER_REMOVE" /></span>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm ${member.deleted ? '' : 'hidden'}" data-type="restore-member">
-                                                <i class="glyphicons glyphicons-undo"></i>
-                                                <span><op:translate key="GROUP_CARD_MEMBER_RESTORE" /></span>
-                                            </button>
+                                                <c:otherwise>
+                                                    <img src="${member.avatarUrl}" alt="">
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                        <!-- Display name -->
+                                        <div>
+                                            <span class="person-title span-member-title ${member.added ? 'text-info' : ''} ${member.deleted ? 'text-del text-muted' : ''}">${not empty member.person.displayName? member.displayName : member.id}</span>
+
+                                            <!-- Extra -->
+                                            <c:if test="${not empty member.extra}">
+                                                <span class="person-extra">${member.extra}</span>
+                                            </c:if>
                                         </div>
-                                        <!-- Extra -->
-                                        <c:if test="${not empty member.extra}">
-                                            <span class="person-extra">${member.extra}</span>
-                                        </c:if>
+                                    </div>
 
+                                    <div class="media-right media-middle">
+                                        <button type="button" title="<op:translate key="GROUP_CARD_MEMBER_REMOVE" />" class="media-object btn btn-default ${member.deleted ? 'hidden' : ''}" data-type="remove-member">
+                                            <i class="glyphicons glyphicons-remove"></i>
+                                            <span class="sr-only"><op:translate key="GROUP_CARD_MEMBER_REMOVE" /></span>
+                                        </button>
+                                        <button type="button" title="<op:translate key="GROUP_CARD_MEMBER_RESTORE" />" class="media-object btn btn-default ${member.deleted ? '' : 'hidden'}" data-type="restore-member">
+                                            <i class="glyphicons glyphicons-undo"></i>
+                                            <span class="sr-only"><op:translate key="GROUP_CARD_MEMBER_RESTORE" /></span>
+                                        </button>
                                     </div>
                                 </div>
                             </fieldset>

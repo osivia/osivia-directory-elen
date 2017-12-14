@@ -9,8 +9,6 @@ import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.group.card.portlet.model.GroupCard;
 import org.osivia.services.group.card.portlet.model.GroupCardOptions;
@@ -39,17 +37,13 @@ public class GroupCardController {
     @Autowired
     private GroupCardService service;
     
-
-    /** Log. */
-    private final Log log;
-    
+   
 
     /**
      * Constructor.
      */
     public GroupCardController() {
         super();
-        this.log = LogFactory.getLog(this.getClass());
     }
     
 
@@ -99,7 +93,6 @@ public class GroupCardController {
     @ModelAttribute("options")
     public GroupCardOptions getOptions(PortletRequest request, PortletResponse response) throws PortletException {
         // Portal controller context
-        log.info("Getoptions");
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         return this.service.getOptions(portalControllerContext);
