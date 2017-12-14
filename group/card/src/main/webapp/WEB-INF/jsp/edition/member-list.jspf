@@ -51,13 +51,14 @@
                                     </div>
 
                                     <div class="media-right media-middle">
-                                        <button type="button" title="<op:translate key="GROUP_CARD_MEMBER_REMOVE" />" class="media-object btn btn-default ${member.deleted ? 'hidden' : ''}" data-type="remove-member">
+                                        <button type="button" class="media-object btn btn-link btn-sm ${member.deleted ? 'hidden' : ''}" data-type="remove-member">
                                             <i class="glyphicons glyphicons-remove"></i>
-                                            <span class="sr-only"><op:translate key="GROUP_CARD_MEMBER_REMOVE" /></span>
+                                            <span class="hidden-xs"><op:translate key="GROUP_CARD_MEMBER_REMOVE" /></span>
+                                            
                                         </button>
-                                        <button type="button" title="<op:translate key="GROUP_CARD_MEMBER_RESTORE" />" class="media-object btn btn-default ${member.deleted ? '' : 'hidden'}" data-type="restore-member">
+                                        <button type="button" class="media-object btn btn-link btn-sm ${member.deleted ? '' : 'hidden'}" data-type="restore-member">
                                             <i class="glyphicons glyphicons-undo"></i>
-                                            <span class="sr-only"><op:translate key="GROUP_CARD_MEMBER_RESTORE" /></span>
+                                            <span class="hidden-xs"><op:translate key="GROUP_CARD_MEMBER_RESTORE" /></span>
                                         </button>
                                     </div>
                                 </div>
