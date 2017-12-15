@@ -13,11 +13,34 @@ import org.springframework.stereotype.Component;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class GroupCardSettings {
 
+    /** Stub indicator. */
+    private boolean stub;
+
+
     /**
      * Constructor.
      */
     public GroupCardSettings() {
         super();
+    }
+
+
+    /**
+     * Getter for stub.
+     * 
+     * @return the stub
+     */
+    public boolean isStub() {
+        return stub;
+    }
+
+    /**
+     * Setter for stub.
+     * 
+     * @param stub the stub to set
+     */
+    public void setStub(boolean stub) {
+        this.stub = stub;
     }
 
 }

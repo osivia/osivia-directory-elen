@@ -12,6 +12,7 @@ import javax.naming.Name;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.directory.v2.service.PortalGroupService;
@@ -85,15 +86,15 @@ public class GroupCardServiceImpl implements GroupCardService {
      */
     @Override
     public String doView(PortalControllerContext portalControllerContext, GroupCardOptions options) throws PortletException {
-//        // Portlet request
-//        PortletRequest request = portalControllerContext.getRequest();
-//
-//        // Portlet settings
-//        GroupCardSettings settings = this.getSettings(portalControllerContext);
-//
-//        if (settings.isStub()) {
-//            request.setAttribute("osivia.emptyResponse", "1");
-//        }
+        // Portlet request
+        PortletRequest request = portalControllerContext.getRequest();
+
+        // Portlet settings
+        GroupCardSettings settings = this.getSettings(portalControllerContext);
+
+        if (settings.isStub()) {
+            request.setAttribute("osivia.emptyResponse", "1");
+        }
 
         // View path
         String path;
@@ -122,13 +123,12 @@ public class GroupCardServiceImpl implements GroupCardService {
         // User connected UID
         String cn = window.getProperty(GROUP_CN_WINDOW_PROPERTY);
 
-        if (!StringUtils.isEmpty(cn))
-        {
+        if (!StringUtils.isEmpty(cn)) {
             options.setCn(cn);
 
             Name dn = this.service.buildDn(cn);
 
-            //            // PortalGroup
+            // // PortalGroup
             PortalGroup portalGroup = this.service.get(dn);
             options.setDn(dn);
             options.setGroup(portalGroup);
@@ -147,7 +147,7 @@ public class GroupCardServiceImpl implements GroupCardService {
         GroupCardOptions options = this.getOptions(portalControllerContext);
 
         // portalGroup
-        //PortalGroup portalGroup = this.service.get(options.getDn());
+        // PortalGroup portalGroup = this.service.get(options.getDn());
         PortalGroup portalGroup = options.getGroup();
 
         // portalGroup card
@@ -174,7 +174,8 @@ public class GroupCardServiceImpl implements GroupCardService {
      * {@inheritDoc}
      */
     @Override
-    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, GroupEditionForm form, String filter) throws PortletException {
+    public JSONObject searchPersons(PortalControllerContext portalControllerContext, GroupCardOptions options, GroupEditionForm form, String filter)
+            throws PortletException {
         // Internationalization bundle
         Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
 
@@ -182,7 +183,7 @@ public class GroupCardServiceImpl implements GroupCardService {
         // Member identifiers
         Map<String, Member> memberIdentifiers = new HashMap<String, Member>();
         for (Member member : form.getMembers()) {
-            memberIdentifiers.put(member.getId(),member);
+            memberIdentifiers.put(member.getId(), member);
         }
 
         // JSON objects
@@ -204,7 +205,7 @@ public class GroupCardServiceImpl implements GroupCardService {
             for (Person person : persons) {
                 // Already member indicator
                 boolean alreadyMember = memberIdentifiers.containsKey(person.getUid());
-                boolean added = (alreadyMember? memberIdentifiers.get(person.getUid()).isAdded() : false); 
+                boolean added = (alreadyMember ? memberIdentifiers.get(person.getUid()).isAdded() : false);
                 // Search result
                 JSONObject object = this.getSearchResult(person, alreadyMember, added, bundle);
 
@@ -303,12 +304,11 @@ public class GroupCardServiceImpl implements GroupCardService {
      * @param form
      * @return
      */
-    private List<Member> getMemberListToSave(GroupEditionForm form)
-    {
+    private List<Member> getMemberListToSave(GroupEditionForm form) {
         List<Member> membersToSave = new ArrayList<>();
-        for(Member member : form.getMembers())
-        {
-            if (!member.isDeleted()) membersToSave.add(member);
+        for (Member member : form.getMembers()) {
+            if (!member.isDeleted())
+                membersToSave.add(member);
         }
         return membersToSave;
     }
@@ -316,31 +316,29 @@ public class GroupCardServiceImpl implements GroupCardService {
     /**
      * {@inheritDoc}
      */
-    public void updateMemberList(GroupEditionForm form)
-    {
+    public void updateMemberList(GroupEditionForm form) {
         List<Member> newList = new ArrayList<>();
-        for(Member member : form.getMembers())
-        {
-            if (!member.isAdded() || !member.isDeleted()) newList.add(member);
+        for (Member member : form.getMembers()) {
+            if (!member.isAdded() || !member.isDeleted())
+                newList.add(member);
         }
         form.setMembers(newList);
     }
 
-    public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException
-    {
+    public void addMember(PortalControllerContext portalControllerContext, GroupEditionForm form, PortalGroup portalGroup) throws PortletException {
 
         String uid = form.getAddedMember().getId();
-        if (!StringUtils.isEmpty(uid))
-        {
+        if (!StringUtils.isEmpty(uid)) {
             Person person = this.personService.getPerson(uid);
             Member member = new Member(person);
             member.setExtra(person.getMail());
-            member.setIndex((form.getMembers() != null)? Integer.toString(form.getMembers().size()) : "0");
+            member.setIndex((form.getMembers() != null) ? Integer.toString(form.getMembers().size()) : "0");
             member.setAdded(true);
             form.getMembers().add(member);
-            //Sort list
+            // Sort list
             Collections.sort(form.getMembers());
-            this.getEditionForm(portalControllerContext).setMembers(form.getMembers());;
+            this.getEditionForm(portalControllerContext).setMembers(form.getMembers());
+            ;
         }
     }
 
@@ -399,13 +397,13 @@ public class GroupCardServiceImpl implements GroupCardService {
             }
         } else {
             // Forbidden
-            this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("GROUP_CARD_EDITION_FORBIDDEN"),
-                    NotificationsType.ERROR);
+            this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("GROUP_CARD_EDITION_FORBIDDEN"), NotificationsType.ERROR);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.osivia.services.group.card.portlet.service.GroupCardService#getEditionForm(org.osivia.portal.api.context.PortalControllerContext)
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public GroupEditionForm getEditionForm(PortalControllerContext portalControllerContext) throws PortletException {
@@ -421,9 +419,9 @@ public class GroupCardServiceImpl implements GroupCardService {
 
         this.fillForm(form, portalGroup);
 
-
         return form;
     }
+
 
     /**
      * Check if the group card can be edited by the current user.
@@ -442,15 +440,16 @@ public class GroupCardServiceImpl implements GroupCardService {
         boolean editable;
         if (StringUtils.isEmpty(uid)) {
             editable = false;
-        } else
-        {
+        } else {
             // Current user DN
             Name dn = this.personService.getEmptyPerson().buildDn(uid);
             // Check if the current user has administration role
             editable = this.roleService.hasRole(dn, ROLE_ADMIN);
         }
+
         return editable;
     }
+
 
     /**
      * Set LDAP properties.
@@ -463,12 +462,12 @@ public class GroupCardServiceImpl implements GroupCardService {
         group.setDisplayName(StringUtils.trimToNull(form.getDisplayName()));
         group.setDescription(StringUtils.trimToNull(form.getDescription()));
         List<Name> listName = new ArrayList<>();
-        for (Member member : membersToSave)
-        {
+        for (Member member : membersToSave) {
             listName.add(member.getDn());
         }
         group.setMembers(listName);
     }
+
 
     /**
      * Fill LDAP properties.
@@ -495,21 +494,19 @@ public class GroupCardServiceImpl implements GroupCardService {
         for (Member member : members) {
             identifiers.add(member.getId());
         }
-
-
     }
+
 
     /**
      * Build member list and sort it
+     * 
      * @param names
      * @return
      */
-    private List<Member> buildMemberList(List<Name> names)
-    {
+    private List<Member> buildMemberList(List<Name> names) {
         ArrayList<Member> members = new ArrayList<>();
         int i = 0;
-        for (Name name : names)
-        {
+        for (Name name : names) {
             Person person = this.personService.getPerson(name);
             Member member = new Member(person);
             member.setExtra(person.getMail());
@@ -517,7 +514,8 @@ public class GroupCardServiceImpl implements GroupCardService {
             i++;
             members.add(member);
         }
-        Collections.sort(members);;
+        Collections.sort(members);
+
         return members;
     }
 
@@ -527,15 +525,15 @@ public class GroupCardServiceImpl implements GroupCardService {
      */
     @Override
     public GroupCardSettings getSettings(PortalControllerContext portalControllerContext) throws PortletException {
-//        // Window
-//        PortalWindow window = WindowFactory.getWindow(portalControllerContext.getRequest());
+        // Window
+        PortalWindow window = WindowFactory.getWindow(portalControllerContext.getRequest());
 
         // Settings
         GroupCardSettings settings = this.applicationContext.getBean(GroupCardSettings.class);
 
-//        // Resource loader stub indicator
-//        boolean stub = BooleanUtils.toBoolean(window.getProperty(STUB_WINDOW_PROPERTY));
-//        settings.setStub(stub);
+        // Resource loader stub indicator
+        boolean stub = BooleanUtils.toBoolean(window.getProperty(STUB_WINDOW_PROPERTY));
+        settings.setStub(stub);
 
         return settings;
     }
@@ -546,11 +544,11 @@ public class GroupCardServiceImpl implements GroupCardService {
      */
     @Override
     public void saveSettings(PortalControllerContext portalControllerContext, GroupCardSettings settings) {
-//        // Window
-//        PortalWindow window = WindowFactory.getWindow(portalControllerContext.getRequest());
-//
-//        // Resource loader stub indicator
-//        window.setProperty(STUB_WINDOW_PROPERTY, String.valueOf(settings.isStub()));
+        // Window
+        PortalWindow window = WindowFactory.getWindow(portalControllerContext.getRequest());
+
+        // Resource loader stub indicator
+        window.setProperty(STUB_WINDOW_PROPERTY, String.valueOf(settings.isStub()));
     }
 
 }
