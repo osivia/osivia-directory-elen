@@ -332,7 +332,6 @@ public class GroupCardServiceImpl implements GroupCardService {
             Person person = this.personService.getPerson(uid);
             Member member = new Member(person);
             member.setExtra(person.getMail());
-            member.setIndex((form.getMembers() != null) ? Integer.toString(form.getMembers().size()) : "0");
             member.setAdded(true);
             form.getMembers().add(member);
             // Sort list
@@ -512,7 +511,6 @@ public class GroupCardServiceImpl implements GroupCardService {
             {
             Member member = new Member(person);
             member.setExtra(person.getMail());
-            member.setIndex(Integer.toString(i));
             members.add(member);
             i++;
             }

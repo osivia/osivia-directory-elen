@@ -25,8 +25,6 @@ public class Member implements Comparable<Member>{
     
     private String extra;
     
-    private String index;
-    
     /** Deleted indicator. */
     private boolean deleted;
     
@@ -200,25 +198,6 @@ public class Member implements Comparable<Member>{
         return person;
     }
 
-    
-    /**
-     * Getter for index.
-     * @return the index
-     */
-    public String getIndex() {
-        return index;
-    }
-
-    
-    /**
-     * Setter for index.
-     * @param index the index to set
-     */
-    public void setIndex(String index) {
-        this.index = index;
-    }
-
-    
     /**
      * Getter for givenName.
      * @return the givenName
