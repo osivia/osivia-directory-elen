@@ -508,11 +508,14 @@ public class GroupCardServiceImpl implements GroupCardService {
         int i = 0;
         for (Name name : names) {
             Person person = this.personService.getPerson(name);
+            if (person != null)
+            {
             Member member = new Member(person);
             member.setExtra(person.getMail());
             member.setIndex(Integer.toString(i));
-            i++;
             members.add(member);
+            i++;
+            }
         }
         Collections.sort(members);
 

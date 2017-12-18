@@ -11,7 +11,7 @@
             <c:choose>
                 <c:when test="${empty card.group.members}">
                     <p class="form-control-static">
-                        <span>Aucun membre</span>
+                        <span><op:translate key="GROUP_CARD_NO_MEMBER" /></span>
                     </p>
                 </c:when>
                 <c:otherwise>

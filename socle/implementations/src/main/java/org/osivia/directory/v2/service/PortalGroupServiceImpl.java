@@ -199,7 +199,7 @@ public class PortalGroupServiceImpl implements PortalGroupService {
      */
     private void removeMember(Name group, Name member) {
         Person person = this.personService.getPersonNoCache(member);
-        if (person.getProfiles().contains(group)) {
+        if (person != null && person.getProfiles().contains(group)) {
             person.getProfiles().remove(group);
             this.personService.update(person);
         }
