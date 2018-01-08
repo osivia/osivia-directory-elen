@@ -264,16 +264,27 @@ public class AppConfig {
         return Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
     }
 
+
+    /**
+     * Get internationalization service
+     * 
+     * @return internationalization service
+     */
+    @Bean
+    public IInternationalizationService getInternationalizationService() {
+        return Locator.findMBean(IInternationalizationService.class, IInternationalizationService.MBEAN_NAME);
+    }
+
+
     /**
      * Get bundle factory.
      *
+     * @param internationalizationService internationalization service
      * @return bundle factory
      */
     @Bean
-    public IBundleFactory getBundleFactory() {
-        IInternationalizationService internationalizationService = Locator.findMBean(IInternationalizationService.class,
-                IInternationalizationService.MBEAN_NAME);
-        return internationalizationService.getBundleFactory(this.getClass().getClassLoader());
+    public IBundleFactory getBundleFactory(IInternationalizationService internationalizationService) {
+        return internationalizationService.getBundleFactory(this.getClass().getClassLoader(), this.applicationContext);
     }
 
 }

@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
  * @author Loïc Billon
  * @since 4.4
  */
-@Component("collabProfile")
+@Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"portalCollabProfile"})
 public final class CollabProfileImpl implements CollabProfile, Serializable {

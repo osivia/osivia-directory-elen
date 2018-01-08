@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
  * @author Loïc Billon
  * @since 4.4
  */
-@Service("roleService")
+@Service
 public class RoleServiceImpl extends LdapServiceImpl implements RoleService {
 
     /** Application context. */

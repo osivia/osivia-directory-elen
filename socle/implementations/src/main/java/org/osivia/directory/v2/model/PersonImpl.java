@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
  * @author Loïc Billon
  * @since 4.4
  */
-@Component("person")
+@Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"portalPerson"})
 public final class PersonImpl implements Person, Serializable {
@@ -357,6 +357,7 @@ public final class PersonImpl implements Person, Serializable {
     public Name buildBaseDn() {
         return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=users").build();
     }
+
 
     /**
      * {@inheritDoc}

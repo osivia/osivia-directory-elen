@@ -40,6 +40,7 @@ import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
+import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
@@ -65,20 +66,16 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
  * @see LdapServiceImpl
  * @see PersonUpdateService
  */
-@Service("personService")
+@Service
 public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
     /** Person card portlet instance. */
     private static final String CARD_INSTANCE = "directory-person-card-instance";
 
 
-    /** Application. */
+    /** Application context. */
     @Autowired
-    protected ApplicationContext context;
-
-    /** Sample person implementation. */
-    @Autowired
-    protected Person sample;
+    protected ApplicationContext applicationContext;
 
     /** Person DAO. */
     @Autowired
@@ -91,6 +88,10 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     /** Portal URL factory. */
     @Autowired
     protected IPortalUrlFactory urlFactory;
+
+    /** Internationalization service. */
+    @Autowired
+    protected IInternationalizationService internationalizationService;
 
     /** Internationalization bundle factory. */
     @Autowired
@@ -115,7 +116,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
      */
     @Override
     public Person getEmptyPerson() {
-        return this.context.getBean(this.sample.getClass());
+        return this.applicationContext.getBean(Person.class);
     }
 
 
@@ -161,7 +162,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
      */
     @Override
     public Person getPerson(String uid) {
-        Name dn = this.sample.buildDn(uid);
+        Name dn = this.getEmptyPerson().buildDn(uid);
 
         return this.getPerson(dn);
     }
@@ -242,6 +243,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
      * 
      * @param person the person
      */
+    @SuppressWarnings("deprecation")
     protected void appendAvatar(Person person) {
         // Append avatar
         INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
@@ -339,6 +341,11 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     }
 
 
+    /**
+     * Get person card portlet instance.
+     * 
+     * @return portlet instance
+     */
     protected String getCardInstance() {
         return CARD_INSTANCE;
     }

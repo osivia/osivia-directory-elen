@@ -13,15 +13,22 @@
  */
 package org.osivia.directory.v2.dao;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import javax.naming.Name;
-import javax.naming.directory.Attribute;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,139 +37,285 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.BinaryLogicalFilter;
+import org.springframework.ldap.filter.Filter;
+import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.filter.OrFilter;
+import org.springframework.ldap.odm.annotations.Attribute;
+import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author Loïc Billon
+ * Person DAO implementation.
  *
+ * @author Loïc Billon
+ * @see PersonDao
  */
-@Repository("personDao")
+@Repository
 public class PersonDaoImpl implements PersonDao {
 
+    /** Person sample. */
+    @Autowired
+    protected Person sample;
 
-	@Autowired
-	protected Person sample;
-	
-	
-	@Autowired
-	@Qualifier("ldapTemplate")
-	protected LdapTemplate template;
-	
-	@Autowired
-	@Qualifier("authenticateLdapTemplate")	
-	protected LdapTemplate authenticateLdapTemplate;	
-	
-	
-	private SearchControls controls;
-		
-	@Override
-	@Cacheable(key = "#dn", value = { "personByDnCache" })
-	public Person getPerson(Name dn) throws NameNotFoundException {
-				
-		Person person = template.findByDn(dn, sample.getClass());
-		return person;
+    /** LDAP template. */
+    @Autowired
+    @Qualifier("ldapTemplate")
+    private LdapTemplate template;
 
-	}
+    /** Authenticate LDAP template. */
+    @Autowired
+    @Qualifier("authenticateLdapTemplate")
+    private LdapTemplate authenticateLdapTemplate;
+
+    /** Search controls. */
+    private SearchControls searchControls;
 
 
-	@Override
-	public Person getPersonNoCache(Name dn) {
-
-		Person person = template.findByDn(dn, sample.getClass());
-		return person;
-	}
-	
-
-	@Override
-	public List<Person> findByCriteria(Person p) {
-
-		OrFilter filter = MappingHelper.generateOrFilter(p);
-				
-		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
-		
-	}
-	
-
-	@Override
-	public void create(Person p) {
-		
-		p.setDn(sample.buildDn(p.getUid()));
-		
-		template.create(p);
-		
-	}
+    /**
+     * Constructor.
+     */
+    public PersonDaoImpl() {
+        super();
+    }
 
 
-	@Override
-	@CacheEvict(value = "personByDnCache", key = "#p.dn")
-	public void update(Person p) {
-		template.update(p);
-		
-	}
-	
-
-	@Override
-	public boolean verifyPassword(String uid, String currentPassword) {
-		
-		Name dn = sample.buildDn(uid);;
-		String personFilter = MappingHelper.getBasicFilter(sample).encode();
-		return authenticateLdapTemplate.authenticate(dn, personFilter, currentPassword);
-		
-	}	
-	
-
-	@Override
-	public void updatePassword(Person p, String newPassword) {
-
-		ModificationItem[] mods = new ModificationItem[1];
-		Attribute userPasswordAttribute = new BasicAttribute ( MappingHelper.getLdapFieldName(p, "userPassword"), newPassword ); ;
-		mods[ 0 ] = new ModificationItem ( DirContext.REPLACE_ATTRIBUTE, userPasswordAttribute  );
-		template.modifyAttributes(p.getDn(), mods);
-	}	
-	
-	
-	/**
-	 * Query optimization
-	 * @return
-	 */
-	protected SearchControls getSearchControls() {
-		
-		if(controls == null) {
-			controls = new SearchControls();
-			
-			controls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
-			
-			if(System.getProperty("ldap.searchperson.maxTime") != null) {
-				int timeout = Integer.parseInt(System.getProperty("ldap.searchperson.maxTime"));
-				controls.setTimeLimit(timeout);
-			}
-			else {
-				controls.setTimeLimit(5000);
-			}
-			
-			if(System.getProperty("ldap.searchperson.maxResults") != null) {
-				int maxResults = Integer.parseInt(System.getProperty("ldap.searchperson.maxResults"));
-				controls.setCountLimit(maxResults);
-			}
-			else {
-				controls.setCountLimit(500);
-			}
-		}
-		
-		return controls;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Cacheable(key = "#dn", value = {"personByDnCache"})
+    public Person getPerson(Name dn) throws NameNotFoundException {
+        return this.template.findByDn(dn, this.sample.getClass());
+    }
 
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.dao.PersonDao#delete(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	@CacheEvict(value = "personByDnCache", key = "#p.dn")
-	public void delete(Person p) {
-		template.delete(p);
-		
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Person getPersonNoCache(Name dn) {
+        return this.template.findByDn(dn, this.sample.getClass());
+    }
 
-	
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Person> findByCriteria(Person criteria) {
+        // Global filter
+        BinaryLogicalFilter globalFilter = new AndFilter();
+
+        // Quick search LDAP attribute names
+        List<String> quickSearchAttributes = this.getQuickSearchAttributes();
+        // Quick search LDAP query filters
+        List<Filter> quickSearchFilters = new ArrayList<>(quickSearchAttributes.size());
+
+        // Person declared fields
+        Field[] fields = criteria.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                // LDAP attribute name
+                String attribute = this.getAttribute(criteria, field);
+
+                if (StringUtils.isNotEmpty(attribute)) {
+                    // LDAP query filter
+                    Filter filter = this.getQueryFilter(criteria, field, attribute);
+
+                    if (filter != null) {
+                        if (quickSearchAttributes.contains(attribute)) {
+                            quickSearchFilters.add(filter);
+                        } else {
+                            globalFilter.append(filter);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!quickSearchFilters.isEmpty()) {
+            BinaryLogicalFilter quickSearchFilter = new OrFilter();
+            quickSearchFilter.appendAll(quickSearchFilters);
+
+            globalFilter.append(quickSearchFilter);
+        }
+
+        return (List<Person>) this.template.find(this.sample.buildBaseDn(), globalFilter, this.getSearchControls(), this.sample.getClass());
+    }
+
+
+    /**
+     * Get quick search LDAP attribute names.
+     * 
+     * @return LDAP attribute names
+     */
+    protected List<String> getQuickSearchAttributes() {
+        return Arrays.asList(new String[]{"uid", "cn", "sn", "mail", "displayName", "givenName"});
+    }
+
+
+    /**
+     * Get LDAP attribute name.
+     * 
+     * @param criteria search criteria
+     * @param field criteria field
+     * @return LDAP attribute name
+     */
+    protected String getAttribute(Person criteria, Field field) {
+        // LDAP attribute annotation
+        Attribute attributeAnnotation = field.getAnnotation(Attribute.class);
+        // LDAP transient annotation
+        Transient transientAnnotation = field.getAnnotation(Transient.class);
+
+        // LDAP attribute name
+        String attribute;
+        if ((attributeAnnotation == null) || (transientAnnotation != null)) {
+            attribute = null;
+        } else {
+            attribute = StringUtils.defaultIfEmpty(attributeAnnotation.name(), field.getName());
+        }
+
+        return attribute;
+    }
+
+
+    /**
+     * Get LDAP query filter.
+     * 
+     * @param criteria LDAP search criteria
+     * @param field criteria field
+     * @param attribute LDAP attribute name
+     * @return LDAP query filter
+     */
+    protected Filter getQueryFilter(Person criteria, Field field, String attribute) {
+        // LDAP attribute value
+        Object value;
+        try {
+            value = PropertyUtils.getProperty(criteria, field.getName());
+        } catch (ReflectiveOperationException e) {
+            value = null;
+        }
+
+        // Filter
+        Filter filter;
+        if (value == null) {
+            filter = null;
+        } else if (value instanceof Boolean) {
+            Boolean booleanValue = (Boolean) value;
+            filter = new LikeFilter(attribute, BooleanUtils.toString(booleanValue, "TRUE", "FALSE", null));
+        } else if (value instanceof Collection) {
+            // Sub-query values
+            Collection<?> subQueryValues = (Collection<?>) value;
+
+            // Sub-query filters
+            Collection<Filter> subQueryFilters = new ArrayList<Filter>(subQueryValues.size());
+            for (Object subQueryValue : subQueryValues) {
+                // Sub-query filter
+                Filter subQueryFilter = new LikeFilter(attribute, subQueryValue.toString());
+                subQueryFilters.add(subQueryFilter);
+            }
+
+            if (subQueryFilters.isEmpty()) {
+                filter = null;
+            } else {
+                // "OR" filter
+                BinaryLogicalFilter orFilter = new OrFilter();
+                orFilter.appendAll(subQueryFilters);
+
+                filter = orFilter;
+            }
+        } else {
+            filter = new LikeFilter(attribute, value.toString());
+        }
+
+        return filter;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void create(Person person) {
+        Name dn = this.sample.buildDn(person.getUid());
+        person.setDn(dn);
+        this.template.create(person);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CacheEvict(value = "personByDnCache", key = "#p.dn")
+    public void update(Person p) {
+        this.template.update(p);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean verifyPassword(String uid, String currentPassword) {
+        Name dn = this.sample.buildDn(uid);
+        String personFilter = MappingHelper.getBasicFilter(this.sample).encode();
+        return this.authenticateLdapTemplate.authenticate(dn, personFilter, currentPassword);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updatePassword(Person person, String newPassword) {
+        ModificationItem[] modifications = new ModificationItem[1];
+        BasicAttribute userPasswordAttribute = new BasicAttribute(MappingHelper.getLdapFieldName(person, "userPassword"), newPassword);
+        modifications[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, userPasswordAttribute);
+        this.template.modifyAttributes(person.getDn(), modifications);
+    }
+
+
+    /**
+     * Get search controls.
+     *
+     * @return search controls
+     */
+    protected SearchControls getSearchControls() {
+        if (this.searchControls == null) {
+            this.searchControls = new SearchControls();
+
+            this.searchControls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
+
+            if (System.getProperty("ldap.searchperson.maxTime") != null) {
+                int timeout = Integer.parseInt(System.getProperty("ldap.searchperson.maxTime"));
+                this.searchControls.setTimeLimit(timeout);
+            } else {
+                this.searchControls.setTimeLimit(5000);
+            }
+
+            if (System.getProperty("ldap.searchperson.maxResults") != null) {
+                int maxResults = Integer.parseInt(System.getProperty("ldap.searchperson.maxResults"));
+                this.searchControls.setCountLimit(maxResults);
+            } else {
+                this.searchControls.setCountLimit(500);
+            }
+        }
+
+        return this.searchControls;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @CacheEvict(value = "personByDnCache", key = "#p.dn")
+    public void delete(Person p) {
+        this.template.delete(p);
+    }
+
 }

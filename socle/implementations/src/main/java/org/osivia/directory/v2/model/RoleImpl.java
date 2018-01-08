@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  * @author Loïc Billon
  * @since 4.4
  */
-@Component("role")
+@Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Entry(objectClasses = {"groupOfUniqueNames"})
 public final class RoleImpl implements Role, Serializable {

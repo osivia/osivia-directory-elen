@@ -20,7 +20,6 @@ import javax.naming.Name;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.query.LdapQueryBuilder;
@@ -30,7 +29,7 @@ import org.springframework.stereotype.Repository;
  * @author Loïc Billon
  *
  */
-@Repository("collabProfileDao")
+@Repository
 public class CollabProfileDaoImpl implements CollabProfileDao {
 
 	
