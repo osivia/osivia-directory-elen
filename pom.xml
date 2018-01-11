@@ -4,7 +4,7 @@
     
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.6.2</version>
+    <version>4.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>

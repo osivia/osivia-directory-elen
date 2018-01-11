@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.osivia.services.directory.person</groupId>
         <artifactId>osivia-services-directory-person-parent</artifactId>
-        <version>4.6.2</version>
+        <version>4.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>osivia-services-directory-person-management</artifactId>
