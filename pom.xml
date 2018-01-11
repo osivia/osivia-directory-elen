@@ -175,7 +175,7 @@
     
     
     <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/tags/4.6.2</developerConnection>
+        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/branches/4.6-maintenance</developerConnection>
     </scm>
     
     
