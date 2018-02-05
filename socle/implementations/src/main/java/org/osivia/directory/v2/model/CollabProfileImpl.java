@@ -40,10 +40,9 @@ import org.springframework.stereotype.Component;
 @Entry(objectClasses = {"portalCollabProfile"})
 public final class CollabProfileImpl implements CollabProfile, Serializable {
 
-
-	/**
-	 * 
-	 */
+    /**
+     * 
+     */
 	private static final long serialVersionUID = -7838307664620741006L;
 
 	@Id
@@ -262,6 +261,37 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
 		return LdapNameBuilder.newInstance(System.getProperty("ldap.base")).add("ou=groups").add("ou=collabProfiles").add("cn="+cn).build();
 	}
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cn == null) ? 0 : cn.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CollabProfileImpl other = (CollabProfileImpl) obj;
+        if (cn == null) {
+            if (other.cn != null)
+                return false;
+        } else if (!cn.equals(other.cn))
+            return false;
+        return true;
+    }
 
     /**
      * {@inheritDoc}
