@@ -113,8 +113,9 @@ public interface WorkspaceService extends IDirService {
      * Delete a workspace and his subgroups, unkink users associated.
      *
      * @param workspaceId workspace identifier
+     * @param docId document Identifier
      */
-    void delete(String workspaceId);
+    void delete(String workspaceId, String docId);
 
 
     /**
