@@ -4,7 +4,7 @@
     
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.6.6</version>
+    <version>4.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
@@ -175,7 +175,7 @@
     
     
     <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/tags/4.6.6</developerConnection>
+        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/branches/4.6-maintenance</developerConnection>
     </scm>
     
     
