@@ -35,6 +35,7 @@ import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
 import org.osivia.directory.v2.repository.GetWorkspaceCommand;
+import org.osivia.directory.v2.repository.PurgeWorkspaceCommand;
 import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -287,7 +288,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     @Override
     @Transactional(rollbackFor = Exception.class)
     // @CacheEvict(key = "#workspaceId", value = "membersByWksCache")
-    public void delete(String workspaceId) {
+    public void delete(String workspaceId, String docId) {
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
 
         List<Person> allPers = new ArrayList<Person>();
@@ -307,7 +308,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         // unlink all groups to all persons
         for (Person p : allPers) {
             for (CollabProfile cp : list) {
-                this.detachPerson(p, cp);
+                this.detachPerson(p, cp, false);
             }
         }
 
@@ -315,6 +316,15 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         for (CollabProfile cp : list) {
             this.dao.delete(cp);
         }
+        
+        // Delete workspace
+        // Nuxeo controller
+        NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
+        nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
+
+        // Nuxeo command
+        INuxeoCommand command = this.applicationContext.getBean(PurgeWorkspaceCommand.class, docId);
+        nuxeoController.executeNuxeoCommand(command);
     }
 
 
@@ -338,7 +348,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             }
 
             if ((cp.getType() == WorkspaceGroupType.security_group) && (cp.getRole() != role)) {
-                this.detachPerson(memberDn, cp);
+                this.detachPerson(memberDn, cp, true);
             }
         }
 
@@ -360,7 +370,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
 
         for (CollabProfile cp : list) {
-            this.detachPerson(memberDn, cp);
+            this.detachPerson(memberDn, cp, true);
         }
     }
 
@@ -417,8 +427,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
      * 
      * @param p person
      * @param profile collab profile
+     * @param updateNuxeo true if update Nuxeo
      */
-    private void detachPerson(Person person, CollabProfile profile) {
+    private void detachPerson(Person person, CollabProfile profile, boolean updateNuxeo) {
         // Update indicator
         boolean update = false;
 
@@ -441,7 +452,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         }
 
         // Update workspace
-        if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
+        if (update && updateNuxeo && WorkspaceGroupType.space_group.equals(profile.getType())) {
             this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
         }
     }
@@ -452,10 +463,11 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
      * 
      * @param memberDn member DN
      * @param cp collab profile
+     * @param updateNuxeo update Nuxeo
      */
-    private void detachPerson(Name memberDn, CollabProfile cp) {
+    private void detachPerson(Name memberDn, CollabProfile cp, boolean updateNuxeo) {
         Person person = this.personService.getPersonNoCache(memberDn);
-        this.detachPerson(person, cp);
+        this.detachPerson(person, cp, updateNuxeo);
     }
 
 
@@ -578,7 +590,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     public void removeMemberFromLocalGroup(String workspaceId, Name localGroupDn, Name memberDn) {
         CollabProfile localGroup = this.dao.findByDn(localGroupDn);
         if (localGroup.getType() == WorkspaceGroupType.local_group) {
-            this.detachPerson(memberDn, localGroup);
+            this.detachPerson(memberDn, localGroup, true);
         }
     }
 
@@ -622,7 +634,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         // find all the members and unlink them
         List<Person> personToDetach = this.personService.findByCriteria(searchPers);
         for (Person p : personToDetach) {
-            this.detachPerson(p, groupToRemove);
+            this.detachPerson(p, groupToRemove, true);
         }
 
         this.dao.delete(groupToRemove);
