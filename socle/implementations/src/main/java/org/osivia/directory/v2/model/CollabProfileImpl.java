@@ -289,6 +289,37 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cn == null) ? 0 : cn.hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CollabProfileImpl other = (CollabProfileImpl) obj;
+        if (cn == null) {
+            if (other.cn != null)
+                return false;
+        } else if (!cn.equals(other.cn))
+            return false;
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         return this.dn.toString();
     }

@@ -1,5 +1,6 @@
 package org.osivia.services.usersettings.portlet.repository;
 
+import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.automation.client.Constants;
 import org.nuxeo.ecm.automation.client.OperationRequest;
 import org.nuxeo.ecm.automation.client.Session;
@@ -45,7 +46,7 @@ public class GetUserWorkspacesCommand implements INuxeoCommand {
         // Clause
         StringBuilder clause = new StringBuilder();
         clause.append("ecm:primaryType = 'Workspace' ");
-        clause.append("AND ttcs:spaceMembers/*/login = '").append(this.user).append("' ");
+        clause.append("AND ttcs:spaceMembers/*/login = '").append(StringUtils.replace(this.user, "'", "\\'")).append("' ");
         clause.append("ORDER BY dc:title ASC");
 
         // Query filter
