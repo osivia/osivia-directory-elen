@@ -197,4 +197,19 @@
         <url>http://www.osivia.org/</url>
     </organization>
     
+    
+    <profiles>
+    	<profile>
+    		<id>ci</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<distributionManagement>
+    			<snapshotRepository>
+            		<id>galactica-ci-snapshots</id>
+            		<url>http://nexus:8081/repository/ci-snapshots</url>
+        		</snapshotRepository>
+    		</distributionManagement>
+    	</profile>
+    </profiles>    
 </project>
