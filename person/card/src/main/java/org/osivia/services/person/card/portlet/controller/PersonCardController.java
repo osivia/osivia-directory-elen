@@ -24,10 +24,14 @@ import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
+import org.osivia.portal.api.directory.entity.DirectoryPerson;
+import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.notifications.NotificationsType;
 import org.osivia.portal.core.cms.CMSException;
+import org.osivia.portal.core.portalobjects.PortalObjectUtils;
 import org.osivia.services.person.card.portlet.service.LevelEdition;
 import org.osivia.services.person.card.portlet.service.PersonCardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +91,17 @@ public class PersonCardController extends CMSPortlet implements PortletContextAw
 	@RenderMapping
 	public String showCard(@ModelAttribute("card") Card card, RenderRequest request, RenderResponse response) {
 		
+		Person person = (Person) request.getAttribute(Constants.ATTR_LOGGED_PERSON_2);
+
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
+		
+		if(person == null) {
+			this.addNotification(pcc, "label.browse.not.authorized", NotificationsType.WARNING);
+			
+			return "blank";
+		}
 		if(card.getUserConsulte() == null) {
 			
-			PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
 			this.addNotification(pcc, "label.modifNonAutorise", NotificationsType.WARNING);
 			
 			return "blank";
