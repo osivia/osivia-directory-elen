@@ -87,7 +87,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
 
     /** Application context. */
-    protected ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
 
     /**
