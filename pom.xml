@@ -91,12 +91,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.2.1</version>
-                    <configuration>
-                        <tagBase>http://www.osivia.org/repos/osivia-services/directory/tags</tagBase>
-                        <releaseProfiles>unpack,pack</releaseProfiles>
-                        <preparationGoals>clean install</preparationGoals>
-                        <goals>deploy</goals>
-                    </configuration>
                 </plugin>
                 
                 <!-- WAR -->
@@ -174,10 +168,12 @@
         </pluginManagement>
     </build>
     
-    
     <scm>
-        <developerConnection>scm:svn:http://www.osivia.org/repos/osivia-services/directory/trunk</developerConnection>
-    </scm>
+		<url>https://github.com/osivia/osivia-directory</url>
+		<connection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</developerConnection>     
+		<tag>HEAD</tag> 
+	</scm>
     
     
     <distributionManagement>
