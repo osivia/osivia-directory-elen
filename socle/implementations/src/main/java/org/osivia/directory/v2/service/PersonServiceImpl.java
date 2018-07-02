@@ -60,7 +60,7 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 
 /**
  * Person service implementation.
- * 
+ *
  * @author Loïc Billon
  * @since 4.4
  * @see LdapServiceImpl
@@ -76,6 +76,10 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     /** Application context. */
     @Autowired
     protected ApplicationContext applicationContext;
+
+    /** Person sample. */
+    @Autowired
+    protected Person personSample;
 
     /** Person DAO. */
     @Autowired
@@ -240,7 +244,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 
     /**
      * Get avatar url for a person
-     * 
+     *
      * @param person the person
      */
     @SuppressWarnings("deprecation")
@@ -343,7 +347,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 
     /**
      * Get person card portlet instance.
-     * 
+     *
      * @return portlet instance
      */
     protected String getCardInstance() {

@@ -62,7 +62,7 @@ public class PersonDaoImpl implements PersonDao {
     /** LDAP template. */
     @Autowired
     @Qualifier("ldapTemplate")
-    private LdapTemplate template;
+    protected LdapTemplate template;
 
     /** Authenticate LDAP template. */
     @Autowired
