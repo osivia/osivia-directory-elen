@@ -13,9 +13,13 @@ import javax.portlet.PortletRequest;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.automation.client.model.Document;
+import org.nuxeo.ecm.automation.client.model.Documents;
+import org.nuxeo.ecm.automation.client.model.PropertyMap;
 import org.osivia.directory.v2.model.ext.Avatar;
+import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.directory.v2.service.RoleService;
+import org.osivia.directory.v2.service.WorkspaceService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
@@ -23,6 +27,7 @@ import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.login.IUserDatasModuleRepository;
 import org.osivia.portal.api.notifications.INotificationsService;
+import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
 import org.osivia.services.person.card.portlet.controller.Card;
@@ -30,9 +35,13 @@ import org.osivia.services.person.card.portlet.controller.FormChgPwd;
 import org.osivia.services.person.card.portlet.controller.FormEdition;
 import org.osivia.services.person.card.portlet.controller.NuxeoProfile;
 import org.osivia.services.person.card.portlet.controller.PersonCardConfig;
+import org.osivia.services.person.card.portlet.controller.PersonCardWorkspaceMember;
+import org.osivia.services.person.card.portlet.repository.GetUserWorkspacesCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
 
 /**
  * @author Loïc Billon
@@ -72,7 +81,12 @@ public class PersonCardServiceImpl implements PersonCardService {
 
 	@Autowired
 	private PersonUpdateService personService;
+	
+	@Autowired
+	private WorkspaceService workspaceService;
 
+	@Autowired
+	private IPortalUrlFactory urlFactory;
 	
 	@Autowired
 	private RoleService roleService;
@@ -187,13 +201,65 @@ public class PersonCardServiceImpl implements PersonCardService {
 		
 		
 		Document nuxeoProfile = (Document) personService.getEcmProfile(context, userConsulte);
-		
 		card.setNxProfile(convertNxProfile(nuxeoProfile));
 		
-
+		// User workspaces
+		if(card.getLevelEdition().equals(LevelEdition.ALLOW)) {
+			setNxWorkspaces(context, card, userConsulte.getUid());
+			
+		}
+		
 		return card;
 	}
+
+
+	/**
+	 * Evaluate the map memberOfSpace
+	 *  
+	 * @param context
+	 * @param card the form
+	 * @param uid the current uid
+	 */
+	private void setNxWorkspaces(PortalControllerContext context, Card card, String uid) {
+		NuxeoController controller = new NuxeoController(context);
+		
+		Documents documents = (Documents)  controller.executeNuxeoCommand(new GetUserWorkspacesCommand(uid));
+		
+		for(Document workspace : documents) {
+			
+			WorkspaceMember member = workspaceService.getMember(workspace.getString("webc:url"), uid);
+			
+			PersonCardWorkspaceMember personCardWorkspaceMember = new PersonCardWorkspaceMember(member);
+			
+            // Title
+			personCardWorkspaceMember.setTitle(workspace.getTitle());
+            // Description
+			personCardWorkspaceMember.setDescription(workspace.getString("dc:description"));
+
+            // Vignette URL
+            PropertyMap vignette = workspace.getProperties().getMap("ttc:vignette");
+            String vignetteUrl;
+            if (vignette == null) {
+                vignetteUrl = null;
+            } else {
+                vignetteUrl = controller.createFileLink(workspace, "ttc:vignette");
+            }
+            personCardWorkspaceMember.setVignetteUrl(vignetteUrl);
+            
+            String cmsUrl = urlFactory.getCMSUrl(context, null, workspace.getPath(), null, null, null, null, null, null, null);
+            
+            personCardWorkspaceMember.setLink(cmsUrl);
+            
+			card.getMemberOfSpace().add(personCardWorkspaceMember);
+			
+		}
+	}
 	
+	/**
+	 * Convert from nuxeo document to object
+	 * @param docNxProfile
+	 * @return 
+	 */
 	public NuxeoProfile convertNxProfile(Document docNxProfile) {
 		
 		NuxeoProfile profile = new NuxeoProfile();

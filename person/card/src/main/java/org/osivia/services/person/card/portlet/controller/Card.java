@@ -13,6 +13,9 @@
  */
 package org.osivia.services.person.card.portlet.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.services.person.card.portlet.service.LevelChgPwd;
@@ -41,6 +44,8 @@ public class Card {
 	private boolean self = false;
 		
 	private Link avatar;
+	
+	private List<PersonCardWorkspaceMember> memberOfSpace = new ArrayList<PersonCardWorkspaceMember>();
 	
 	
 	/**
@@ -133,5 +138,22 @@ public class Card {
 		this.avatar = avatar;
 	}
 
+	/**
+	 * Return the list of workspaces the user belongs to
+	 * @return
+	 */
+	public List<PersonCardWorkspaceMember> getMemberOfSpace() {
+		return memberOfSpace;
+	}
+
+	/**
+	 * Sets the list of workspaces the user belongs to
+	 * @param memberOfSpace
+	 */
+	public void setMemberOfSpace(List<PersonCardWorkspaceMember>memberOfSpace) {
+		this.memberOfSpace = memberOfSpace;
+	}
+
+	
 
 }

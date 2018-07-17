@@ -17,118 +17,161 @@
 <c:set var="namespace"><portlet:namespace /></c:set>
 
 
-
-<div class="form-horizontal">
-    <div class="form-group">
-        <!-- Avatar -->
-        <div class="col-sm-3 col-md-2">
-            <img src="${card.avatar.url}" alt="" class="avatar avatar-big pull-right">
-        </div>
-        
-        <!-- Display name -->
-        <div class="col-sm-9 col-md-10">
-            <h1>
-                <c:if test="${not empty card.userConsulte.title}">
-                    <span>${card.userConsulte.title}</span>
-                </c:if>
-                
-                <span>${card.userConsulte.displayName}</span>
-            </h1>
-        </div>
-    </div>
-    
-    <!-- Title -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.title" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.userConsulte.title}</p>
-        </div>
-    </div>
-
-    <!-- First name -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.givenName" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.userConsulte.givenName}</p>
-        </div>
-    </div>
-
-    <!-- Last name -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.sn" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.userConsulte.sn}</p>
-        </div>
-    </div>
-    
-    <!-- Occupation -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.occupation" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.nxProfile.occupation}</p>
-        </div>
-    </div>
-    
-    <!-- Institution -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.institution" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.nxProfile.institution}</p>
-        </div>
-    </div>    
-    
-    <!-- Phone -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.phone" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.nxProfile.phone}</p>
-        </div>
-    </div>
-
-    <!-- Mobile phone -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.mobilePhone" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.nxProfile.mobilePhone}</p>
-        </div>
-    </div>
-    
-    <!-- Mail -->
-    <div class="form-group">
-        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.mail" /></label>
-        <div class="col-sm-9 col-md-10">
-            <p class="form-control-static">${card.userConsulte.mail}</p>
-        </div>
-    </div>
+<div class="portlet-filler container-fluid">
+	<div class="form-horizontal">
+	    <div class="form-group">
+	        <!-- Avatar -->
+	        <div class="col-sm-3 col-md-2">
+	            <img src="${card.avatar.url}" alt="" class="avatar avatar-big pull-right">
+	        </div>
+	        
+	        <!-- Display name -->
+	        <div class="col-sm-9 col-md-10">
+	            <h1>
+	                <c:if test="${not empty card.userConsulte.title}">
+	                    <span>${card.userConsulte.title}</span>
+	                </c:if>
+	                
+	                <span>${card.userConsulte.displayName}</span>
+	            </h1>
+	        </div>
+	    </div>
+	    
+	    <!-- Title -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.title" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.userConsulte.title}</p>
+	        </div>
+	    </div>
+	
+	    <!-- First name -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.givenName" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.userConsulte.givenName}</p>
+	        </div>
+	    </div>
+	
+	    <!-- Last name -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.sn" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.userConsulte.sn}</p>
+	        </div>
+	    </div>
+	    
+	    <!-- Occupation -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.occupation" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.nxProfile.occupation}</p>
+	        </div>
+	    </div>
+	    
+	    <!-- Institution -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.institution" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.nxProfile.institution}</p>
+	        </div>
+	    </div>    
+	    
+	    <!-- Phone -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.phone" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.nxProfile.phone}</p>
+	        </div>
+	    </div>
+	
+	    <!-- Mobile phone -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.mobilePhone" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.nxProfile.mobilePhone}</p>
+	        </div>
+	    </div>
+	    
+	    <!-- Mail -->
+	    <div class="form-group">
+	        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.mail" /></label>
+	        <div class="col-sm-9 col-md-10">
+	            <p class="form-control-static">${card.userConsulte.mail}</p>
+	        </div>
+	    </div>
+	    
+	    <c:if test="${card.levelEdition eq 'ALLOW'}">
+	    	<!-- Workspaces -->
+		    <div class="form-group">
+		        <label class="col-sm-3 col-md-2 control-label"><op:translate key="label.workspaces" /></label>
+		        <div class="col-sm-9 col-md-10">
+		            <c:forEach items="${card.memberOfSpace}" var="memberOfSpace" varStatus="status">
+		                <div class="panel panel-default">
+		                    <div class="panel-body">
+		                        <div class="row">
+		                            <div class="col-sm-6">
+		                                <div class="media">
+		                                    <!-- Vignette -->
+		                                    <c:if test="${not empty memberOfSpace.vignetteUrl}">
+		                                        <div class="media-left media-middle">
+		                                            <img src="${memberOfSpace.vignetteUrl}" alt="" class="media-object">
+		                                        </div>
+		                                    </c:if>
+		                                    
+		                                    <div class="media-body media-middle">
+		                                        <!-- Title -->
+		                                        <h3 class="media-heading h4"><a href="${memberOfSpace.link}">${memberOfSpace.title}</a></h3>
+		                                        
+		                                        <!-- Description -->
+		                                        <c:if test="${not empty memberOfSpace.description}">
+		                                            <p>${memberOfSpace.description}</p>
+		                                        </c:if>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                            
+		                            <div class="col-sm-6">
+		                                <p><op:translate key="${memberOfSpace.member.role.key}" classLoader="${memberOfSpace.member.role.classLoader}" /></p>
+		                            </div>
+		                        </div>
+		                    </div>
+		                </div>
+		            </c:forEach>
+		        </div>
+		    </div>
+	    </c:if>
+	</div>
 </div>
-
 
 <!-- Buttons -->
 <c:if test="${card.levelEdition eq 'ALLOW'}">
-    <div class="row">
-        <div class="col-sm-offset-3 col-sm-9 col-md-offset-2 col-md-10">
-            <!-- Edit -->
-            <a href="${modifyUrl}" class="btn btn-primary">
-                <i class="glyphicons glyphicons-pencil"></i>
-                <span><op:translate key="label.btn.edit" /></span>
-            </a>
-            
-            <!-- Change password -->
-            <c:if test="${card.levelChgPwd eq 'ALLOW' || card.levelChgPwd eq 'OVERWRITE'}">
-	            <a href="${chgPwdUrl}" class="btn btn-default">
-	                <i class="glyphicons glyphicons-keys"></i>
-	                <span><op:translate key="label.btn.chgpwd" /></span>
+	<div class="portlet-toolbar adapt-scrollbar">
+	    <div class="row">
+	        <div class="col-sm-offset-3 col-sm-9 col-md-offset-2 col-md-10">
+	            <!-- Edit -->
+	            <a href="${modifyUrl}" class="btn btn-primary">
+	                <i class="glyphicons glyphicons-pencil"></i>
+	                <span><op:translate key="label.btn.edit" /></span>
 	            </a>
-            </c:if>
-            
-            <!-- Delete -->
-            <c:if test="${card.levelDeletion eq 'ALLOW'}">
-                <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#${namespace}-delete-modal">
-                    <i class="glyphicons glyphicons-bin"></i>
-                    <span><op:translate key="DELETE" /></span>
-                </button>
-            </c:if>
-        </div>
+	            
+	            <!-- Change password -->
+	            <c:if test="${card.levelChgPwd eq 'ALLOW' || card.levelChgPwd eq 'OVERWRITE'}">
+		            <a href="${chgPwdUrl}" class="btn btn-default">
+		                <i class="glyphicons glyphicons-keys"></i>
+		                <span><op:translate key="label.btn.chgpwd" /></span>
+		            </a>
+	            </c:if>
+	            
+	            <!-- Delete -->
+	            <c:if test="${card.levelDeletion eq 'ALLOW'}">
+	                <button type="button" class="btn btn-danger pull-right" data-toggle="modal" data-target="#${namespace}-delete-modal">
+	                    <i class="glyphicons glyphicons-bin"></i>
+	                    <span><op:translate key="DELETE" /></span>
+	                </button>
+	            </c:if>
+	        </div>
+	    </div>
     </div>
 </c:if>
 

@@ -7,11 +7,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.directory.v2.service.RoleService;
+import org.osivia.directory.v2.service.WorkspaceService;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.notifications.INotificationsService;
+import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -104,6 +106,17 @@ public class PersonCardConfiguration {
     public RoleService getRoleService() {
     	return DirServiceFactory.getService(RoleService.class);
     }
+    
+    /**
+     * Get workspace service.
+     *
+     * @return workspace service
+     */
+    @Bean
+    public WorkspaceService getWorkspaceService() {
+    	return DirServiceFactory.getService(WorkspaceService.class);
+    }
+    
 
     /**
      * Get forms service.
@@ -116,6 +129,17 @@ public class PersonCardConfiguration {
     }
 
 
+    /**
+     * Get portal URL factory.
+     * 
+     * @return portal URL factory
+     */
+	@Bean(name="urlFactory")
+	public IPortalUrlFactory getUrlFactory() {
+		return Locator.findMBean(IPortalUrlFactory.class, IPortalUrlFactory.MBEAN_NAME);
+	}
+    
+    
     /**
      * Get bundle factory.
      *
