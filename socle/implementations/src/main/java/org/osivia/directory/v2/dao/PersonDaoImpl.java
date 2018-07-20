@@ -30,6 +30,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.LikeFilter;
+import org.springframework.ldap.filter.NotFilter;
 import org.springframework.ldap.filter.OrFilter;
 import org.springframework.stereotype.Repository;
 
@@ -81,6 +83,16 @@ public class PersonDaoImpl implements PersonDao {
 				
 		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
 		
+	}
+	
+	@Override
+	public List<Person> findByNoConnectionDate() {
+		
+		String field = MappingHelper.getLdapFieldName(sample, "lastConnection");
+		NotFilter filter = new NotFilter(new LikeFilter(field, "*"));
+		
+		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
+
 	}
 	
 

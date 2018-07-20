@@ -20,6 +20,8 @@ import java.util.List;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
@@ -52,6 +54,10 @@ import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 @Service
 public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceService, ApplicationContextAware {
 
+	
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
+
+	
     /** Person service. */
     @Autowired
     private PersonUpdateService personService;
@@ -261,6 +267,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
                 this.attachPerson(owner, roleGroup);
             }
         }
+        
+        ldapLogger.info("Space created : "+workspaceId);
 
     }
 
@@ -299,6 +307,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         for (CollabProfile cp : list) {
             this.dao.delete(cp);
         }
+        
+        ldapLogger.info("Space deleted : "+workspaceId);
+
     }
 
 
@@ -330,6 +341,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         WorkspaceMemberImpl member = new WorkspaceMemberImpl(person);
         member.setRole(role);
 
+        ldapLogger.info("Space member modified : "+workspaceId+ " "+person.getUid()+ " ("+role.toString()+")");
+
+        
         return member;
     }
 
@@ -346,6 +360,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         for (CollabProfile cp : list) {
             this.detachPerson(memberDn, cp);
         }
+        
+        ldapLogger.info("Space member removed : "+workspaceId+ " "+memberDn.toString());
+        
     }
 
 
@@ -381,6 +398,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
             this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), true);
         }
+        
     }
 
 
@@ -428,6 +446,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
             this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
         }
+        
     }
 
 
@@ -495,6 +514,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         localGroup.setDn(this.sample.buildDn(cn));
 
         this.dao.create(localGroup);
+        
+        ldapLogger.info("Local group created : "+workspaceId+ " "+displayName);
+
 
         return localGroup;
     }
@@ -519,6 +541,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
                 }
             }
         }
+        
+        ldapLogger.info("Local group member modified : "+workspaceId+ " "+memberDn.toString()+ " > "+localGroupDn.toString()+")");
+
     }
 
 
@@ -531,6 +556,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
         Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
         this.addMemberToLocalGroup(workspaceId, localGroupDn, memberDn);
+        
     }
 
 
@@ -544,6 +570,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         if (localGroup.getType() == WorkspaceGroupType.local_group) {
             this.detachPerson(memberDn, localGroup);
         }
+               
     }
 
 
@@ -556,6 +583,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
         Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
         this.removeMemberFromLocalGroup(workspaceId, localGroupDn, memberDn);
+        
+        ldapLogger.info("Local group member removed : "+workspaceId+ " "+memberUid+ " > "+localGroupCn);
+        
     }
 
 
@@ -566,6 +596,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     @Transactional(rollbackFor = Exception.class)
     public void modifyLocalGroup(CollabProfile localGroup) {
         this.dao.update(localGroup);
+        
+        ldapLogger.info("Local group modified : "+localGroup.getCn());
+        
     }
 
 
@@ -590,6 +623,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         }
 
         this.dao.delete(groupToRemove);
+        
+        ldapLogger.info("Local group removed : "+workspaceId + " "+dn.toString());
+        
     }
 
 
@@ -601,6 +637,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     public void removeLocalGroup(String workspaceId, String cn) {
         Name dn = this.sample.buildDn(cn);
         this.removeLocalGroup(workspaceId, dn);
+        
     }
 
 

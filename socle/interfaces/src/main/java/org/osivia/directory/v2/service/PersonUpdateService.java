@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.Name;
@@ -79,5 +80,11 @@ public interface PersonUpdateService extends PersonService {
 	 * @return the person
 	 */
 	public Person getPersonNoCache(Name dn);
+
+	/**
+	 * Return a list of persons with no connection date (has never logged on portal)
+	 * @return list of person
+	 */
+	public List<Person> findByNoConnectionDate();
 
 }

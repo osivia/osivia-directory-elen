@@ -74,4 +74,10 @@ public interface PersonDao {
 	 */
 	Person getPersonNoCache(Name dn);
 
+	/**
+ 	 * Return a list of persons with no connection date (has never logged on portal)
+	 * @return
+	 */
+	List<Person> findByNoConnectionDate();
+
 }

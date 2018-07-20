@@ -55,8 +55,7 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 @Service("personService")
 public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
-	private final static Log logger = LogFactory.getLog(PersonServiceImpl.class);
-
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
 
 	private static final String CARD_INSTANCE = "directory-person-card-instance";
 
@@ -93,7 +92,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 			appendAvatar(p);
 			
 		} catch (NameNotFoundException e) {
-			logger.warn("Person with dn "+dn+" not found");
+			ldapLogger.warn("Person with dn "+dn+" not found");
 			return null;
 		}
 
@@ -110,7 +109,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 			appendAvatar(p);
 			
 		} catch (NameNotFoundException e) {
-			logger.warn("Person with dn "+dn+" not found");
+			ldapLogger.warn("Person with dn "+dn+" not found");
 			return null;
 		}
 
@@ -153,6 +152,8 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 		
 		dao.create(p);
 		
+		ldapLogger.info("Person created : "+p.getUid());
+		
 	}
 
 	/* (non-Javadoc)
@@ -161,6 +162,8 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	@Override
 	public void update(Person p) {
 		dao.update(p);
+		
+		ldapLogger.info("Person updated : "+p.getUid());
 		
 	}
 	
@@ -263,7 +266,13 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 		
 		dao.delete(userConsulte);
 		
+		ldapLogger.info("Person deleted : "+userConsulte.getUid());
+
+		
 	}
 
-
+	@Override
+	public List<Person> findByNoConnectionDate() {
+		return dao.findByNoConnectionDate();
+	}
 }

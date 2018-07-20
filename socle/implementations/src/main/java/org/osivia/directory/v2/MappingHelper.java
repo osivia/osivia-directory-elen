@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
@@ -35,6 +37,8 @@ import org.springframework.ldap.odm.annotations.Transient;
  * @since 4.4
  */
 public class MappingHelper {
+
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
 
 	/**
 	 * Static class
@@ -84,12 +88,10 @@ public class MappingHelper {
 					return null;
 
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 				return null;
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 				return null;
 			}
 		} else
@@ -151,23 +153,17 @@ public class MappingHelper {
 				}
 
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IntrospectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			}
 		}
 
@@ -228,23 +224,17 @@ public class MappingHelper {
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IntrospectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			}
 		}
 
