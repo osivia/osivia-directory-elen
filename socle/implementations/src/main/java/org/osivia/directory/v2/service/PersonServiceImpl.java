@@ -14,6 +14,7 @@
 package org.osivia.directory.v2.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -272,7 +273,15 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	}
 
 	@Override
-	public List<Person> findByNoConnectionDate() {
-		return dao.findByNoConnectionDate();
+	public List<Person> findByNoConnectionDate(Person p) {
+		return dao.findByNoConnectionDate(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.PersonUpdateService#findByValidityDate(java.util.Date)
+	 */
+	@Override
+	public List<Person> findByValidityDate(Date d) {
+		return dao.findByValidityDate(d);
 	}
 }

@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.Name;
@@ -23,6 +24,7 @@ import javax.naming.directory.ModificationItem;
 import javax.naming.directory.SearchControls;
 
 import org.osivia.directory.v2.MappingHelper;
+import org.osivia.directory.v2.model.converter.DateToGeneralizedTime;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,6 +32,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.LessThanOrEqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.filter.NotFilter;
 import org.springframework.ldap.filter.OrFilter;
@@ -86,14 +90,37 @@ public class PersonDaoImpl implements PersonDao {
 	}
 	
 	@Override
-	public List<Person> findByNoConnectionDate() {
+	public List<Person> findByNoConnectionDate(Person p) {
+		
 		
 		String field = MappingHelper.getLdapFieldName(sample, "lastConnection");
-		NotFilter filter = new NotFilter(new LikeFilter(field, "*"));
+		NotFilter dateFilter = new NotFilter(new LikeFilter(field, "*"));
+		
+		AndFilter filter = MappingHelper.generateAndFilter(p);
+		filter.and(dateFilter);
 		
 		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
 
 	}
+	
+
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.dao.PersonDao#findByValidityDate(java.util.Date)
+	 */
+	@Override
+	public List<Person> findByValidityDate(Date d) {
+		
+		String field = MappingHelper.getLdapFieldName(sample, "validity");
+		
+		DateToGeneralizedTime converter = new DateToGeneralizedTime();
+		
+		LessThanOrEqualsFilter filter = new LessThanOrEqualsFilter(field, converter.convert(d));
+		
+		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
+
+	}
+	
 	
 
 	@Override

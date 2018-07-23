@@ -19,10 +19,12 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.directory.api.util.GeneralizedTime;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
@@ -133,6 +135,11 @@ public class MappingHelper {
 
 							Object getterResult = pd.getReadMethod()
 									.invoke(odm);
+							
+							if(getterResult instanceof Date) {
+								GeneralizedTime generalizedTime = new GeneralizedTime((Date) getterResult);
+								getterResult = generalizedTime.toGeneralizedTime();
+							}
 
 							if (getterResult != null) {
 								if (getterResult instanceof Collection<?>) {
@@ -205,6 +212,11 @@ public class MappingHelper {
 
 							Object getterResult = pd.getReadMethod()
 									.invoke(odm);
+							
+							if(getterResult instanceof Date) {
+								GeneralizedTime generalizedTime = new GeneralizedTime((Date) getterResult);
+								getterResult = generalizedTime.toGeneralizedTime();
+							}
 
 							if (getterResult != null) {
 								if (getterResult instanceof Collection<?>) {
@@ -213,6 +225,7 @@ public class MappingHelper {
 										and.and(new LikeFilter(name, o
 												.toString()));
 
+										
 									}
 								} else {
 
