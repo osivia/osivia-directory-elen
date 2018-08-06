@@ -5,6 +5,7 @@ package org.osivia.services.person.management.portlet.configuration;
 
 import javax.portlet.PortletContext;
 
+import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
 import org.osivia.portal.api.directory.v2.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class PersonManagementConfiguration implements PortletContextAware {
      */
     @Override
     public void setPortletContext(PortletContext portletContext) {
-        portletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.applicationContext);
+        portletContext.setAttribute(Constants.PORTLET_ATTR_WEBAPP_CONTEXT,applicationContext);
     }
 
 

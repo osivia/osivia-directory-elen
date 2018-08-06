@@ -1,9 +1,12 @@
 package org.osivia.services.group.management.portlet.configuration;
 
+import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 
 import org.osivia.directory.v2.service.PortalGroupService;
+import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
+import org.osivia.portal.api.portlet.PortletAppUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.portlet.context.PortletConfigAware;
 import org.springframework.web.portlet.context.PortletContextAware;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -23,7 +27,7 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration
 @ComponentScan(basePackages = "org.osivia.services.group.management.portlet")
-public class GroupManagementConfiguration implements PortletContextAware {
+public class GroupManagementConfiguration implements PortletConfigAware {
 
     /** Application context. */
     @Autowired
@@ -38,14 +42,13 @@ public class GroupManagementConfiguration implements PortletContextAware {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+ 
+    
     @Override
-    public void setPortletContext(PortletContext portletContext) {
-        portletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.applicationContext);
-    }
+    public void setPortletConfig(PortletConfig portletConfig) {
+            PortletAppUtils.registerApplication(portletConfig, applicationContext);            
 
+    }
 
     /**
      * Get view resolver.
