@@ -1,5 +1,7 @@
 package org.osivia.services.firstconnection.portlet.service;
 
+import java.util.Date;
+
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
@@ -60,10 +62,19 @@ public class FirstConnectionServiceImpl implements FirstConnectionService, Appli
         // User
         String user = request.getRemoteUser();
         
+        Person person = personService.getPerson(user);
+        
         // User form
         UserForm form = this.applicationContext.getBean(UserForm.class);
         form.setId(user);
-        form.setEmail(user);
+        form.setEmail(person.getMail());
+        form.setFirstName(person.getSn());
+        form.setLastName(person.getGivenName());
+        
+        // If a person is internal (managed by ldap), the password should be changed. 
+        if(person.getExternal() == Boolean.FALSE) {
+        	form.setMustChangePassword(true);
+        }
 
         return form;
     }
@@ -93,13 +104,22 @@ public class FirstConnectionServiceImpl implements FirstConnectionService, Appli
         String displayName = firstName + " " + lastName;
         person.setCn(displayName);
         person.setDisplayName(displayName);
+        
+        // E-mail
+        person.setMail(form.getEmail());
+        
+        // First set of connexion date
+        person.setCreationDate(new Date());
+        person.setLastConnection(new Date());
 
         // Update
         this.personService.update(person);
 
         // Update password
-        String password = form.getPassword();
-        this.personService.updatePassword(person, password);
+        if(form.isMustChangePassword()) {
+        	String password = form.getPassword();
+        	this.personService.updatePassword(person, password);
+        }
     }
 
 

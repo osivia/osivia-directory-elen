@@ -41,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoException;
 import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 
 /**
@@ -444,7 +445,17 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
         // Update workspace
         if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
-            this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
+        	try {
+        		this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
+        	}
+        	catch(Exception e) {
+        		
+    	        ldapLogger.error("Cannot remove "+person.getUid()+" from "+profile.getWorkspaceId()+". Space not found. "+e.getClass());
+        		
+        		if (!(e instanceof NuxeoException)) {
+        			throw e;
+        		}
+        	}
         }
         
     }

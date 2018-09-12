@@ -1,5 +1,7 @@
 package org.osivia.services.firstconnection.portlet.model.validator;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.osivia.services.firstconnection.portlet.model.UserForm;
 import org.springframework.stereotype.Component;
@@ -42,18 +44,31 @@ public class UserFormValidator implements Validator {
      */
     @Override
     public void validate(Object target, Errors errors) {
-        ValidationUtils.rejectIfEmpty(errors, "firstName", "NotEmpty");
-        ValidationUtils.rejectIfEmpty(errors, "lastName", "NotEmpty");
-        ValidationUtils.rejectIfEmpty(errors, "password", "NotEmpty");
-        ValidationUtils.rejectIfEmpty(errors, "passwordConfirmation", "NotEmpty");
-
+    	
         // User form
         UserForm form = (UserForm) target;
-        if (StringUtils.isNotEmpty(form.getPassword()) && (form.getPassword().length() < PASSWORD_MIN_LENGTH)) {
-            errors.rejectValue("password", "TooShort", new Object[]{PASSWORD_MIN_LENGTH}, null);
-        }
-        if (StringUtils.isNotEmpty(form.getPasswordConfirmation()) && !StringUtils.equals(form.getPassword(), form.getPasswordConfirmation())) {
-            errors.rejectValue("passwordConfirmation", "Unmatching");
+    	
+        ValidationUtils.rejectIfEmpty(errors, "firstName", "NotEmpty");
+        ValidationUtils.rejectIfEmpty(errors, "lastName", "NotEmpty");
+        ValidationUtils.rejectIfEmpty(errors, "email", "NotEmpty");
+        
+        boolean emailValide = Pattern.matches(
+				"^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", form.getEmail());
+		if (!emailValide) {
+			errors.rejectValue("email", "wrong.mail");
+		}
+        
+        if(form.isMustChangePassword()) {
+        
+	        ValidationUtils.rejectIfEmpty(errors, "password", "NotEmpty");
+	        ValidationUtils.rejectIfEmpty(errors, "passwordConfirmation", "NotEmpty");
+	
+	        if (StringUtils.isNotEmpty(form.getPassword()) && (form.getPassword().length() < PASSWORD_MIN_LENGTH)) {
+	            errors.rejectValue("password", "TooShort", new Object[]{PASSWORD_MIN_LENGTH}, null);
+	        }
+	        if (StringUtils.isNotEmpty(form.getPasswordConfirmation()) && !StringUtils.equals(form.getPassword(), form.getPasswordConfirmation())) {
+	            errors.rejectValue("passwordConfirmation", "Unmatching");
+	        }
         }
     }
 
