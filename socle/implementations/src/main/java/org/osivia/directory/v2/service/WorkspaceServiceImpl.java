@@ -22,12 +22,15 @@ import javax.naming.Name;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
+import org.osivia.directory.v2.repository.GetUserProfileCommand;
+import org.osivia.directory.v2.repository.ReIndexUserCommand;
 import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -485,9 +488,21 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
         nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
 
-        // Nuxeo command
-        INuxeoCommand command = this.applicationContext.getBean(UpdateWorkspaceCommand.class, workspaceId, user, attach);
-        nuxeoController.executeNuxeoCommand(command);
+        // Modify members lists
+        INuxeoCommand updateWorkspace = this.applicationContext.getBean(UpdateWorkspaceCommand.class, workspaceId, user, attach);
+        nuxeoController.executeNuxeoCommand(updateWorkspace);
+        
+        // Get the UserProfile UUID
+        INuxeoCommand getUserProfile = this.applicationContext.getBean(GetUserProfileCommand.class, user);
+        Object profile = nuxeoController.executeNuxeoCommand(getUserProfile);
+        if(profile != null) {
+        	Document nxProfile = (Document) profile;
+        	
+        	INuxeoCommand reindexUser = this.applicationContext.getBean(ReIndexUserCommand.class, nxProfile);
+            nuxeoController.executeNuxeoCommand(reindexUser);
+
+        }
+        
     }
 
 
