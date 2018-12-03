@@ -28,7 +28,7 @@
     <c:if test="${not empty form.users}">
         <c:forEach items="${form.users}" var="user">
             <div class="table-row">
-                <a href="#" class="person no-ajax-link ${user.id eq form.selectedUserId ? 'active' : ''}" data-id="${user.id}">
+                <a href="javascript:;" class="person no-ajax-link ${user.id eq form.selectedUserId ? 'active' : ''}" data-id="${user.id}">
                     <!-- Avatar -->
                     <span class="person-avatar">
                         <c:choose>
