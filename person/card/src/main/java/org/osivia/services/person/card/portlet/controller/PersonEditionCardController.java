@@ -109,6 +109,8 @@ public class PersonEditionCardController  extends CMSPortlet implements PortletC
 		form.setPhone(card.getNxProfile().getPhone());
 		form.setMobilePhone(card.getNxProfile().getMobilePhone());
 		
+		form.setShownInSearch(card.getNxProfile().getShownInSearch());
+		
 		return form;
 	}
 	

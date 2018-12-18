@@ -29,6 +29,9 @@ public class NuxeoProfile {
 	private String occupation;
 	
 	private String institution;
+	
+	/** true if the user accept to be found in the search */ 
+	private Boolean shownInSearch;
 
 	/**
 	 * @return the bio
@@ -100,6 +103,15 @@ public class NuxeoProfile {
 		this.institution = institution;
 	}
 
+	public Boolean getShownInSearch() {
+		return shownInSearch;
+	}
 
+	public void setShownInSearch(Boolean shownInSearch) {
+		this.shownInSearch = shownInSearch;
+	}
+
+
+	
 
 }

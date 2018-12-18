@@ -75,7 +75,12 @@ public class PersonCardServiceImpl implements PersonCardService {
 	 */
 	private static final String INSTITUTION = "ttc_userprofile:institution";
 	
-
+	/**
+	 * 
+	 */
+	private static final String SHOWN_IN_SEARCH = "ttc_userprofile:shownInSearch";
+	
+	
 	@Autowired
 	private PersonCardConfig config;
 
@@ -269,6 +274,7 @@ public class PersonCardServiceImpl implements PersonCardService {
 		profile.setMobilePhone(docNxProfile.getString(MOBILE));
 		profile.setOccupation(docNxProfile.getString(PROFESSION));
 		profile.setInstitution(docNxProfile.getString(INSTITUTION));
+		profile.setShownInSearch(Boolean.valueOf(docNxProfile.getString(SHOWN_IN_SEARCH)));
 		
 		return profile;
 	}
@@ -370,6 +376,7 @@ public class PersonCardServiceImpl implements PersonCardService {
 		nxProperties.put(MOBILE, form.getMobilePhone());
 		nxProperties.put(PROFESSION, form.getOccupation());
 		nxProperties.put(INSTITUTION,  form.getInstitution());
+		nxProperties.put(SHOWN_IN_SEARCH, form.getShownInSearch().toString());
 		
 	}
 

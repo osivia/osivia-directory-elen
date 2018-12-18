@@ -44,6 +44,9 @@ public class FormEdition {
 	private String occupation;
 	
 	private String institution;
+	
+	/** true if the user accept to be found in the search */ 
+	private Boolean shownInSearch;
 
 	/**
 	 * @return the avatar
@@ -190,5 +193,21 @@ public class FormEdition {
 		this.institution = institution;
 	}
 
+	/**
+	 * @return shownInSearch
+	 */
+	public Boolean getShownInSearch() {
+		return shownInSearch;
+	}
+
+	/**
+	 * 
+	 * @param shownInSearch
+	 */
+	public void setShownInSearch(Boolean shownInSearch) {
+		this.shownInSearch = shownInSearch;
+	}
+
+	
 	
 }

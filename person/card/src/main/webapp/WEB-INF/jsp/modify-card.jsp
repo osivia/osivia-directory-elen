@@ -177,7 +177,21 @@
 			</div>
 		</div>
 		
+		<div class="form-group"> 	
+			<form:label path="shownInSearch" cssClass="col-md-2 control-label">
+				<op:translate  key="label.showninsearch" />
+			</form:label>
 		
+			<div class="col-md-10">
+				<div class="checkbox">
+					<label>
+						<form:checkbox path="shownInSearch" />
+						<op:translate  key="label.showninsearch.description" />
+					</label>
+				</div>
+			</div>
+		</div>
+				
 	
 		<!-- Buttons -->
 	    <div class="row">
