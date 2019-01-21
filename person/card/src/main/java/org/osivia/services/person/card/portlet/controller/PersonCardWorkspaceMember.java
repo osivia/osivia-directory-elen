@@ -21,7 +21,9 @@ public class PersonCardWorkspaceMember {
     private String vignetteUrl;
     /** Worskapce link */
 	private String link;
-
+	/** Workspace id */
+	private String workspaceId;
+	
 	public PersonCardWorkspaceMember(WorkspaceMember member) {
 		this.member = member;
 	}
@@ -105,6 +107,20 @@ public class PersonCardWorkspaceMember {
 	public void setLink(String link) {
 		this.link = link;
 		
+	}
+
+	/**
+	 * @return the workspaceId
+	 */
+	public String getWorkspaceId() {
+		return workspaceId;
+	}
+
+	/**
+	 * @param workspaceId the workspaceId to set
+	 */
+	public void setWorkspaceId(String workspaceId) {
+		this.workspaceId = workspaceId;
 	}
 
 	

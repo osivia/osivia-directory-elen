@@ -23,10 +23,12 @@ import org.osivia.directory.v2.service.WorkspaceService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.login.IUserDatasModuleRepository;
 import org.osivia.portal.api.notifications.INotificationsService;
+import org.osivia.portal.api.notifications.NotificationsType;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
@@ -255,6 +257,8 @@ public class PersonCardServiceImpl implements PersonCardService {
             
             personCardWorkspaceMember.setLink(cmsUrl);
             
+            personCardWorkspaceMember.setWorkspaceId(workspace.getString("webc:url"));
+            
 			card.getMemberOfSpace().add(personCardWorkspaceMember);
 			
 		}
@@ -416,6 +420,22 @@ public class PersonCardServiceImpl implements PersonCardService {
 		
 		personService.delete(card.getUserConsulte());
 		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#exit(org.osivia.services.person.card.portlet.controller.Card, java.lang.String)
+	 */
+	@Override
+	public void exit(PortalControllerContext portalControllerContext, Card card, String workspaceId) {
+
+		workspaceService.removeMember(workspaceId, card.getUserConsulte().getDn());
+		
+        // Notification
+        Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
+        String message = bundle.getString("MEMBERSHIP_EXIT_OK");
+        this.notificationsService.addSimpleNotification(portalControllerContext, message, NotificationsType.SUCCESS);			
+				
 	}
 
 

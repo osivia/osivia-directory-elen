@@ -39,7 +39,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.context.PortletConfigAware;
@@ -142,6 +144,18 @@ public class PersonCardController extends CMSPortlet implements PortletContextAw
 			throws PortalException, CMSException {
 
         response.setRenderParameter("controller", "chgPwd");
+	}
+	
+	@ActionMapping(value="exit")
+	public void exit(@ModelAttribute("card") Card card, @RequestParam("workspaceId") String workspaceId,  ActionRequest request, ActionResponse response, PortletSession session,  SessionStatus status) {
+		
+		PortalControllerContext pcc = new PortalControllerContext(this.portletContext, request, response);
+
+		service.exit(pcc, card, workspaceId);
+		status.setComplete();
+
+        request.setAttribute("osivia.updateContents", "true");
+		
 	}
 
 	@RenderMapping("blank")

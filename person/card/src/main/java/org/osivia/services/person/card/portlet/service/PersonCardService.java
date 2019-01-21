@@ -109,6 +109,14 @@ public interface PersonCardService {
 	 */
 	public void deletePerson(Card card);
 
+	/**
+	 * Leave a workspace
+	 * @param portalControllerContext
+	 * @param card
+	 * @param workspaceId
+	 */
+	public void exit(PortalControllerContext portalControllerContext, Card card, String workspaceId);
+
 
 
 

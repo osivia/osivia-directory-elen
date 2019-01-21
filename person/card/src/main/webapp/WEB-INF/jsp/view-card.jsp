@@ -110,7 +110,7 @@
 		                <div class="panel panel-default">
 		                    <div class="panel-body">
 		                        <div class="row">
-		                            <div class="col-sm-6">
+		                            <div class="col-sm-5">
 		                                <div class="media">
 		                                    <!-- Vignette -->
 		                                    <c:if test="${not empty memberOfSpace.vignetteUrl}">
@@ -131,9 +131,23 @@
 		                                </div>
 		                            </div>
 		                            
-		                            <div class="col-sm-6">
+		                            <div class="col-sm-5">
 		                                <p><op:translate key="${memberOfSpace.member.role.key}" classLoader="${memberOfSpace.member.role.classLoader}" /></p>
 		                            </div>
+		                            
+		                            <portlet:actionURL name="exit" var="exitUrl">
+		                            	<portlet:param name="workspaceId" value="${memberOfSpace.workspaceId}"/>
+		                            </portlet:actionURL>
+		                            
+		                            <div class="col-sm-2">
+		                              	<!-- Remove membership -->
+		                              	<c:if test="${memberOfSpace.member.role.id ne 'owner'}">
+								            <button type="button" onclick="$JQry('#${namespace}-confirmation-form').attr('action', '${exitUrl}');" data-toggle="modal" data-target="#${namespace}-exit-modal"  class="btn btn-default"> 
+								                <i class="glyphicons glyphicons-exit"></i>
+								                <span><op:translate key="label.btn.exit" /></span>
+								            </button>
+							            </c:if>
+		                            </div>		                            
 		                        </div>
 		                    </div>
 		                </div>
@@ -173,6 +187,41 @@
 	        </div>
 	    </div>
     </div>
+    
+    
+    <!-- Modal exit -->
+	<div id="${namespace}-exit-modal" class="modal fade" role="dialog">
+		<form id="${namespace}-confirmation-form" action="#" method="post">
+	
+	        <div class="modal-dialog modal-sm">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <button type="button" class="close" data-dismiss="modal">
+	                        <i class="glyphicons glyphicons-remove"></i>
+	                        <span class="sr-only"><op:translate key="CLOSE" /></span>
+	                    </button>
+	
+	                    <h4 class="modal-title"><op:translate key="MEMBERSHIP_EXIT_MODAL_TITLE" /></h4>
+	                </div>
+	
+	                <div class="modal-body">
+	                    <p><op:translate key="MEMBERSHIP_EXIT_MODAL_MESSAGE" /></p>
+	                </div>
+	
+	                <div class="modal-footer">
+	                    <button id="${namespace}-confirmation-exit"  type="submit" class="btn btn-danger" data-dismiss="modal">
+	                        <i class="glyphicons glyphicons-exit"></i>
+	                        <span><op:translate key="label.btn.exit" /></span>
+	                    </button>
+	
+	                    <button type="button" class="btn btn-default" data-dismiss="modal">
+	                        <span><op:translate key="CANCEL" /></span>
+	                    </button>
+	                </div>
+	            </div>
+	        </div>
+        </form>
+    </div>    
 </c:if>
 
 
