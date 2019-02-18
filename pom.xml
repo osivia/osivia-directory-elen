@@ -71,8 +71,8 @@
                     <version>3.3</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 
@@ -144,26 +144,17 @@
                         </execution>
                     </executions>
                 </plugin>
-                
-                <!-- AntRun -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
-                </plugin>
-                
-                <!-- Eclipse -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <version>2.10</version>
-                    <configuration>
-                        <downloadJavadocs>true</downloadJavadocs>
-                        <downloadSources>true</downloadSources>
-                        <wtpversion>2.0</wtpversion>
-                    </configuration>
-                </plugin>
 
+	            <!-- Disable strict javadoc checking since java8 -->
+	            <plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-javadoc-plugin</artifactId>
+	                <configuration>
+	                    <additionalOptions>
+	                        <additionalOption>-Xdoclint:none</additionalOption>
+	                    </additionalOptions>
+	                </configuration>
+	            </plugin>
             </plugins>
         </pluginManagement>
     </build>
