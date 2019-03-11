@@ -59,10 +59,10 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
     /** Unique member. */
     @Attribute
     private List<Name> uniqueMember;
-
-    /** Explicit member. */
-    @Attribute(name = "portalExplicitMember")
-    private List<Name> explicitMember;
+//
+//    /** Explicit member. */
+//    @Attribute(name = "portalExplicitMember")
+//    private List<Name> explicitMember;
 
     /** Workspace identifier. */
     @Attribute(name = "portalCollabWorkspaceId")
@@ -71,10 +71,10 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
     /** Display name (useful for local group). */
     @Attribute(name = "portalDisplayName")
     private String displayName;
-
-    /** Explicit manager. */
-    @Attribute(name = "portalExplicitManager")
-    private List<Name> explicitManager;
+//
+//    /** Explicit manager. */
+//    @Attribute(name = "portalExplicitManager")
+//    private List<Name> explicitManager;
 
     /** Profile type. */
     @Attribute(name = "portalProfileType")
@@ -91,8 +91,8 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
     public CollabProfileImpl() {
         super();
         this.uniqueMember = new ArrayList<Name>();
-        this.explicitMember = new ArrayList<Name>();
-        this.explicitManager = new ArrayList<Name>();
+//        this.explicitMember = new ArrayList<Name>();
+//        this.explicitManager = new ArrayList<Name>();
     }
 
 
@@ -167,23 +167,23 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
         this.uniqueMember = uniqueMember;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Name> getExplicitMember() {
-        return explicitMember;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setExplicitMember(List<Name> explicitMember) {
-        this.explicitMember = explicitMember;
-    }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public List<Name> getExplicitMember() {
+//        return explicitMember;
+//    }
+//
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void setExplicitMember(List<Name> explicitMember) {
+//        this.explicitMember = explicitMember;
+//    }
 
 
     /**
@@ -220,24 +220,24 @@ public final class CollabProfileImpl implements CollabProfile, Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Name> getExplicitManager() {
-        return explicitManager;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setExplicitManager(List<Name> explicitManager) {
-        this.explicitManager = explicitManager;
-    }
+//
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public List<Name> getExplicitManager() {
+//        return explicitManager;
+//    }
+//
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    @Override
+//    public void setExplicitManager(List<Name> explicitManager) {
+//        this.explicitManager = explicitManager;
+//    }
 
 
     /**

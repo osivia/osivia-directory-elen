@@ -40,17 +40,17 @@ public interface CollabProfile {
 	 */
 	public WorkspaceGroupType getType();
 
-	/**
-	 * 
-	 * @param explicitManager
-	 */
-	public void setExplicitManager(List<Name> explicitManager);
-
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Name> getExplicitManager();
+//	/**
+//	 * 
+//	 * @param explicitManager
+//	 */
+//	public void setExplicitManager(List<Name> explicitManager);
+//
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	public List<Name> getExplicitManager();
 
 	/**
 	 * 
@@ -76,17 +76,17 @@ public interface CollabProfile {
 	 */
 	public String getWorkspaceId();
 
-	/**
-	 * 
-	 * @param explicitMember
-	 */
-	public void setExplicitMember(List<Name> explicitMember);
-
-	/**
-	 * 
-	 * @return
-	 */
-	public List<Name> getExplicitMember();
+//	/**
+//	 * 
+//	 * @param explicitMember
+//	 */
+//	public void setExplicitMember(List<Name> explicitMember);
+//
+//	/**
+//	 * 
+//	 * @return
+//	 */
+//	public List<Name> getExplicitMember();
 
 	/**
 	 * 
