@@ -86,6 +86,7 @@ local.properties
 
 # Generated files
 .idea/**/contentModel.xml
+.idea/artifacts/*.xml
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
