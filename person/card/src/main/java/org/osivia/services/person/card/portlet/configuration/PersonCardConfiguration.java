@@ -1,28 +1,23 @@
+/**
+ * 
+ */
 package org.osivia.services.person.card.portlet.configuration;
-
-import javax.portlet.PortletConfig;
-import javax.portlet.PortletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.CharEncoding;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.directory.v2.service.RoleService;
-import org.osivia.portal.api.Constants;
+import org.osivia.directory.v2.service.WorkspaceService;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.notifications.INotificationsService;
-import org.osivia.portal.api.portlet.PortletAppUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.portlet.context.PortletConfigAware;
-import org.springframework.web.portlet.context.PortletContextAware;
 import org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver;
 import org.springframework.web.portlet.multipart.PortletMultipartResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -32,17 +27,12 @@ import fr.toutatice.portail.cms.nuxeo.api.forms.IFormsService;
 import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoServiceFactory;
 
 /**
- * Person card portlet configuration.
- * 
  * @author Loïc Billon
+ *
  */
 @Configuration
 @ComponentScan(basePackages = "org.osivia.services.person.card.portlet")
-public class PersonCardConfiguration implements PortletConfigAware {
-
-    /** Application context. */
-    @Autowired
-    private ApplicationContext applicationContext;
+public class PersonCardConfiguration {
 
 
     /**
@@ -50,15 +40,6 @@ public class PersonCardConfiguration implements PortletConfigAware {
      */
     public PersonCardConfiguration() {
         super();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setPortletConfig(PortletConfig portletConfig) {
-            PortletAppUtils.registerApplication(portletConfig, applicationContext);            
-
     }
 
 
@@ -93,7 +74,7 @@ public class PersonCardConfiguration implements PortletConfigAware {
 
     /**
      * Get multipart resolver.
-     *
+     * 
      * @return multipart resolver
      */
     @Bean(name = "portletMultipartResolver")
@@ -125,6 +106,17 @@ public class PersonCardConfiguration implements PortletConfigAware {
     public RoleService getRoleService() {
     	return DirServiceFactory.getService(RoleService.class);
     }
+    
+    /**
+     * Get workspace service.
+     *
+     * @return workspace service
+     */
+    @Bean
+    public WorkspaceService getWorkspaceService() {
+    	return DirServiceFactory.getService(WorkspaceService.class);
+    }
+    
 
     /**
      * Get forms service.
@@ -138,6 +130,17 @@ public class PersonCardConfiguration implements PortletConfigAware {
 
 
     /**
+     * Get portal URL factory.
+     * 
+     * @return portal URL factory
+     */
+	@Bean(name="urlFactory")
+	public IPortalUrlFactory getUrlFactory() {
+		return Locator.findMBean(IPortalUrlFactory.class, IPortalUrlFactory.MBEAN_NAME);
+	}
+    
+    
+    /**
      * Get bundle factory.
      *
      * @return bundle factory
@@ -146,7 +149,7 @@ public class PersonCardConfiguration implements PortletConfigAware {
     public IBundleFactory getBundleFactory() {
         IInternationalizationService internationalizationService = Locator.findMBean(IInternationalizationService.class,
                 IInternationalizationService.MBEAN_NAME);
-        return internationalizationService.getBundleFactory(this.getClass().getClassLoader(), this.applicationContext);
+        return internationalizationService.getBundleFactory(this.getClass().getClassLoader());
     }
 
 
@@ -159,5 +162,4 @@ public class PersonCardConfiguration implements PortletConfigAware {
     public INotificationsService getNotificationService() {
         return Locator.findMBean(INotificationsService.class, INotificationsService.MBEAN_NAME);
     }
-
 }

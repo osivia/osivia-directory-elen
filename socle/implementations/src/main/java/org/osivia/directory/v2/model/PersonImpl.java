@@ -101,6 +101,10 @@ public final class PersonImpl implements Person, Serializable {
     @Attribute(name = "portalPersonValidity")
     private Date validity;
 
+    /** Creation date. */
+    @Attribute(name = "portalPersonCreationDate")
+    private Date creationDate;
+    
     /** Last connection date. */
     @Attribute(name = "portalPersonLastConnection")
     private Date lastConnection;
@@ -332,7 +336,24 @@ public final class PersonImpl implements Person, Serializable {
     }
 
 
-    /**
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+
+	/**
      * {@inheritDoc}
      */
     @Override

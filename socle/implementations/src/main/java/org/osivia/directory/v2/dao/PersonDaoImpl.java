@@ -15,10 +15,7 @@ package org.osivia.directory.v2.dao;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import javax.naming.Name;
 import javax.naming.directory.BasicAttribute;
@@ -30,6 +27,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.osivia.directory.v2.MappingHelper;
+import org.osivia.directory.v2.model.converter.DateToGeneralizedTime;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +39,10 @@ import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.BinaryLogicalFilter;
 import org.springframework.ldap.filter.Filter;
 import org.springframework.ldap.filter.LikeFilter;
+import org.springframework.ldap.filter.AndFilter;
+import org.springframework.ldap.filter.LessThanOrEqualsFilter;
+import org.springframework.ldap.filter.LikeFilter;
+import org.springframework.ldap.filter.NotFilter;
 import org.springframework.ldap.filter.OrFilter;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Transient;
@@ -143,13 +145,14 @@ public class PersonDaoImpl implements PersonDao {
             globalFilter.append(quickSearchFilter);
         }
 
-        return (List<Person>) this.template.find(this.sample.buildBaseDn(), globalFilter, this.getSearchControls(), this.sample.getClass());
-    }
 
+		return (List<Person>) template.find(sample.buildBaseDn(), globalFilter, getSearchControls() , sample.getClass());
+
+	}
 
     /**
      * Get quick search LDAP attribute names.
-     * 
+     *
      * @return LDAP attribute names
      */
     protected List<String> getQuickSearchAttributes() {
@@ -157,9 +160,43 @@ public class PersonDaoImpl implements PersonDao {
     }
 
 
+	@Override
+	public List<Person> findByNoConnectionDate(Person p) {
+
+
+		String field = MappingHelper.getLdapFieldName(sample, "lastConnection");
+		NotFilter dateFilter = new NotFilter(new LikeFilter(field, "*"));
+
+		AndFilter filter = MappingHelper.generateAndFilter(p);
+		filter.and(dateFilter);
+
+		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
+
+	}
+
+
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.dao.PersonDao#findByValidityDate(java.util.Date)
+	 */
+	@Override
+	public List<Person> findByValidityDate(Date d) {
+
+		String field = MappingHelper.getLdapFieldName(sample, "validity");
+
+		DateToGeneralizedTime converter = new DateToGeneralizedTime();
+
+		LessThanOrEqualsFilter filter = new LessThanOrEqualsFilter(field, converter.convert(d));
+
+		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
+
+	}
+
+	
+
     /**
      * Get LDAP attribute name.
-     * 
+     *
      * @param criteria search criteria
      * @param field criteria field
      * @return LDAP attribute name
@@ -184,7 +221,7 @@ public class PersonDaoImpl implements PersonDao {
 
     /**
      * Get LDAP query filter.
-     * 
+     *
      * @param criteria LDAP search criteria
      * @param field criteria field
      * @param attribute LDAP attribute name

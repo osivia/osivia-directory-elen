@@ -11,7 +11,7 @@
     
     
     <properties>
-        <toutatice.version>4.7.13</toutatice.version>
+        <toutatice.version>4.7-SNAPSHOT</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
@@ -25,24 +25,15 @@
         <module>ear</module>
     </modules>
     
-    
-    <dependencyManagement>
-        <dependencies>
-            
-            <!-- jsoup -->
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>${jsoup.version}</version>
-                <scope>compile</scope>
-            </dependency>
-        
-        </dependencies>
-    </dependencyManagement>
-    
-    
     <dependencies>
-    
+        <!-- jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Toutatice -->
         <dependency>
             <groupId>toutatice-portail.cms</groupId>
@@ -56,10 +47,9 @@
             <version>${toutatice.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
-    
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -158,12 +148,12 @@
             </plugins>
         </pluginManagement>
     </build>
-    
+
     <scm>
 		<url>https://github.com/osivia/osivia-directory</url>
 		<connection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</developerConnection>     
-		<tag>HEAD</tag> 
+		<developerConnection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</developerConnection>
+		<tag>HEAD</tag>
 	</scm>
     
     
@@ -184,7 +174,7 @@
         <url>http://www.osivia.org/</url>
     </organization>
     
-    
+
     <profiles>
     	<profile>
     		<id>ci</id>
@@ -198,5 +188,5 @@
         		</snapshotRepository>
     		</distributionManagement>
     	</profile>
-    </profiles>    
+    </profiles>
 </project>

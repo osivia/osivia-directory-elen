@@ -14,6 +14,7 @@
 package org.osivia.directory.v2.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,9 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 @Service
 public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
-    /** Person card portlet instance. */
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
+
+	/** Person card portlet instance. */
     private static final String CARD_INSTANCE = "directory-person-card-instance";
 
 
@@ -102,19 +105,6 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     protected IBundleFactory bundleFactory;
 
 
-    /** Log. */
-    private final Log log;
-
-
-    /**
-     * Constructor.
-     */
-    public PersonServiceImpl() {
-        super();
-        this.log = LogFactory.getLog(this.getClass());
-    }
-
-
     /**
      * {@inheritDoc}
      */
@@ -135,29 +125,29 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
             this.appendAvatar(p);
 
         } catch (NameNotFoundException e) {
-            this.log.warn("Person with dn " + dn + " not found");
+            ldapLogger.warn("Person with dn "+dn+" not found");
             return null;
         }
 
-        return p;
-    }
+		return p;
+		
+	}
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Person getPersonNoCache(Name dn) {
+
         Person p;
         try {
-            p = this.dao.getPersonNoCache(dn);
-            this.appendAvatar(p);
+            p = dao.getPersonNoCache(dn);
+            appendAvatar(p);
+
         } catch (NameNotFoundException e) {
-            this.log.warn("Person with dn " + dn + " not found");
+            ldapLogger.warn("Person with dn "+dn+" not found");
             return null;
         }
 
         return p;
+
     }
 
 
@@ -184,45 +174,47 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
         return persons;
     }
 
+	
+	/* (non-Javadoc)
+	 * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
+	 */
+	@Override
+	public void create(Person p) {
+		
+		dao.create(p);
+		
+		ldapLogger.info("Person created : "+p.getUid());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void create(Person p) {
-        this.dao.create(p);
-    }
+	}
 
+	/* (non-Javadoc)
+	 * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
+	 */
+	@Override
+	public void update(Person p) {
+		dao.update(p);
+		
+		ldapLogger.info("Person updated : "+p.getUid());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void update(Person p) {
-        this.dao.update(p);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
-        this.update(p);
-
-        NuxeoController controller = new NuxeoController(portalControllerContext);
-
-        Document nuxeoProfile = (Document) this.getEcmProfile(portalControllerContext, p);
-
-        UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile, properties, avatar);
-        controller.executeNuxeoCommand(updateCmd);
-
-        if (avatar != null) {
-            controller.refreshUserAvatar(p.getUid());
-        }
-    }
-
+	}
+	
+	@Transactional
+	public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
+		
+		update(p);
+		
+		NuxeoController controller = new NuxeoController(portalControllerContext);
+		
+		Document nuxeoProfile = (Document) getEcmProfile(portalControllerContext, p);
+		
+		UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile,properties, avatar);
+		controller.executeNuxeoCommand(updateCmd);
+		
+		if(avatar != null) {
+			controller.refreshUserAvatar(p.getUid());
+		}
+	}
+	
 
     /**
      * {@inheritDoc}
@@ -322,27 +314,29 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 
     }
 
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.PersonUpdateService#delete(org.osivia.portal.api.directory.v2.model.Person)
+	 */
+	@Override
+	public void delete(Person userConsulte) {
+		
+		CollabProfile searchProfiles = workspaceService.getEmptyProfile();
+		searchProfiles.setType(WorkspaceGroupType.space_group);
+		List<Name> name = new ArrayList<Name>();
+		name.add(userConsulte.getDn());
+		searchProfiles.setUniqueMember(name);
+		
+		List<CollabProfile> spaces = workspaceService.findByCriteria(searchProfiles);
+		for(CollabProfile space : spaces) {
+			workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
+		}
+		
+		dao.delete(userConsulte);
+		
+		ldapLogger.info("Person deleted : "+userConsulte.getUid());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Person userConsulte) {
 
-        CollabProfile searchProfiles = this.workspaceService.getEmptyProfile();
-        searchProfiles.setType(WorkspaceGroupType.space_group);
-        List<Name> name = new ArrayList<Name>();
-        name.add(userConsulte.getDn());
-        searchProfiles.setUniqueMember(name);
-
-        List<CollabProfile> spaces = this.workspaceService.findByCriteria(searchProfiles);
-        for (CollabProfile space : spaces) {
-            this.workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
-        }
-
-        this.dao.delete(userConsulte);
-
-    }
+	}
 
 
     /**
@@ -370,7 +364,6 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
             controllerContext = ControllerContextAdapter.getControllerContext(portalControllerContext);
             request = portalControllerContext.getRequest();
         }
-
         // Portal administrator indicator attribute value
         Boolean attribute;
         if (controllerContext == null) {
@@ -387,4 +380,17 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
         return BooleanUtils.toBoolean(attribute);
     }
 
+
+	@Override
+	public List<Person> findByNoConnectionDate(Person p) {
+		return dao.findByNoConnectionDate(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.PersonUpdateService#findByValidityDate(java.util.Date)
+	 */
+	@Override
+	public List<Person> findByValidityDate(Date d) {
+		return dao.findByValidityDate(d);
+	}
 }

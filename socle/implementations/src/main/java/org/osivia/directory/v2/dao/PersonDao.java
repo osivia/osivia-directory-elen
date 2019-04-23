@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.Name;
@@ -73,5 +74,19 @@ public interface PersonDao {
 	 * @return the person
 	 */
 	Person getPersonNoCache(Name dn);
+
+	/**
+ 	 * Return a list of persons with no connection date (has never logged on portal)
+ 	 * @param p the person search
+	 * @return
+	 */
+	List<Person> findByNoConnectionDate(Person p);
+	
+	/**
+	 * Return a list of persons with a validity date less than the one passed 
+	 * @param d the date
+	 * @return list of person
+	 */	
+	List<Person> findByValidityDate(Date d);
 
 }

@@ -1,74 +1,104 @@
+/**
+ * 
+ */
 package org.osivia.services.person.card.portlet.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.Name;
-import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.nuxeo.ecm.automation.client.model.Document;
+import org.nuxeo.ecm.automation.client.model.Documents;
+import org.nuxeo.ecm.automation.client.model.PropertyMap;
 import org.osivia.directory.v2.model.ext.Avatar;
+import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.directory.v2.service.RoleService;
+import org.osivia.directory.v2.service.WorkspaceService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
+import org.osivia.portal.api.locator.Locator;
+import org.osivia.portal.api.login.IUserDatasModuleRepository;
 import org.osivia.portal.api.notifications.INotificationsService;
 import org.osivia.portal.api.notifications.NotificationsType;
+import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
-import org.osivia.services.person.card.portlet.model.PersonCard;
-import org.osivia.services.person.card.portlet.model.PersonCardOptions;
-import org.osivia.services.person.card.portlet.model.PersonEditionForm;
-import org.osivia.services.person.card.portlet.model.PersonNuxeoProfile;
-import org.osivia.services.person.card.portlet.model.PersonPasswordEditionForm;
-import org.osivia.services.person.card.portlet.model.PersonPasswordEditionMode;
-import org.osivia.services.person.card.portlet.model.PersonTitle;
-import org.osivia.services.person.card.portlet.repository.PersonCardRepository;
+import org.osivia.services.person.card.portlet.controller.Card;
+import org.osivia.services.person.card.portlet.controller.FormChgPwd;
+import org.osivia.services.person.card.portlet.controller.FormEdition;
+import org.osivia.services.person.card.portlet.controller.NuxeoProfile;
+import org.osivia.services.person.card.portlet.controller.PersonCardConfig;
+import org.osivia.services.person.card.portlet.controller.PersonCardWorkspaceMember;
+import org.osivia.services.person.card.portlet.repository.GetUserWorkspacesCommand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+
 /**
- * Person card portlet service implementation.
+ * @author Loïc Billon
  *
- * @author Cédric Krommenhoek
- * @see PersonCardService
  */
 @Service
 public class PersonCardServiceImpl implements PersonCardService {
 
-    /** Administrator role system property. */
-    private static final String ADMINISTRATOR_ROLE_PROPERTY = "personcard.roles.roleAdministrator";
-    /** Password edition allowed indicator system property. */
-    private static final String PASSWORD_EDITION_ALLOWED_PROPERTY = "personcard.personCanChangePassword";
+	/**
+	 * 
+	 */
+	private static final String PROFESSION = "ttc_userprofile:profession";
 
+	/**
+	 * 
+	 */
+	private static final String MOBILE = "ttc_userprofile:mobile";
 
-    /** Application context. */
-    @Autowired
-    private ApplicationContext applicationContext;
+	/**
+	 * 
+	 */
+	private static final String PHONE_NUMBER = "userprofile:phonenumber";
 
-    /** Portlet repository. */
-    @Autowired
-    private PersonCardRepository repository;
+	/**
+	 * 
+	 */
+	private static final String BIO = "ttc_userprofile:bio";
 
-    /** Person service. */
-    @Autowired
-    private PersonUpdateService personService;
+	/**
+	 * 
+	 */
+	private static final String INSTITUTION = "ttc_userprofile:institution";
+	
+	/**
+	 * 
+	 */
+	private static final String SHOWN_IN_SEARCH = "ttc_userprofile:shownInSearch";
+	
+	
+	@Autowired
+	private PersonCardConfig config;
 
-    /** Role service. */
-    @Autowired
-    private RoleService roleService;
+	@Autowired
+	private PersonUpdateService personService;
+	
+	@Autowired
+	private WorkspaceService workspaceService;
 
-    /** Internationalization bundle factory. */
+	@Autowired
+	private IPortalUrlFactory urlFactory;
+	
+	@Autowired
+	private RoleService roleService;
+	
+    /** Bundle factory. */
     @Autowired
     private IBundleFactory bundleFactory;
 
@@ -77,454 +107,337 @@ public class PersonCardServiceImpl implements PersonCardService {
     private INotificationsService notificationsService;
 
 
-    /** Administrator role. */
-    private final String administratorRole;
-    /** Password edition allowed indicator. */
-    private final boolean passwordEditionAllowed;
-
-
     /**
-     * Constructor.
+     * {@inheritDoc}
      */
-    public PersonCardServiceImpl() {
-        super();
+    @Override
+    public LevelEdition findLevelEdition(Person userConnecte, Person userConsulte) {
+        // Level
+        LevelEdition level;
 
-        // Administrator role
-        this.administratorRole = System.getProperty(ADMINISTRATOR_ROLE_PROPERTY);
-        // Password edition allowed indicator
-        this.passwordEditionAllowed = BooleanUtils.toBoolean(System.getProperty(PASSWORD_EDITION_ALLOWED_PROPERTY, String.valueOf(true)));
+        if (userConnecte == null) {
+            level = LevelEdition.DENY;
+        } else if (config.getRoleAdministrator() != null && roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator())) {
+            level = LevelEdition.ALLOW;
+        } else if (userConnecte.getUid().equals(userConsulte.getUid())) {
+            level = LevelEdition.ALLOW;
+        } else {
+            level = LevelEdition.DENY;
+        }
+
+        return level;
     }
-
+	
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public PersonCardOptions getOptions(PortalControllerContext portalControllerContext) throws PortletException {
-        // Person card options
-        PersonCardOptions options = this.applicationContext.getBean(PersonCardOptions.class);
+    public LevelChgPwd findLevelChgPwd(Person userConnecte, Person userConsulte) {
+        // Level
+    	LevelChgPwd level;
 
-        if (StringUtils.isEmpty(options.getUid())) {
-            // Portlet request
-            PortletRequest request = portalControllerContext.getRequest();
-            // Window
-            PortalWindow window = WindowFactory.getWindow(request);
-
-            // Person UID
-            String uid = StringUtils.defaultIfEmpty(window.getProperty(PERSON_UID_WINDOW_PROPERTY), request.getRemoteUser());
-            options.setUid(uid);
-
-            // Person DN
-            Name dn = this.personService.getEmptyPerson().buildDn(uid);
-            options.setDn(dn);
-
-            // Person
-            Person person = this.personService.getPersonNoCache(options.getDn());
-            options.setPerson(person);
-
-            // Person titles
-            List<PersonTitle> titles = Arrays.asList(PersonTitle.values());
-            options.setTitles(titles);
-
-            if (person != null) {
-                // Editable person card indicator
-                boolean editable = this.isEditable(portalControllerContext, person);
-                options.setEditable(editable);
-
-                // Password edition mode
-                PersonPasswordEditionMode passwordEditionMode = this.getPasswordEditionMode(portalControllerContext, person);
-                options.setPasswordEditionMode(passwordEditionMode);
-
-                // Deletable person indicator
-                boolean deletable = this.isDeletable(portalControllerContext, person);
-                options.setDeletable(deletable);
-            }
+        if (userConnecte == null) {
+            level = LevelChgPwd.DENY;
+        } else if (config.getRoleAdministrator() != null && roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator())) {
+            level = LevelChgPwd.OVERWRITE;
+        } else if (userConnecte.getUid().equals(userConsulte.getUid()) && BooleanUtils.isNotTrue(userConnecte.getExternal())
+                && config.getPersonCanChangePassword()) {
+            level = LevelChgPwd.ALLOW;
+        } else {
+            level = LevelChgPwd.DENY;
         }
 
-        return options;
+        return level;
     }
-
-
+	
+    
     /**
-     * Check if the person card can be edited by the current user.
-     *
-     * @param portalControllerContext portal controller context
-     * @param person targeted person
-     * @return true if the person card is editable
+     * {@inheritDoc}
      */
-    protected boolean isEditable(PortalControllerContext portalControllerContext, Person person) {
-        // Portlet request
-        PortletRequest request = portalControllerContext.getRequest();
-        // Current user UID
-        String uid = request.getRemoteUser();
+	@Override
+	public LevelDeletion findLevelDeletion(Person userConnecte, Person userConsulte) {
+        // Level
+        LevelDeletion level;
 
-        // Editable person card indicator
-        boolean editable;
-
-        if (StringUtils.isEmpty(uid)) {
-            editable = false;
-        } else if (StringUtils.equals(uid, person.getUid())) {
-            editable = true;
+        if (userConnecte == null) {
+            level = LevelDeletion.DENY;
+        } else if ((config.getRoleAdministrator() != null) && (roleService.hasRole(userConnecte.getDn(), config.getRoleAdministrator()))
+                && !userConnecte.getUid().equals(userConsulte.getUid())) {
+            level = LevelDeletion.ALLOW;
         } else {
-            // Current user DN
-            Name dn = this.personService.getEmptyPerson().buildDn(uid);
-
-            // Check if the current user has administration role
-            editable = StringUtils.isNotEmpty(this.administratorRole) && this.roleService.hasRole(dn, this.administratorRole);
+            level = LevelDeletion.DENY;
         }
 
-        return editable;
-    }
+        return level;
+	}	
+	
+
+	public Card loadCard(PortalControllerContext context) throws PortalException {
+		
+		//TODO replace with ATTR_LOGGED_PERSON_2
+		PortletRequest request = context.getRequest();
+		Person userConnecte = (Person) request.getAttribute("osivia.directory.v2.loggedPerson");
+
+		//	TODO gérer les déconnectés
+
+		Card card = new Card();
+
+		PortalWindow window = WindowFactory.getWindow(request);
+		String uid = window.getProperty("uidFichePersonne");
+
+		Person userConsulte = null;
+		// Consultation d'une autre personne, soit en anonyme, soit connecté et dans ce cas l'UID est différent de soi
+		if ((userConnecte == null) || ((uid != null) && !(uid.equals(userConnecte.getUid())))) {
+
+			userConsulte = personService.getPerson(uid);
+
+		} else {
+			userConsulte = userConnecte;
+		}
+		
+        if ((userConnecte != null) && userConnecte.getUid().equals(userConsulte.getUid())) {
+            card.setSelf(true);
+        }
+
+		card.setUserConsulte(userConsulte);
+		card.setLevelEdition(findLevelEdition(userConnecte, userConsulte));
+		card.setLevelDeletion(findLevelDeletion(userConnecte, userConsulte));
+		card.setLevelChgPwd(findLevelChgPwd(userConnecte, userConsulte));
+		card.setAvatar(userConsulte.getAvatar());
+		
+		
+		Document nuxeoProfile = (Document) personService.getEcmProfile(context, userConsulte);
+		card.setNxProfile(convertNxProfile(nuxeoProfile));
+		
+		// User workspaces
+		if(card.getLevelEdition().equals(LevelEdition.ALLOW)) {
+			setNxWorkspaces(context, card, userConsulte.getUid());
+			
+		}
+		
+		return card;
+	}
 
 
-    /**
-     * Get password edition mode.
-     *
-     * @param portalControllerContext portal controller context
-     * @param person targeted person
-     * @return password edition mode
-     */
-    protected PersonPasswordEditionMode getPasswordEditionMode(PortalControllerContext portalControllerContext, Person person) {
-        // Portlet request
-        PortletRequest request = portalControllerContext.getRequest();
-        // Current user UID
-        String uid = request.getRemoteUser();
+	/**
+	 * Evaluate the map memberOfSpace
+	 *  
+	 * @param context
+	 * @param card the form
+	 * @param uid the current uid
+	 */
+	private void setNxWorkspaces(PortalControllerContext context, Card card, String uid) {
+		NuxeoController controller = new NuxeoController(context);
+		
+		Documents documents = (Documents)  controller.executeNuxeoCommand(new GetUserWorkspacesCommand(uid));
+		
+		for(Document workspace : documents) {
+			
+			WorkspaceMember member = workspaceService.getMember(workspace.getString("webc:url"), uid);
+			
+			PersonCardWorkspaceMember personCardWorkspaceMember = new PersonCardWorkspaceMember(member);
+			
+            // Title
+			personCardWorkspaceMember.setTitle(workspace.getTitle());
+            // Description
+			personCardWorkspaceMember.setDescription(workspace.getString("dc:description"));
 
-        // Password edition mode
-        PersonPasswordEditionMode passwordEditionMode;
-
-        if (StringUtils.isEmpty(uid)) {
-            passwordEditionMode = PersonPasswordEditionMode.DENY;
-        } else {
-            // Current user DN
-            Name dn = this.personService.getEmptyPerson().buildDn(uid);
-
-            // Check if the current user has administration role
-            if (StringUtils.isNotEmpty(this.administratorRole) && this.roleService.hasRole(dn, this.administratorRole)) {
-                passwordEditionMode = PersonPasswordEditionMode.OVERWRITE;
-            } else if (StringUtils.equals(uid, person.getUid()) && BooleanUtils.isNotTrue(person.getExternal()) && this.passwordEditionAllowed) {
-                passwordEditionMode = PersonPasswordEditionMode.ALLOW;
+            // Vignette URL
+            PropertyMap vignette = workspace.getProperties().getMap("ttc:vignette");
+            String vignetteUrl;
+            if (vignette == null) {
+                vignetteUrl = null;
             } else {
-                passwordEditionMode = PersonPasswordEditionMode.DENY;
+                vignetteUrl = controller.createFileLink(workspace, "ttc:vignette");
             }
-        }
+            personCardWorkspaceMember.setVignetteUrl(vignetteUrl);
+            
+            String cmsUrl = urlFactory.getCMSUrl(context, null, workspace.getPath(), null, null, null, null, null, null, null);
+            
+            personCardWorkspaceMember.setLink(cmsUrl);
+            
+            personCardWorkspaceMember.setWorkspaceId(workspace.getString("webc:url"));
+            
+			card.getMemberOfSpace().add(personCardWorkspaceMember);
+			
+		}
+	}
+	
+	/**
+	 * Convert from nuxeo document to object
+	 * @param docNxProfile
+	 * @return 
+	 */
+	public NuxeoProfile convertNxProfile(Document docNxProfile) {
+		
+		NuxeoProfile profile = new NuxeoProfile();
+		
+		profile.setBio(docNxProfile.getString(BIO));
+		profile.setPhone(docNxProfile.getString(PHONE_NUMBER));
+		profile.setMobilePhone(docNxProfile.getString(MOBILE));
+		profile.setOccupation(docNxProfile.getString(PROFESSION));
+		profile.setInstitution(docNxProfile.getString(INSTITUTION));
+		profile.setShownInSearch(Boolean.valueOf(docNxProfile.getString(SHOWN_IN_SEARCH)));
+		
+		return profile;
+	}
 
-        return passwordEditionMode;
-    }
-
-
-    /**
-     * Check if the person can be deleted by the current user.
-     *
-     * @param portalControllerContext portal controller context
-     * @param person targeted person
-     * @return true if the person can be deleted
-     */
-    protected boolean isDeletable(PortalControllerContext portalControllerContext, Person person) {
-        // Portlet request
-        PortletRequest request = portalControllerContext.getRequest();
-        // Current user UID
-        String uid = request.getRemoteUser();
-
-        // Deletable person indicator
-        boolean deletable;
-
-        if (StringUtils.isEmpty(uid) || StringUtils.equals(uid, person.getUid())) {
-            deletable = false;
-        } else {
-            // Current user DN
-            Name dn = this.personService.getEmptyPerson().buildDn(uid);
-
-            // Check if the current user has administration role
-            deletable = StringUtils.isNotEmpty(this.administratorRole) && this.roleService.hasRole(dn, this.administratorRole);
-        }
-
-        return deletable;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PersonCard getPersonCard(PortalControllerContext portalControllerContext) throws PortletException {
-        // Person card options
-        PersonCardOptions options = this.getOptions(portalControllerContext);
-
-        // Person
-        Person person = this.personService.getPersonNoCache(options.getDn());
-
-        // Person card
-        PersonCard card;
-        if (person == null) {
-            card = null;
-        } else {
-            card = this.applicationContext.getBean(PersonCard.class);
-            card.setPerson(person);
-
-            // Person Nuxeo profile
-            PersonNuxeoProfile nuxeoProfile = this.repository.getNuxeoProfile(portalControllerContext, person);
-            card.setNuxeoProfile(nuxeoProfile);
-        }
-
-        return card;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deletePerson(PortalControllerContext portalControllerContext, PersonCardOptions options) throws PortletException {
-        // Internationalization bundle
-        Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
-
-        if (options.isDeletable()) {
-            // Person
-            Person person = options.getPerson();
-
-            if (person != null) {
-                this.personService.delete(person);
-
-                // Update options
-                options.setPerson(null);
-
-                // Notification
-                this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_DELETE_SUCCESS"),
-                        NotificationsType.SUCCESS);
-            }
-        } else {
-            // Forbidden
-            this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_DELETE_FORBIDDEN"), NotificationsType.ERROR);
-        }
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PersonEditionForm getEditionForm(PortalControllerContext portalControllerContext) throws PortletException {
-        // Person card options
-        PersonCardOptions options = this.getOptions(portalControllerContext);
-
-        // Edition form
-        PersonEditionForm form = this.applicationContext.getBean(PersonEditionForm.class);
-
-
-        // Person
-        Person person = this.personService.getPersonNoCache(options.getDn());
-
-        if (person != null) {
-            // Avatar
-            Avatar avatar = new Avatar();
-            avatar.setUrl(person.getAvatar().getUrl());
-            form.setAvatar(avatar);
-
-            this.fillLdapProperties(portalControllerContext, form, person);
-        }
-
-
-        // Person Nuxeo profile
-        PersonNuxeoProfile nuxeoProfile = this.repository.getNuxeoProfile(portalControllerContext, person);
-
-        if (nuxeoProfile != null) {
-            this.fillNuxeoProperties(portalControllerContext, form, nuxeoProfile);
-        }
-
-        return form;
-    }
-
-
-    /**
-     * Fill LDAP properties.
-     *
-     * @param form person edition form
-     * @param person person
-     * @throws PortletException
-     */
-    protected void fillLdapProperties(PortalControllerContext portalControllerContext, PersonEditionForm form, Person person) throws PortletException {
-        // Title
-        String title = person.getTitle();
-        form.setTitle(title);
-
-        // First name
-        String firstName = person.getGivenName();
-        form.setFirstName(firstName);
-
-        // Last name
-        String lastName = person.getSn();
-        form.setLastName(lastName);
-
-        // Mail
-        String mail = person.getMail();
-        form.setMail(mail);
-    }
-
-
-    /**
-     * Fill Nuxeo properties.
-     *
-     * @param form person edition form
-     * @param nuxeoProfile Nuxeo profile
-     * @throws PortletException
-     */
-    protected void fillNuxeoProperties(PortalControllerContext portalControllerContext, PersonEditionForm form, PersonNuxeoProfile nuxeoProfile)
-            throws PortletException {
-        // Occupation
-        String occupation = nuxeoProfile.getOccupation();
-        form.setOccupation(occupation);
-
-        // Institution
-        String institution = nuxeoProfile.getInstitution();
-        form.setInstitution(institution);
-
-        // Phone
-        String phone = nuxeoProfile.getPhone();
-        form.setPhone(phone);
-
-        // Mobile phone
-        String mobilePhone = nuxeoProfile.getMobilePhone();
-        form.setMobilePhone(mobilePhone);
-
-        // Bio
-        String bio = nuxeoProfile.getBio();
-        form.setBio(bio);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void uploadAvatar(PortalControllerContext portalControllerContext, PersonEditionForm form) throws PortletException, IOException {
-        // Avatar
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#uploadAvatar(org.osivia.portal.api.context.PortalControllerContext, org.osivia.services.person.card.portlet.controller.FormEdition)
+	 */
+	@Override
+	public void uploadAvatar(PortalControllerContext portalControllerContext,
+			FormEdition form) throws IllegalStateException, IOException {
+		
+        // Vignette
         Avatar avatar = form.getAvatar();
         avatar.setUpdated(true);
         avatar.setDeleted(false);
 
         // Temporary file
-        MultipartFile upload = avatar.getUpload();
+        MultipartFile upload = form.getAvatar().getUpload();
         File temporaryFile = File.createTempFile("avatar-", ".tmp");
         temporaryFile.deleteOnExit();
         upload.transferTo(temporaryFile);
         avatar.setTemporaryFile(temporaryFile);
-    }
+		
+	}
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteAvatar(PortalControllerContext portalControllerContext, PersonEditionForm form) throws PortletException, IOException {
-        // Avatar
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#deleteAvatar(org.osivia.portal.api.context.PortalControllerContext, org.osivia.services.person.card.portlet.controller.FormEdition)
+	 */
+	@Override
+	public void deleteAvatar(PortalControllerContext portalControllerContext,
+			FormEdition form) {
+        // Vignette
         Avatar avatar = form.getAvatar();
         avatar.setUpdated(false);
         avatar.setDeleted(true);
-    }
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#saveCard(org.osivia.portal.api.context.PortalControllerContext, org.osivia.services.person.card.portlet.controller.FormEdition)
+	 */
+	@Override
+	public void saveCard(PortalControllerContext portalControllerContext,
+			Card card, FormEdition form) throws PortalException {
+		
+		// update the person in ldap
+		Person p = personService.getPerson(card.getUserConsulte().getUid());
+		mergeLdapProperties(p, form);
+		
+		Map<String, String> nxProperties = new HashMap<String, String>();
+		mergeNxProperties(nxProperties, form);
+		personService.update(portalControllerContext, p, form.getAvatar(), nxProperties);
+		
+		
+		// ========= maj user connecte
+		if (card.isSelf()) {
+			
+			IUserDatasModuleRepository userRepo = Locator.findMBean(IUserDatasModuleRepository.class, IUserDatasModuleRepository.MBEAN_NAME);
+			userRepo.reload(portalControllerContext.getRequest());
+			
+		}
+	}
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void savePerson(PortalControllerContext portalControllerContext, PersonCardOptions options, PersonEditionForm form) throws PortletException {
-        // Internationalization bundle
+	/**
+	 * @param p
+	 * @param form
+	 */
+	protected void mergeLdapProperties(Person p, FormEdition form) {
+		
+		p.setMail(StringUtils.trimToNull(form.getMail()));
+		
+		p.setTitle(StringUtils.trimToNull(form.getTitle()));
+		
+		if (form.getSn() != null) {
+			p.setSn(form.getSn());
+		}
+		if (form.getGivenName() != null) {
+			p.setGivenName(form.getGivenName());
+		}
+		if((form.getSn() != null) && (form.getGivenName() != null)) {
+			String fullName = form.getGivenName() + " " + form.getSn();
+			String reversefullName = form.getSn() + " " + form.getGivenName();
+			p.setCn(reversefullName);
+			p.setDisplayName(fullName);
+		}
+	}
+	
+
+	/**
+	 * @param nxProperties
+	 * @param form
+	 */
+	protected void mergeNxProperties(Map<String, String> nxProperties,
+			FormEdition form) {
+		
+		nxProperties.put(BIO, form.getBio());
+		nxProperties.put(PHONE_NUMBER, form.getPhone());
+		nxProperties.put(MOBILE, form.getMobilePhone());
+		nxProperties.put(PROFESSION, form.getOccupation());
+		nxProperties.put(INSTITUTION,  form.getInstitution());
+		nxProperties.put(SHOWN_IN_SEARCH, form.getShownInSearch().toString());
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#changePassword(org.osivia.services.person.card.portlet.controller.FormChgPwd)
+	 */
+	@Override
+	public boolean changePassword(Card card, FormChgPwd formChgPwd) {
+
+		if (!personService.verifyPassword(card.getUserConsulte().getUid(), formChgPwd.getCurrentPwd())) {
+			return false;
+		} else {
+
+			// Modification du mot de passe
+			personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
+			
+			return true;
+
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#overwritePassword(org.osivia.services.person.card.portlet.controller.Card, org.osivia.services.person.card.portlet.controller.FormChgPwd)
+	 */
+	@Override
+	public void overwritePassword(Card card, FormChgPwd formChgPwd) {
+		// Modification du mot de passe
+		personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#deletePerson(org.osivia.services.person.card.portlet.controller.Card)
+	 */
+	@Override
+	public void deletePerson(Card card) {
+		
+		personService.delete(card.getUserConsulte());
+		
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#exit(org.osivia.services.person.card.portlet.controller.Card, java.lang.String)
+	 */
+	@Override
+	public void exit(PortalControllerContext portalControllerContext, Card card, String workspaceId) {
+
+		workspaceService.removeMember(workspaceId, card.getUserConsulte().getDn());
+		
+        // Notification
         Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
-
-        if (options.isEditable()) {
-            // Person
-            Person person = options.getPerson();
-
-            if (person != null) {
-                // LDAP properties
-                this.setLdapProperties(portalControllerContext, form, person);
-
-                // Nuxeo properties
-                Map<String, String> properties = this.repository.getNuxeoProperties(portalControllerContext, form);
-
-                // Update person
-                try {
-                    this.personService.update(portalControllerContext, person, form.getAvatar(), properties);
-                } catch (PortalException e) {
-                    throw new PortletException(e);
-                }
-
-                // Notification
-                this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_EDITION_SUCCESS"),
-                        NotificationsType.SUCCESS);
-            }
-        } else {
-            // Forbidden
-            this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_EDITION_FORBIDDEN"),
-                    NotificationsType.ERROR);
-        }
-    }
+        String message = bundle.getString("MEMBERSHIP_EXIT_OK");
+        this.notificationsService.addSimpleNotification(portalControllerContext, message, NotificationsType.SUCCESS);			
+				
+	}
 
 
-    /**
-     * Set LDAP properties.
-     *
-     * @param form person edition form
-     * @param person person
-     * @throws PortletException
-     */
-    protected void setLdapProperties(PortalControllerContext portalControllerContext, PersonEditionForm form, Person person) throws PortletException {
-        person.setTitle(StringUtils.trimToNull(form.getTitle()));
-        person.setGivenName(StringUtils.trim(form.getFirstName()));
-        person.setSn(StringUtils.trim(form.getLastName()));
-        person.setCn(StringUtils.trim(form.getLastName() + " " + form.getFirstName()));
-        person.setDisplayName(StringUtils.trim(form.getFirstName() + " " + form.getLastName()));
-        person.setMail(StringUtils.trim(form.getMail()));
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PersonPasswordEditionForm getPasswordEditionForm(PortalControllerContext portalControllerContext) throws PortletException {
-        // Person card options
-        PersonCardOptions options = this.getOptions(portalControllerContext);
-
-        // Password edition form
-        PersonPasswordEditionForm form = this.applicationContext.getBean(PersonPasswordEditionForm.class);
-
-        // Person UID
-        form.setUid(options.getUid());
-
-        // Overwrite password indicator
-        form.setOverwrite(PersonPasswordEditionMode.OVERWRITE.equals(options.getPasswordEditionMode()));
-
-        return form;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updatePassword(PortalControllerContext portalControllerContext, PersonCardOptions options, PersonPasswordEditionForm form)
-            throws PortletException {
-        // Internationalization bundle
-        Bundle bundle = this.bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
-
-        if ((options.getPasswordEditionMode() != null) && options.getPasswordEditionMode().isEditable()) {
-            // Person
-            Person person = options.getPerson();
-
-            if (person != null) {
-                this.personService.updatePassword(person, form.getUpdate());
-
-                // Notification
-                this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_SUCCESS"),
-                        NotificationsType.SUCCESS);
-            }
-        } else {
-            // Forbidden
-            this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_FORBIDDEN"),
-                    NotificationsType.ERROR);
-        }
-    }
 
 }

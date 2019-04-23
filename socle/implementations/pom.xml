@@ -29,7 +29,7 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-        
+
         <!-- JBoss -->
         <dependency>
             <groupId>org.jboss.portal</groupId>
