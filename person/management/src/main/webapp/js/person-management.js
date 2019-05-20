@@ -28,13 +28,13 @@ $JQry(function() {
 				success : function(data, status, xhr) {
 					$results.html(data);
 					
-					$JQry(".person-management a.person").click(selectUser)
+					$JQry(".person-management a").click(selectUser)
 				}
 			});
 		}, 200);
 	});
 
-	$JQry(".person-management a.person").click(selectUser);
+	$JQry(".person-management a").click(selectUser);
 	
 });
 

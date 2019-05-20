@@ -24,6 +24,6 @@
         </div>
         
         <!-- Submit -->
-        <input type="submit" name="select" class="hidden">
+        <input type="submit" name="select" class="d-none">
     </form:form>
 </div>

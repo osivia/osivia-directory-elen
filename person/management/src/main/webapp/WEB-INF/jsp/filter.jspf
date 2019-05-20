@@ -9,16 +9,18 @@
 <div class="form-group">
     <form:label path="filter" cssClass="sr-only"><op:translate key="PERSON_MANAGEMENT_FILTER"/></form:label>
     <div class="input-group">
-        <span class="input-group-addon">
-            <i class="glyphicons glyphicons-search"></i>
-        </span>
+        <div class="input-group-prepend">
+            <span class="input-group-text">
+                <i class="glyphicons glyphicons-basic-search"></i>
+            </span>
+        </div>
         <form:input path="filter" cssClass="form-control" placeholder="${filterPlaceholder}" />
     </div>
-    <p class="help-block">
-        <span><op:translate key="PERSON_MANAGEMENT_FILTER_HELP" /></span>
+    <p class="form-text text-muted">
+        <small><op:translate key="PERSON_MANAGEMENT_FILTER_HELP" /></small>
     </p>
     
-    <div class="hidden-script">
+    <div class="d-none">
         <button type="submit" name="apply-filter" class="btn btn-secondary">
             <span><op:translate key="SEARCH" /></span>
         </button>

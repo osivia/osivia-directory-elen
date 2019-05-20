@@ -6,51 +6,63 @@
 <%@ page contentType="text/html" isELIgnored="false"%>
 
 
-<div class="table table-hover">
-    <!-- Table header -->
-    <div class="table-row table-header">
-        <c:choose>
-            <c:when test="${empty form.users}">
-                <span><op:translate key="PERSON_MANAGEMENT_NO_RESULT" /></span>
-            </c:when>
-            
-            <c:when test="${fn:length(form.users) eq 1}">
-                <span><op:translate key="PERSON_MANAGEMENT_ONE_RESULT" /></span>
-            </c:when>
-            
-            <c:otherwise>
-                <span><op:translate key="PERSON_MANAGEMENT_MULTIPLE_RESULTS" args="${fn:length(form.users)}"/></span>
-            </c:otherwise>
-        </c:choose>
-    </div>
+<table class="table table-hover">
+    <%--Table header--%>
+    <thead>
+        <tr>
+            <th>
+                <c:choose>
+                    <c:when test="${empty form.users}">
+                        <span><op:translate key="PERSON_MANAGEMENT_NO_RESULT" /></span>
+                    </c:when>
+
+                    <c:when test="${fn:length(form.users) eq 1}">
+                        <span><op:translate key="PERSON_MANAGEMENT_ONE_RESULT" /></span>
+                    </c:when>
+
+                    <c:otherwise>
+                        <span><op:translate key="PERSON_MANAGEMENT_MULTIPLE_RESULTS" args="${fn:length(form.users)}"/></span>
+                    </c:otherwise>
+                </c:choose>
+            </th>
+        </tr>
+    </thead>
     
-    <!-- Table body -->
+    <%--Table body--%>
     <c:if test="${not empty form.users}">
-        <c:forEach items="${form.users}" var="user">
-            <div class="table-row">
-                <a href="#" class="person no-ajax-link ${user.id eq form.selectedUserId ? 'active' : ''}" data-id="${user.id}">
-                    <!-- Avatar -->
-                    <span class="person-avatar">
-                        <c:choose>
-                            <c:when test="${empty user.avatarUrl}">
-                                <i class="glyphicons glyphicons-user"></i>
-                            </c:when>
-                            
-                            <c:otherwise>
-                                <img src="${user.avatarUrl}" alt="">
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-                    
-                    <!-- Display name -->
-                    <span class="person-title">${user.displayName}</span>
-                    
-                    <!-- Extra -->
-                    <c:if test="${not empty user.extra}">
-                        <span class="person-extra">${user.extra}</span>
-                    </c:if>
-                </a>
-            </div>
-        </c:forEach>
+        <tbody>
+            <c:forEach items="${form.users}" var="user">
+                <tr>
+                    <td class="position-relative ${user.id eq form.selectedUserId ? 'table-active' : ''}">
+                        <div class="d-flex">
+                            <%--Avatar--%>
+                            <div class="mr-2">
+                                <c:choose>
+                                    <c:when test="${empty user.avatarUrl}">
+                                        <i class="glyphicons glyphicons-basic-user"></i>
+                                    </c:when>
+
+                                    <c:otherwise>
+                                        <img src="${user.avatarUrl}" alt="" class="avatar">
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+
+                            <div class="d-flex flex-grow-1 flex-column">
+                                <%--Display name--%>
+                                <a href="javascript:" class="stretched-link no-ajax-link" data-id="${user.id}">
+                                    <span>${user.displayName}</span>
+                                </a>
+
+                                <%--Extra--%>
+                                <c:if test="${not empty user.extra}">
+                                    <small class="text-muted">${user.extra}</small>
+                                </c:if>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </c:forEach>
+        </tbody>
     </c:if>
-</div>
+</table>
