@@ -1,9 +1,9 @@
 <%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 
 
-<div class="form-group">
-    <label class="col-sm-3 col-lg-2 control-label"><op:translate key="PERSON_CARD_FIRST_NAME" /></label>
-    <div class="col-sm-9 col-lg-10">
-        <p class="form-control-static">${card.person.givenName}</p>
+<div class="form-group row">
+    <label class="col-md-3 col-lg-2 col-form-label"><op:translate key="PERSON_CARD_FIRST_NAME" /></label>
+    <div class="col-md-9 col-lg-10">
+        <p class="form-control-plaintext">${card.person.givenName}</p>
     </div>
 </div>

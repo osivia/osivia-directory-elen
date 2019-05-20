@@ -19,7 +19,7 @@
     </p>
     
     <div class="hidden-script">
-        <button type="submit" name="apply-filter" class="btn btn-default">
+        <button type="submit" name="apply-filter" class="btn btn-secondary">
             <span><op:translate key="SEARCH" /></span>
         </button>
     </div>

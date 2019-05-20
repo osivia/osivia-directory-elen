@@ -5,8 +5,8 @@
 <portlet:actionURL name="cancel" var="cancelUrl" copyCurrentRenderParameters="true" />
 
 
-<div class="form-group">
-    <div class="col-sm-offset-3 col-sm-9 col-lg-offset-2 col-lg-10">
+<div class="form-group row">
+    <div class="col-md-9 offset-md-3 col-lg-10 offset-lg-2">
         <!-- Save -->
         <button type="submit" name="save" class="btn btn-primary">
             <i class="glyphicons glyphicons-floppy-disk"></i>
@@ -14,7 +14,7 @@
         </button>
         
         <!-- Cancel -->
-        <a href="${cancelUrl}" class="btn btn-default">
+        <a href="${cancelUrl}" class="btn btn-secondary">
             <span><op:translate key="CANCEL" /></span>
         </a>
     </div>

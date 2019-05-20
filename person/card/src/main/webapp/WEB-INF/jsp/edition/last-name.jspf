@@ -5,16 +5,11 @@
 
 
 <spring:bind path="lastName">
-    <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-        <form:label path="lastName" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="PERSON_CARD_LAST_NAME" /></form:label>
-        <div class="col-sm-9 col-lg-10">
-            <form:input path="lastName" cssClass="form-control" />
-            <c:if test="${status.error}">
-                <span class="form-control-feedback">
-                    <i class="glyphicons glyphicons-remove"></i>
-                </span>
-            </c:if>
-            <form:errors path="lastName" cssClass="help-block" />
+    <div class="form-group row required">
+        <form:label path="lastName" cssClass="col-md-3 col-lg-2 col-form-label"><op:translate key="PERSON_CARD_LAST_NAME" /></form:label>
+        <div class="col-md-9 col-lg-10">
+            <form:input path="lastName" cssClass="form-control ${status.error ? 'is-invalid' : ''}" />
+            <form:errors path="lastName" cssClass="invalid-feedback" />
         </div>
     </div>
 </spring:bind>

@@ -2,9 +2,9 @@
 <%@ taglib uri="http://www.osivia.org/jsp/taglib/osivia-portal" prefix="op" %>
 
 
-<div class="form-group">
-    <form:label path="occupation" cssClass="col-sm-3 col-lg-2 control-label"><op:translate key="PERSON_CARD_OCCUPATION" /></form:label>
-    <div class="col-sm-9 col-lg-10">
+<div class="form-group row">
+    <form:label path="occupation" cssClass="col-md-3 col-lg-2 col-form-label"><op:translate key="PERSON_CARD_OCCUPATION" /></form:label>
+    <div class="col-md-9 col-lg-10">
         <form:input path="occupation" cssClass="form-control" />
     </div>
 </div>

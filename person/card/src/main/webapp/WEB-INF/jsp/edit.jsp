@@ -8,7 +8,7 @@
 <portlet:actionURL name="save" var="saveUrl" copyCurrentRenderParameters="true" />
 
 
-<form:form action="${saveUrl}" method="post" modelAttribute="editionForm" enctype="multipart/form-data" cssClass="form-horizontal" role="form">
+<form:form action="${saveUrl}" method="post" modelAttribute="editionForm" enctype="multipart/form-data" role="form">
     <fieldset>
         <legend><op:translate key="PERSON_CARD_EDITION_LEGEND" /></legend>
     

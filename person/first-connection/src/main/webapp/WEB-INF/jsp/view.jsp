@@ -32,7 +32,7 @@
         <!-- Title-->
         <spring:bind path="title">
             <div class="form-group">
-                <form:label path="title" cssClass="col-sm-4 col-lg-3 control-label"><op:translate key="TITLE" /></form:label>
+                <form:label path="title" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="TITLE" /></form:label>
                 <div class="col-sm-8 col-lg-9">
                 <form:select path="title" name="title" cssClass="form-control">
 					<form:option value=""></form:option>
@@ -46,7 +46,7 @@
         <!-- First name -->
         <spring:bind path="firstName">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-                <form:label path="firstName" cssClass="col-sm-4 col-lg-3 control-label"><op:translate key="FIRST_NAME" /></form:label>
+                <form:label path="firstName" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="FIRST_NAME" /></form:label>
                 <div class="col-sm-8 col-lg-9">
                     <form:input path="firstName" cssClass="form-control" />
                     <c:if test="${status.error}">
@@ -62,7 +62,7 @@
         <!-- Last name -->
         <spring:bind path="lastName">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-                <form:label path="lastName" cssClass="col-sm-4 col-lg-3 control-label"><op:translate key="LAST_NAME" /></form:label>
+                <form:label path="lastName" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="LAST_NAME" /></form:label>
                 <div class="col-sm-8 col-lg-9">
                     <form:input path="lastName" cssClass="form-control" />
                     <c:if test="${status.error}">
@@ -77,16 +77,16 @@
         
         <!-- Email -->
         <div class="form-group">
-            <label class="col-sm-4 col-lg-3 control-label"><op:translate key="EMAIL" /></label>
+            <label class="col-sm-4 col-lg-3 col-form-label"><op:translate key="EMAIL" /></label>
             <div class="col-sm-8 col-lg-9">
-                <p class="form-control-static">${userForm.email}</p>
+                <p class="form-control-plaintext">${userForm.email}</p>
             </div>
         </div>
         
         <!-- Password -->
         <spring:bind path="password">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-                <form:label path="password" cssClass="col-sm-4 col-lg-3 control-label"><op:translate key="PASSWORD" /></form:label>
+                <form:label path="password" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="PASSWORD" /></form:label>
                 <div class="col-sm-8 col-lg-9">
                     <div class="input-group">
                         <span class="input-group-addon">
@@ -119,7 +119,7 @@
         <!-- Password -->
         <spring:bind path="passwordConfirmation">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-                <form:label path="passwordConfirmation" cssClass="col-sm-4 col-lg-3 control-label"><op:translate key="PASSWORD_CONFIRMATION" /></form:label>
+                <form:label path="passwordConfirmation" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="PASSWORD_CONFIRMATION" /></form:label>
                 <div class="col-sm-8 col-lg-9">
                     <div class="input-group">
                         <span class="input-group-addon">

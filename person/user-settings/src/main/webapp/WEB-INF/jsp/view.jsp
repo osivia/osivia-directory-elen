@@ -22,7 +22,7 @@
             <div class="portlet-filler container-fluid">
                 <!-- Are notifications enabled? -->
                 <div class="form-group">
-                    <form:label path="notificationsEnabled" cssClass="control-label col-sm-3 col-lg-2"><op:translate key="USER_SETTINGS_NOTIFICATIONS_ENABLED" /></form:label>
+                    <form:label path="notificationsEnabled" cssClass="col-form-label col-sm-3 col-lg-2"><op:translate key="USER_SETTINGS_NOTIFICATIONS_ENABLED" /></form:label>
                     <div class="col-sm-9 col-lg-10">
                         <div class="checkbox">
                             <label>
@@ -35,7 +35,7 @@
                 
                 <!-- Workspace notifications -->
                 <div class="form-group">
-                    <label class="control-label col-sm-3 col-lg-2"><op:translate key="USER_SETTINGS_WORKSPACE_NOTIFICATIONS" /></label>
+                    <label class="col-form-label col-sm-3 col-lg-2"><op:translate key="USER_SETTINGS_WORKSPACE_NOTIFICATIONS" /></label>
                     <div class="col-sm-9 col-lg-10">
                         <c:forEach items="${form.workspaceNotifications}" var="notification" varStatus="status">
                             <div class="panel panel-default">
@@ -89,7 +89,7 @@
                         </button>
                         
                         <!-- Cancel -->
-                        <button type="reset" class="btn btn-default">
+                        <button type="reset" class="btn btn-secondary">
                             <span><op:translate key="CANCEL" /></span>
                         </button>
                     </div>

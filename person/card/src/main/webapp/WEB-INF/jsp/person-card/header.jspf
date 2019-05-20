@@ -1,12 +1,12 @@
-<div class="form-group">
+<div class="form-group row align-items-center">
     <!-- Avatar -->
-    <div class="col-sm-3 col-lg-2">
-        <img src="${card.person.avatar.url}" alt="" class="avatar avatar-big pull-right">
+    <div class="col-md-3 col-lg-2 text-right">
+        <img src="${card.person.avatar.url}" alt="" class="avatar h1 mb-0">
     </div>
     
     <!-- Display name -->
-    <div class="col-sm-9 col-lg-10">
-        <h3 class="h1">
+    <div class="col-md-9 col-lg-10">
+        <h3 class="h1 mb-0">
             <span>${card.person.title}</span>
             <span>${card.person.displayName}</span>
         </h3>

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html" isELIgnored="false" %>
 
 
-<div class="form-horizontal">
+<div>
     <!-- Header -->
     <%@ include file="person-card/header.jspf" %>
     
