@@ -51,6 +51,16 @@ public interface PersonUpdateService extends PersonService {
 	 */
 	public boolean verifyPassword(String uid, String currentPassword);
 
+	
+	/**
+	 * Check if a password validate some character rules
+	 * 
+	 * @param portalControllerContext
+	 * @param newPassword
+	 * @return
+	 */
+	public List<String> validatePasswordRules(PortalControllerContext portalControllerContext, String newPassword);
+
 	/**
 	 * Update the password of a person
 	 * @param p a person 
@@ -95,5 +105,6 @@ public interface PersonUpdateService extends PersonService {
 	 * @return list of person
 	 */
 	public List<Person> findByValidityDate(Date d);
+
 
 }
