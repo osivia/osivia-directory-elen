@@ -514,16 +514,34 @@ public class PersonCardServiceImpl implements PersonCardService {
             Person person = options.getPerson();
 
             if (person != null) {
-                this.personService.updatePassword(person, form.getUpdate());
+            	
+                List<String> messages = personService.validatePasswordRules(portalControllerContext, form.getUpdate());
+                if(!messages.isEmpty()) {
+                	String messagesConcat = bundle.getString("PASSWORD_VALIDATION");
+                	
+                	messagesConcat = messagesConcat + StringUtils.join(messages, ", ");
+                	// Notification
+                    this.notificationsService.addSimpleNotification(portalControllerContext, messagesConcat,
+                            NotificationsType.ERROR);
+                    
+                    throw new PortletException(messagesConcat);
+                }
+                else {
+            	   	this.personService.updatePassword(person, form.getUpdate());
+                    // Notification
+                    this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_SUCCESS"),
+                            NotificationsType.SUCCESS);
+                }
 
-                // Notification
-                this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_SUCCESS"),
-                        NotificationsType.SUCCESS);
+
             }
         } else {
             // Forbidden
             this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_FORBIDDEN"),
                     NotificationsType.ERROR);
+            
+            throw new PortletException(bundle.getString("PERSON_CARD_PASSWORD_EDITION_FORBIDDEN"));
+
         }
     }
 

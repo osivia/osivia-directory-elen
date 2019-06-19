@@ -14,6 +14,8 @@
 package org.osivia.directory.v2.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,16 @@ import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
 import org.osivia.portal.core.context.ControllerContextAdapter;
+import org.passay.DigitCharacterRule;
+import org.passay.LengthRule;
+import org.passay.LowercaseCharacterRule;
+import org.passay.PasswordData;
+import org.passay.PasswordValidator;
+import org.passay.RuleResult;
+import org.passay.RuleResultDetail;
+import org.passay.SpecialCharacterRule;
+import org.passay.UppercaseCharacterRule;
+import org.passay.WhitespaceRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
@@ -232,6 +244,29 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
         return this.dao.verifyPassword(uid, currentPassword);
     }
 
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.PersonUpdateService#validatePasswordRules(org.osivia.portal.api.context.PortalControllerContext)
+	 */
+	@Override
+	public List<String> validatePasswordRules(PortalControllerContext portalControllerContext, String newPassword) {
+
+		List<String> messages = new ArrayList<>();
+
+		PasswordValidator pwv = new PasswordValidator(Arrays.asList(new LengthRule(8, 30),
+				new UppercaseCharacterRule(1), new DigitCharacterRule(1), new SpecialCharacterRule(1),
+				new LowercaseCharacterRule(1), new WhitespaceRule()));			
+
+		RuleResult result = pwv.validate(new PasswordData(newPassword));
+		
+		Bundle bundle = bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
+				
+		for(RuleResultDetail detail : result.getDetails()) {
+			String translatedMsg = bundle.getString(detail.getErrorCode());
+			messages.add(translatedMsg);
+		}
+		
+		return messages;
+	}
 
     /**
      * {@inheritDoc}

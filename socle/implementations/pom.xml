@@ -17,8 +17,7 @@
     <properties>
         <!-- JBoss -->
         <jboss.portal.version>2.7.2</jboss.portal.version>
-    </properties>
-
+	</properties>
 
 	<dependencies>
 
@@ -69,6 +68,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        
+		<dependency>
+		    <groupId>org.passay</groupId>
+		    <artifactId>passay</artifactId>
+		    <version>1.0</version>
+		</dependency>        
 	</dependencies>
 
 </project>

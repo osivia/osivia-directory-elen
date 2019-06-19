@@ -13,6 +13,8 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.naming.Name;
@@ -48,6 +50,16 @@ public interface PersonUpdateService extends PersonService {
 	 * @return authenticated or not 
 	 */
 	public boolean verifyPassword(String uid, String currentPassword);
+
+	
+	/**
+	 * Check if a password validate some character rules
+	 * 
+	 * @param portalControllerContext
+	 * @param newPassword
+	 * @return
+	 */
+	public List<String> validatePasswordRules(PortalControllerContext portalControllerContext, String newPassword);
 
 	/**
 	 * Update the password of a person

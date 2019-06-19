@@ -97,10 +97,16 @@ public class PersonPasswordEditionController {
             // Copy render parameters
             this.copyRenderParameters(request, response);
         } else {
-            this.service.updatePassword(portalControllerContext, options, form);
-
-            // Complete session
-            session.setComplete();
+        	
+        	try {
+        		this.service.updatePassword(portalControllerContext, options, form);
+                // Complete session
+                session.setComplete();
+        	}
+        	catch(PortletException e) {
+                // Copy render parameters
+                this.copyRenderParameters(request, response);
+        	}
         }
     }
 
