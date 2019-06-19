@@ -89,12 +89,17 @@ public interface PersonCardService {
 	public void saveCard(PortalControllerContext portalControllerContext,
 			Card card, FormEdition form) throws PortalException;
 
+	
 	/**
 	 * Submit a passowrd change
-	 * @param card 
+	 * 
+	 * @param portalControllerContext
+	 * @param card
 	 * @param formChgPwd
+	 * @return
 	 */
-	public boolean changePassword(Card card, FormChgPwd formChgPwd);
+	public boolean changePassword(PortalControllerContext portalControllerContext, Card card, FormChgPwd formChgPwd);
+
 
 	/**
 	 * Submit a passowrd change (for admins)
@@ -116,6 +121,7 @@ public interface PersonCardService {
 	 * @param workspaceId
 	 */
 	public void exit(PortalControllerContext portalControllerContext, Card card, String workspaceId);
+
 
 
 

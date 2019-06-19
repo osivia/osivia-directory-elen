@@ -88,7 +88,9 @@ public class PersonChgPwdController extends CMSPortlet implements PortletContext
 			chgPwdValidator.validate(formChgPwd, result);
 	
 			if (!result.hasErrors()) {
-				boolean changeOk = service.changePassword(card, formChgPwd);
+				
+				
+				boolean changeOk = service.changePassword(pcc, card, formChgPwd);
 							
 				if(changeOk) {
 	

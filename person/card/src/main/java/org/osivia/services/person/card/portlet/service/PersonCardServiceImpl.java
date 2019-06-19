@@ -6,6 +6,7 @@ package org.osivia.services.person.card.portlet.service;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -388,16 +389,29 @@ public class PersonCardServiceImpl implements PersonCardService {
 	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#changePassword(org.osivia.services.person.card.portlet.controller.FormChgPwd)
 	 */
 	@Override
-	public boolean changePassword(Card card, FormChgPwd formChgPwd) {
+	public boolean changePassword(PortalControllerContext portalControllerContext, Card card, FormChgPwd formChgPwd) {
 
 		if (!personService.verifyPassword(card.getUserConsulte().getUid(), formChgPwd.getCurrentPwd())) {
 			return false;
 		} else {
-
-			// Modification du mot de passe
-			personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
 			
-			return true;
+			List<String> validatePasswordRules = personService.validatePasswordRules(portalControllerContext, formChgPwd.getNewPwd());
+			
+			if(validatePasswordRules.isEmpty()) {
+	
+				// Modification du mot de passe
+				personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
+				
+				return true;
+			}
+			else {
+				
+				String messages = StringUtils.join(validatePasswordRules, ", ");
+		        this.notificationsService.addSimpleNotification(portalControllerContext, messages, NotificationsType.ERROR);			
+
+				return false;
+
+			}
 
 		}
 	}
