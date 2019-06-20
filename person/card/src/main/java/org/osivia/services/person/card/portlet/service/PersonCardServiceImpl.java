@@ -517,9 +517,13 @@ public class PersonCardServiceImpl implements PersonCardService {
             	
                 List<String> messages = personService.validatePasswordRules(portalControllerContext, form.getUpdate());
                 if(!messages.isEmpty()) {
-                	String messagesConcat = bundle.getString("PASSWORD_VALIDATION");
                 	
-                	messagesConcat = messagesConcat + StringUtils.join(messages, ", ");
+                	String messagesConcat = bundle.getString("PASSWORD_VALIDATION") + "<ul>";
+                	
+                	for(String message : messages) {
+                		messagesConcat = messagesConcat.concat("<li>").concat(message).concat("</li>");
+                	}
+                	messagesConcat.concat("</ul>");
                 	// Notification
                     this.notificationsService.addSimpleNotification(portalControllerContext, messagesConcat,
                             NotificationsType.ERROR);
