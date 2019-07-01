@@ -17,10 +17,13 @@ import java.util.List;
 
 import javax.naming.Name;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osivia.directory.v2.dao.RoleDao;
 import org.osivia.directory.v2.model.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +45,10 @@ public class RoleServiceImpl extends LdapServiceImpl implements RoleService {
 	protected Role sample;
 	
 
+    /** Log. */
+    private final Log log = LogFactory.getLog(this.getClass());
+	
+
 	/* (non-Javadoc)
 	 * @see org.osivia.directory.v2.service.RoleService#getEmptyRole()
 	 */
@@ -60,11 +67,20 @@ public class RoleServiceImpl extends LdapServiceImpl implements RoleService {
 	/* (non-Javadoc)
 	 * @see org.osivia.directory.v2.service.RoleService#getRole(javax.naming.Name)
 	 */
-	@Override
-	public Role getRole(Name dn) {
-		return dao.findByDn(dn);
-	}
+    @Override
+    public Role getRole(Name dn) {
 
+        Role r;
+        try {
+            r = dao.findByDn(dn);
+
+        } catch (NameNotFoundException e) {
+            this.log.warn("Role with dn " + dn + " not found");
+            return null;
+        }
+
+        return r;
+    }
 	
 	
 	/* (non-Javadoc)
@@ -74,8 +90,9 @@ public class RoleServiceImpl extends LdapServiceImpl implements RoleService {
 	public boolean hasRole(Name person, String cnRole) {
 
 		Role role = getRole(cnRole);
-				
-		return role.getUniqueMember().contains(person);
+		if(role != null) {
+		    return role.getUniqueMember().contains(person);
+		} else return false;
 	}
 
 	/* (non-Javadoc)

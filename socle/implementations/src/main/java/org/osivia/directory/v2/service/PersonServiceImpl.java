@@ -254,17 +254,17 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 
 		PasswordValidator pwv = new PasswordValidator(Arrays.asList(new LengthRule(8, 30),
 				new UppercaseCharacterRule(1), new DigitCharacterRule(1), new SpecialCharacterRule(1),
-				new LowercaseCharacterRule(1), new WhitespaceRule()));			
+				new LowercaseCharacterRule(1), new WhitespaceRule()));
 
 		RuleResult result = pwv.validate(new PasswordData(newPassword));
-		
+
 		Bundle bundle = bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
-				
+
 		for(RuleResultDetail detail : result.getDetails()) {
 			String translatedMsg = bundle.getString(detail.getErrorCode());
 			messages.add(translatedMsg);
 		}
-		
+
 		return messages;
 	}
 
@@ -422,4 +422,17 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
         return BooleanUtils.toBoolean(attribute);
     }
 
+
+	@Override
+	public List<Person> findByNoConnectionDate(Person p) {
+		return dao.findByNoConnectionDate(p);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.osivia.directory.v2.service.PersonUpdateService#findByValidityDate(java.util.Date)
+	 */
+	@Override
+	public List<Person> findByValidityDate(Date d) {
+		return dao.findByValidityDate(d);
+	}
 }

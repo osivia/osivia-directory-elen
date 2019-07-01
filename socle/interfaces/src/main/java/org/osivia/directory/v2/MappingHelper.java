@@ -19,8 +19,12 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.directory.api.util.GeneralizedTime;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
@@ -35,6 +39,8 @@ import org.springframework.ldap.odm.annotations.Transient;
  * @since 4.4
  */
 public class MappingHelper {
+
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
 
 	/**
 	 * Static class
@@ -84,12 +90,10 @@ public class MappingHelper {
 					return null;
 
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 				return null;
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 				return null;
 			}
 		} else
@@ -131,6 +135,11 @@ public class MappingHelper {
 
 							Object getterResult = pd.getReadMethod()
 									.invoke(odm);
+							
+							if(getterResult instanceof Date) {
+								GeneralizedTime generalizedTime = new GeneralizedTime((Date) getterResult);
+								getterResult = generalizedTime.toGeneralizedTime();
+							}
 
 							if (getterResult != null) {
 								if (getterResult instanceof Collection<?>) {
@@ -151,23 +160,17 @@ public class MappingHelper {
 				}
 
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IntrospectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			}
 		}
 
@@ -209,6 +212,11 @@ public class MappingHelper {
 
 							Object getterResult = pd.getReadMethod()
 									.invoke(odm);
+							
+							if(getterResult instanceof Date) {
+								GeneralizedTime generalizedTime = new GeneralizedTime((Date) getterResult);
+								getterResult = generalizedTime.toGeneralizedTime();
+							}
 
 							if (getterResult != null) {
 								if (getterResult instanceof Collection<?>) {
@@ -217,6 +225,7 @@ public class MappingHelper {
 										and.and(new LikeFilter(name, o
 												.toString()));
 
+										
 									}
 								} else {
 
@@ -228,23 +237,17 @@ public class MappingHelper {
 					}
 				}
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (IntrospectionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (NoSuchFieldException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ldapLogger.error(e);
 			}
 		}
 

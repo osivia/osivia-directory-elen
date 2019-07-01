@@ -27,6 +27,8 @@ public class UserForm {
     private String password;
     /** Passord confirmation. */
     private String passwordConfirmation;
+    /** Flag if ssers must change their password */
+    private boolean mustChangePassword = false;
 
 
     /**
@@ -163,5 +165,19 @@ public class UserForm {
     public void setPasswordConfirmation(String passwordConfirmation) {
         this.passwordConfirmation = passwordConfirmation;
     }
+
+
+
+	public boolean isMustChangePassword() {
+		return mustChangePassword;
+	}
+
+
+
+	public void setMustChangePassword(boolean mustChangePassword) {
+		this.mustChangePassword = mustChangePassword;
+	}
+    
+    
 
 }

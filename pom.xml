@@ -11,7 +11,7 @@
     
     
     <properties>
-        <toutatice.version>4.7.6</toutatice.version>
+        <toutatice.version>4.9-SNAPSHOT</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
@@ -56,9 +56,9 @@
             <version>${toutatice.version}</version>
             <scope>test</scope>
         </dependency>
-        
+
     </dependencies>
-    
+
     
     <build>
         <pluginManagement>
@@ -71,8 +71,8 @@
                     <version>3.3</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 
@@ -144,28 +144,63 @@
                         </execution>
                     </executions>
                 </plugin>
-                
-                <!-- AntRun -->
+
+                <!-- Javadocs -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
-                </plugin>
-                
-                <!-- Eclipse -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-eclipse-plugin</artifactId>
-                    <version>2.10</version>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.0</version>
                     <configuration>
-                        <downloadJavadocs>true</downloadJavadocs>
-                        <downloadSources>true</downloadSources>
-                        <wtpversion>2.0</wtpversion>
+                        <additionalOptions>
+                            <!-- Disable strict javadoc checking since java8 -->
+                            <additionalOption>-Xdoclint:none</additionalOption>
+                        </additionalOptions>
                     </configuration>
+                </plugin>
+
+                <!-- Sources -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.2</version>
                 </plugin>
 
             </plugins>
         </pluginManagement>
+
+
+        <plugins>
+
+            <!-- Javadocs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
     </build>
     
     <scm>
@@ -193,7 +228,7 @@
         <url>http://www.osivia.org/</url>
     </organization>
     
-    
+
     <profiles>
     	<profile>
     		<id>ci</id>
@@ -207,5 +242,5 @@
         		</snapshotRepository>
     		</distributionManagement>
     	</profile>
-    </profiles>    
+    </profiles>
 </project>

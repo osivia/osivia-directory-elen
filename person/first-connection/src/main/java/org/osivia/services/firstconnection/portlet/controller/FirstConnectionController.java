@@ -124,7 +124,7 @@ public class FirstConnectionController implements PortletContextAware {
      */
     @InitBinder("userForm")
     public void invitationsCreationFormInitBinder(PortletRequestDataBinder binder) {
-        binder.setDisallowedFields("id", "email");
+        binder.setDisallowedFields("id");
         binder.addValidators(this.userFormValidator);
     }
 

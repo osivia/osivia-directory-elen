@@ -28,6 +28,9 @@ import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.Documents;
 import org.nuxeo.ecm.automation.client.model.PropertyList;
 import org.nuxeo.ecm.automation.client.model.PropertyMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
@@ -36,6 +39,8 @@ import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
 import org.osivia.directory.v2.repository.GetWorkspaceCommand;
 import org.osivia.directory.v2.repository.PurgeWorkspaceCommand;
+import org.osivia.directory.v2.repository.GetUserProfileCommand;
+import org.osivia.directory.v2.repository.ReIndexUserCommand;
 import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
@@ -49,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoException;
 import fr.toutatice.portail.cms.nuxeo.api.forms.FormFilterException;
 import fr.toutatice.portail.cms.nuxeo.api.forms.IFormsService;
 import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
@@ -65,8 +71,10 @@ import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceService, ApplicationContextAware {
 
 
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
+
 	private final static Log logger_integrity = LogFactory.getLog("ldap.integrity");
-	
+
     private static final String LDAP_INTEGRITY_MODEL_WEBID = IFormsService.FORMS_WEB_ID_PREFIX + "ldap_integrity";
 
     /** Person service. */
@@ -279,6 +287,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             }
         }
 
+        ldapLogger.info("Space created : "+workspaceId);
+
     }
 
 
@@ -316,7 +326,10 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         for (CollabProfile cp : list) {
             this.dao.delete(cp);
         }
-        
+
+        ldapLogger.info("Space deleted : "+workspaceId);
+
+
         // Delete workspace
         // Nuxeo controller
         NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
@@ -356,6 +369,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         WorkspaceMemberImpl member = new WorkspaceMemberImpl(person);
         member.setRole(role);
 
+        ldapLogger.info("Space member modified : "+workspaceId+ " "+person.getUid()+ " ("+role.toString()+")");
+
+
         return member;
     }
 
@@ -372,6 +388,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         for (CollabProfile cp : list) {
             this.detachPerson(memberDn, cp, true);
         }
+
+        ldapLogger.info("Space member removed : "+workspaceId+ " "+memberDn.toString());
+
     }
 
 
@@ -407,6 +426,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
             this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), true);
         }
+
     }
 
 
@@ -452,9 +472,20 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         }
 
         // Update workspace
-        if (update && updateNuxeo && WorkspaceGroupType.space_group.equals(profile.getType())) {
-            this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
+        if (update && WorkspaceGroupType.space_group.equals(profile.getType())) {
+        	try {
+        		this.updateWorkspace(profile.getWorkspaceId(), person.getUid(), false);
+        	}
+        	catch(Exception e) {
+
+    	        ldapLogger.error("Cannot remove "+person.getUid()+" from "+profile.getWorkspaceId()+". Space not found. "+e.getClass());
+
+        		if (!(e instanceof NuxeoException)) {
+        			throw e;
+        		}
+        	}
         }
+
     }
 
 
@@ -483,15 +514,27 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         NuxeoController nuxeoController = new NuxeoController(this.getPortletContext());
         nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
 
-        // Nuxeo command
-        INuxeoCommand command = this.applicationContext.getBean(UpdateWorkspaceCommand.class, workspaceId, user, attach);
-        nuxeoController.executeNuxeoCommand(command);
+        // Modify members lists
+        INuxeoCommand updateWorkspace = this.applicationContext.getBean(UpdateWorkspaceCommand.class, workspaceId, user, attach);
+        nuxeoController.executeNuxeoCommand(updateWorkspace);
+
+        // Get the UserProfile UUID
+        INuxeoCommand getUserProfile = this.applicationContext.getBean(GetUserProfileCommand.class, user);
+        Object profile = nuxeoController.executeNuxeoCommand(getUserProfile);
+        if(profile != null) {
+        	Document nxProfile = (Document) profile;
+
+        	INuxeoCommand reindexUser = this.applicationContext.getBean(ReIndexUserCommand.class, nxProfile);
+            nuxeoController.executeNuxeoCommand(reindexUser);
+
+        }
+
     }
 
-    
+
     /**
      * Update workspace.
-     * 
+     *
      * @param workspaceId workspace identifier
      * @param user user identifier
      * @param attach true if user is attached, false if user is detached
@@ -504,7 +547,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         // Nuxeo command
         INuxeoCommand command = this.applicationContext.getBean(GetWorkspaceCommand.class, workspaceId);
         Documents documents = (Documents) nuxeoController.executeNuxeoCommand(command);
-        
+
         return documents.get(0);
     }
 
@@ -544,6 +587,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
         this.dao.create(localGroup);
 
+        ldapLogger.info("Local group created : "+workspaceId+ " "+displayName);
+
+
         return localGroup;
     }
 
@@ -567,6 +613,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
                 }
             }
         }
+
+        ldapLogger.info("Local group member modified : "+workspaceId+ " "+memberDn.toString()+ " > "+localGroupDn.toString()+")");
+
     }
 
 
@@ -579,6 +628,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
         Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
         this.addMemberToLocalGroup(workspaceId, localGroupDn, memberDn);
+
     }
 
 
@@ -592,6 +642,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         if (localGroup.getType() == WorkspaceGroupType.local_group) {
             this.detachPerson(memberDn, localGroup, true);
         }
+
     }
 
 
@@ -604,6 +655,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         Name localGroupDn = this.getEmptyProfile().buildDn(localGroupCn);
         Name memberDn = this.personService.getEmptyPerson().buildDn(memberUid);
         this.removeMemberFromLocalGroup(workspaceId, localGroupDn, memberDn);
+
+        ldapLogger.info("Local group member removed : "+workspaceId+ " "+memberUid+ " > "+localGroupCn);
+
     }
 
 
@@ -614,6 +668,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     @Transactional(rollbackFor = Exception.class)
     public void modifyLocalGroup(CollabProfile localGroup) {
         this.dao.update(localGroup);
+
+        ldapLogger.info("Local group modified : "+localGroup.getCn());
+
     }
 
 
@@ -638,6 +695,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         }
 
         this.dao.delete(groupToRemove);
+
+        ldapLogger.info("Local group removed : "+workspaceId + " "+dn.toString());
+
     }
 
 
@@ -649,38 +709,39 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     public void removeLocalGroup(String workspaceId, String cn) {
         Name dn = this.sample.buildDn(cn);
         this.removeLocalGroup(workspaceId, dn);
+
     }
 
 
     @Override
     public boolean checkGroups(String workspaceId) {
-    	
+
     	boolean ret = false;
-    	
+
     	logger_integrity.info("checkGroups starts for "+workspaceId+".");
-    	
+
     	Map<Name, Boolean> names = new HashMap<Name, Boolean>();
-    	
+
     	List<WorkspaceMember> allMembers = getAllMembers(workspaceId);
     	for(WorkspaceMember member : allMembers) {
     		names.put(member.getMember().getDn(), Boolean.FALSE);
     	}
-    	
+
     	Document workspaceDocument = getWorkspaceDocument(workspaceId);
-    	
+
     	PropertyList spaceMembers = workspaceDocument.getProperties().getList("ttcs:spaceMembers");
     	for (int i = 0; i < spaceMembers.size(); i++) {
     		PropertyMap member = spaceMembers.getMap(i);
-    		
+
     		String login = member.getString("login");
     		Name dn = personSample.buildDn(login);
-    		
+
     		// if found
     		Boolean found = names.get(dn);
     		if(found != null) {
 
     	    	logger_integrity.debug(dn.toString() +" found.");
-    			
+
     			names.put(dn, Boolean.TRUE);
     		}
     		else {
@@ -688,38 +749,38 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     			logger_integrity.error("No member found in workspace with dn "+dn);
     			ret = true;
     		}
-    		
+
     	}
-    	
+
     	for(Map.Entry<Name, Boolean>  entry : names.entrySet()) {
     		if(entry.getValue() == Boolean.FALSE) {
     			logger_integrity.error("Orphan member found in workspace with dn "+entry.getKey().toString());
     			ret = true;
     		}
     	}
-    	
+
     	return ret;
-    	
+
     }
-    
+
     @Override
     public void sendIntegrityAlert(PortalControllerContext pcc) {
-    	
+
 		NuxeoController nuxeoController = new NuxeoController(pcc.getPortletCtx());
 
         IFormsService formsService = nuxeoController.getNuxeoCMSService().getFormsService();
-        
+
         Map<String, String> variables = new HashMap<>();
-        
+
 		try {
             formsService.start(pcc, LDAP_INTEGRITY_MODEL_WEBID, variables);
 		} catch (PortalException | FormFilterException e) {
 			logger_integrity.error("Unable to send notification", e);
 		}
-        
+
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
