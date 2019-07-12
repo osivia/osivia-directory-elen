@@ -13,6 +13,8 @@
  */
 package org.osivia.services.person.card.portlet.controller;
 
+import org.osivia.services.person.card.portlet.service.PersonCardService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -26,13 +28,16 @@ import org.springframework.validation.Validator;
 @Component("chgPwdValidator")
 public class ChgPwdValidator implements Validator {
 
+	/** Portlet service. */
+	@Autowired
+	private PersonCardService service;
+
+
 	public boolean supports(Class<?> klass) {
 		return FormChgPwd.class.isAssignableFrom(klass);
 	}
 
 	public void validate(Object target, Errors errors) {
-		
-		
 		FormChgPwd fiche = (FormChgPwd) target;
 
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "newPwd", "NotEmpty.field");
@@ -46,7 +51,8 @@ public class ChgPwdValidator implements Validator {
 		if(!fiche.getNewPwd().equals(fiche.getConfirmPwd())) {
 			errors.rejectValue("confirmPwd", "Not.Same.Pwd");
 		}
-		
+
+		this.service.validatePasswordRules(errors, "newPwd", fiche.getNewPwd());
 	}
 
 }

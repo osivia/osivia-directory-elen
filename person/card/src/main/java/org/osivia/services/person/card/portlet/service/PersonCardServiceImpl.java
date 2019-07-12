@@ -3,16 +3,12 @@
  */
 package org.osivia.services.person.card.portlet.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.portlet.PortletRequest;
-
+import com.sun.org.apache.xalan.internal.xsltc.DOM;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.Documents;
 import org.nuxeo.ecm.automation.client.model.PropertyMap;
@@ -24,6 +20,7 @@ import org.osivia.directory.v2.service.WorkspaceService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.html.DOM4JUtils;
 import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.locator.Locator;
@@ -33,18 +30,19 @@ import org.osivia.portal.api.notifications.NotificationsType;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.windows.PortalWindow;
 import org.osivia.portal.api.windows.WindowFactory;
-import org.osivia.services.person.card.portlet.controller.Card;
-import org.osivia.services.person.card.portlet.controller.FormChgPwd;
-import org.osivia.services.person.card.portlet.controller.FormEdition;
-import org.osivia.services.person.card.portlet.controller.NuxeoProfile;
-import org.osivia.services.person.card.portlet.controller.PersonCardConfig;
-import org.osivia.services.person.card.portlet.controller.PersonCardWorkspaceMember;
+import org.osivia.services.person.card.portlet.controller.*;
 import org.osivia.services.person.card.portlet.repository.GetUserWorkspacesCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Loïc Billon
@@ -385,37 +383,66 @@ public class PersonCardServiceImpl implements PersonCardService {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#changePassword(org.osivia.services.person.card.portlet.controller.FormChgPwd)
-	 */
+
 	@Override
 	public boolean changePassword(PortalControllerContext portalControllerContext, Card card, FormChgPwd formChgPwd) {
-
 		if (!personService.verifyPassword(card.getUserConsulte().getUid(), formChgPwd.getCurrentPwd())) {
 			return false;
 		} else {
-			
-			List<String> validatePasswordRules = personService.validatePasswordRules(portalControllerContext, formChgPwd.getNewPwd());
-			
-			if(validatePasswordRules.isEmpty()) {
-	
-				// Modification du mot de passe
-				personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
-				
-				return true;
-			}
-			else {
-				
-				String messages = StringUtils.join(validatePasswordRules, ", ");
-		        this.notificationsService.addSimpleNotification(portalControllerContext, messages, NotificationsType.ERROR);			
+			// Modification du mot de passe
+			personService.updatePassword(card.getUserConsulte(), formChgPwd.getNewPwd());
 
-				return false;
-
-			}
-
+			return true;
 		}
 	}
-	
+
+
+	@Override
+	public void validatePasswordRules(Errors errors, String field, String password) {
+		Map<String, String> messages = this.personService.validatePasswordRules(password);
+
+		if (MapUtils.isNotEmpty(messages)) {
+			for (Map.Entry<String, String> entry : messages.entrySet()) {
+				errors.rejectValue(field, entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+
+	@Override
+	public Element getPasswordRulesInformation(PortalControllerContext portalControllerContext, String password) {
+		// Information
+		Map<String, Boolean> information = this.personService.getPasswordRulesInformation(password);
+
+		// Container
+		Element container = DOM4JUtils.generateDivElement(StringUtils.EMPTY);
+
+		if (MapUtils.isNotEmpty(information)) {
+			Element ul = DOM4JUtils.generateElement("ul", "list-unstyled", StringUtils.EMPTY);
+			container.add(ul);
+
+			for (Map.Entry<String, Boolean> entry : information.entrySet()) {
+				Element li = DOM4JUtils.generateElement("li", null, StringUtils.EMPTY);
+				ul.add(li);
+
+				String htmlClass;
+				String icon;
+				if (BooleanUtils.isTrue(entry.getValue())) {
+					htmlClass = "text-success";
+					icon = "glyphicons glyphicons-check";
+				} else {
+					htmlClass = null;
+					icon = "glyphicons glyphicons-unchecked";
+				}
+				Element item = DOM4JUtils.generateElement("span", htmlClass, entry.getKey(), icon, null);
+				li.add(item);
+			}
+		}
+
+		return container;
+	}
+
+
 	/* (non-Javadoc)
 	 * @see org.osivia.services.person.card.portlet.service.PersonCardService#overwritePassword(org.osivia.services.person.card.portlet.controller.Card, org.osivia.services.person.card.portlet.controller.FormChgPwd)
 	 */
