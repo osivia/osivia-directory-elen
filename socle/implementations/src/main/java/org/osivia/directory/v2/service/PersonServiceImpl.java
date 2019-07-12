@@ -13,15 +13,11 @@
  */
 package org.osivia.directory.v2.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.Name;
-
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.client.model.Document;
@@ -34,296 +30,420 @@ import org.osivia.directory.v2.repository.UpdateUserProfileCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
-import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.api.urls.PortalUrlType;
 import org.osivia.portal.core.cms.CMSException;
-import org.passay.DigitCharacterRule;
-import org.passay.LengthRule;
-import org.passay.LowercaseCharacterRule;
-import org.passay.PasswordData;
-import org.passay.PasswordValidator;
-import org.passay.RuleResult;
-import org.passay.RuleResultDetail;
-import org.passay.SpecialCharacterRule;
-import org.passay.UppercaseCharacterRule;
-import org.passay.WhitespaceRule;
+import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
-import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
-import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
+import javax.naming.Name;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Impl of the person service
+ *
  * @author Loïc Billon
  * @since 4.4
  */
 @Service("personService")
 public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
-	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
+    private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
 
-	private static final String CARD_INSTANCE = "directory-person-card-instance";
+    private static final String CARD_INSTANCE = "directory-person-card-instance";
 
-	
-	@Autowired
-	protected ApplicationContext context;
-	
-	@Autowired
-	protected Person sample;
-	
-	@Autowired
-	protected PersonDao dao;
-	
-	@Autowired
-	protected WorkspaceService workspaceService;
 
-	@Autowired
-	protected IPortalUrlFactory urlFactory;
-	
-	@Autowired
-	protected IBundleFactory bundleFactory;
-	
-	@Override
-	public Person getEmptyPerson() {
-		return context.getBean(sample.getClass());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(javax.naming.Name)
-	 */
-	@Override
-	public Person getPerson(Name dn) {
-		
-		Person p;
-		try {
-			p = dao.getPerson(dn);
-			appendAvatar(p);
-			
-		} catch (NameNotFoundException e) {
-			ldapLogger.warn("Person with dn "+dn+" not found");
-			return null;
-		}
+    @Autowired
+    protected ApplicationContext context;
 
-		return p;
-		
-	}
-	
-	@Override
-	public Person getPersonNoCache(Name dn) {
-		
-		Person p;
-		try {
-			p = dao.getPersonNoCache(dn);
-			appendAvatar(p);
-			
-		} catch (NameNotFoundException e) {
-			ldapLogger.warn("Person with dn "+dn+" not found");
-			return null;
-		}
+    @Autowired
+    protected Person sample;
 
-		return p;
-		
-	}
+    @Autowired
+    protected PersonDao dao;
 
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
-	 */
-	@Override
-	public Person getPerson(String uid) {
+    @Autowired
+    protected WorkspaceService workspaceService;
+
+    @Autowired
+    protected IPortalUrlFactory urlFactory;
+
+    @Autowired
+    protected IBundleFactory bundleFactory;
+
+    @Override
+    public Person getEmptyPerson() {
+        return context.getBean(sample.getClass());
+    }
+
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(javax.naming.Name)
+     */
+    @Override
+    public Person getPerson(Name dn) {
+
+        Person p;
+        try {
+            p = dao.getPerson(dn);
+            appendAvatar(p);
+
+        } catch (NameNotFoundException e) {
+            ldapLogger.warn("Person with dn " + dn + " not found");
+            return null;
+        }
+
+        return p;
+
+    }
+
+    @Override
+    public Person getPersonNoCache(Name dn) {
+
+        Person p;
+        try {
+            p = dao.getPersonNoCache(dn);
+            appendAvatar(p);
+
+        } catch (NameNotFoundException e) {
+            ldapLogger.warn("Person with dn " + dn + " not found");
+            return null;
+        }
+
+        return p;
+
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
+     */
+    @Override
+    public Person getPerson(String uid) {
 
         Name dn = sample.buildDn(uid);
 
-		return getPerson(dn);
-	}
-	
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
-	 */
-	@Override
-	public List<Person> findByCriteria(Person search) {
+        return getPerson(dn);
+    }
 
-		List<Person> persons = dao.findByCriteria(search);
-		for(Person p : persons) {
-			appendAvatar(p);
-		}
-		return persons;
-	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	public void create(Person p) {
-		
-		dao.create(p);
-		
-		ldapLogger.info("Person created : "+p.getUid());
-		
-	}
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#getPerson(java.lang.String)
+     */
+    @Override
+    public List<Person> findByCriteria(Person search) {
 
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	public void update(Person p) {
-		dao.update(p);
-		
-		ldapLogger.info("Person updated : "+p.getUid());
-		
-	}
-	
-	@Transactional
-	public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
-		
-		update(p);
-		
-		NuxeoController controller = new NuxeoController(portalControllerContext);
-		
-		Document nuxeoProfile = (Document) getEcmProfile(portalControllerContext, p);
-		
-		UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile,properties, avatar);
-		controller.executeNuxeoCommand(updateCmd);
-		
-		if(avatar != null) {
-			controller.refreshUserAvatar(p.getUid());
-		}
-	}
-	
+        List<Person> persons = dao.findByCriteria(search);
+        for (Person p : persons) {
+            appendAvatar(p);
+        }
+        return persons;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#verifyPassword(java.lang.String)
-	 */
-	@Override
-	public boolean verifyPassword(String uid, String currentPassword) {
 
-		return dao.verifyPassword(uid, currentPassword);
-		
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.service.PersonUpdateService#validatePasswordRules(org.osivia.portal.api.context.PortalControllerContext)
-	 */
-	@Override
-	public List<String> validatePasswordRules(PortalControllerContext portalControllerContext, String newPassword) {
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
+     */
+    @Override
+    public void create(Person p) {
 
-		List<String> messages = new ArrayList<>();
+        dao.create(p);
 
-		PasswordValidator pwv = new PasswordValidator(Arrays.asList(new LengthRule(8, 30),
-				new UppercaseCharacterRule(1), new DigitCharacterRule(1), new SpecialCharacterRule(1),
-				new LowercaseCharacterRule(1), new WhitespaceRule()));			
+        ldapLogger.info("Person created : " + p.getUid());
 
-		RuleResult result = pwv.validate(new PasswordData(newPassword));
-		
-		Bundle bundle = bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
-				
-		for(RuleResultDetail detail : result.getDetails()) {
-			String translatedMsg = bundle.getString(detail.getErrorCode());
-			messages.add(translatedMsg);
-		}
-		
-		return messages;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.osivia.portal.api.directory.v2.service.PersonService#updatePassword(org.osivia.portal.api.directory.v2.model.Person, java.lang.String)
-	 */
-	@Override
-	public void updatePassword(Person p, String newPassword) {
+    }
 
-		dao.updatePassword(p, newPassword);
-	}
-	
-	/**
-	 * Get avatar url for a person
-	 * @param person the person
-	 */
-	protected void appendAvatar(Person person) {
-		// 	Append avatar
-		INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
-		INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
-		
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)
+     */
+    @Override
+    public void update(Person p) {
+        dao.update(p);
+
+        ldapLogger.info("Person updated : " + p.getUid());
+
+    }
+
+    @Transactional
+    public void update(PortalControllerContext portalControllerContext, Person p, Avatar avatar, Map<String, String> properties) throws PortalException {
+
+        update(p);
+
+        NuxeoController controller = new NuxeoController(portalControllerContext);
+
+        Document nuxeoProfile = (Document) getEcmProfile(portalControllerContext, p);
+
+        UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile, properties, avatar);
+        controller.executeNuxeoCommand(updateCmd);
+
+        if (avatar != null) {
+            controller.refreshUserAvatar(p.getUid());
+        }
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#verifyPassword(java.lang.String)
+     */
+    @Override
+    public boolean verifyPassword(String uid, String currentPassword) {
+
+        return dao.verifyPassword(uid, currentPassword);
+
+    }
+
+
+    @Override
+    public Map<String, String> validatePasswordRules(String password) {
+        // Rules
+        List<Rule> rules = this.getPasswordRules();
+        // Message resolver
+        MessageResolver messageResolver = this.getPasswordRulesMessageResolver();
+
+        // Password validator
+        PasswordValidator passwordValidator = new PasswordValidator(messageResolver, rules);
+
+        // Password data
+        PasswordData passwordData = new PasswordData(password);
+
+        // Validation result
+        RuleResult result = passwordValidator.validate(passwordData);
+
+        Map<String, String> messages = new LinkedHashMap<>(result.getDetails().size());
+        for (RuleResultDetail detail : result.getDetails()) {
+            String errorCode = detail.getErrorCode();
+            String message = messageResolver.resolve(detail);
+            messages.put(errorCode, message);
+        }
+
+        return messages;
+    }
+
+
+    @Override
+    public Map<String, Boolean> getPasswordRulesInformation(String password) {
+        // Rules
+        List<Rule> rules = this.getPasswordRules();
+        // Message resolver
+        MessageResolver messageResolver = this.getPasswordRulesMessageResolver();
+
+        // Password data
+        PasswordData passwordData = new PasswordData(password);
+
+        // Informations
+        Map<String, Boolean> informations = new LinkedHashMap<>(rules.size());
+        for (Rule rule : rules) {
+            if (rule instanceof LengthRule) {
+                // Length rule
+                LengthRule lengthRule = (LengthRule) rule;
+                int minimumLength = lengthRule.getMinimumLength();
+                int maximumLength = lengthRule.getMaximumLength();
+
+                // Detail parameters
+                Map<String, Object> detailParameters = new LinkedHashMap<>(2);
+                detailParameters.put("minimumLength", minimumLength);
+                detailParameters.put("maximumLength", maximumLength);
+
+                if (minimumLength > 0) {
+                    // Minimum length rule
+                    Rule minimumLengthRule = new LengthRule(minimumLength, Integer.MAX_VALUE);
+                    RuleResultDetail detail = new RuleResultDetail(lengthRule.ERROR_CODE_MIN, detailParameters);
+                    String message = messageResolver.resolve(detail);
+                    RuleResult result = minimumLengthRule.validate(passwordData);
+
+                    informations.put(message, result.isValid());
+                }
+
+                if (maximumLength < Integer.MAX_VALUE) {
+                    // Maximum length rule
+                    Rule maximumLengthRule = new LengthRule(0, maximumLength);
+                    RuleResultDetail detail = new RuleResultDetail(lengthRule.ERROR_CODE_MAX, detailParameters);
+                    String message = messageResolver.resolve(detail);
+                    RuleResult result = maximumLengthRule.validate(passwordData);
+
+                    informations.put(message, result.isValid());
+                }
+            } else if (rule instanceof AbstractCharacterRule) {
+                // Character rule
+                AbstractCharacterRule characterRule = (AbstractCharacterRule) rule;
+
+                // Detail parameters
+                Map<String, Object> detailParameters = new LinkedHashMap<>(1);
+                detailParameters.put("minimumRequired", characterRule.getNumberOfCharacters());
+
+                // Code
+                String code;
+                if (characterRule instanceof LowercaseCharacterRule) {
+                    code = LowercaseCharacterRule.ERROR_CODE;
+                } else if (characterRule instanceof UppercaseCharacterRule) {
+                    code = UppercaseCharacterRule.ERROR_CODE;
+                } else if (characterRule instanceof DigitCharacterRule) {
+                    code = DigitCharacterRule.ERROR_CODE;
+                } else if (characterRule instanceof SpecialCharacterRule) {
+                    code = SpecialCharacterRule.ERROR_CODE;
+                } else {
+                    code = null;
+                }
+
+                if (StringUtils.isNotEmpty(code)) {
+                    RuleResultDetail detail = new RuleResultDetail(code, detailParameters);
+                    String message = messageResolver.resolve(detail);
+                    RuleResult result = characterRule.validate(passwordData);
+
+                    informations.put(message, result.isValid());
+                }
+            } else if (rule instanceof WhitespaceRule) {
+                // Whitespace rule
+                WhitespaceRule whitespaceRule = (WhitespaceRule) rule;
+
+                RuleResultDetail detail = new RuleResultDetail(WhitespaceRule.ERROR_CODE, null);
+                String message = messageResolver.resolve(detail);
+                RuleResult result = whitespaceRule.validate(passwordData);
+
+                informations.put(message, result.isValid());
+            }
+        }
+
+        return informations;
+    }
+
+
+    /**
+     * Get password rules.
+     *
+     * @return rules
+     */
+    private List<Rule> getPasswordRules() {
+        List<Rule> rules = new ArrayList<>();
+        rules.add(new LengthRule(8, 30));
+        rules.add(new LowercaseCharacterRule(1));
+        rules.add(new UppercaseCharacterRule(1));
+        rules.add(new DigitCharacterRule(1));
+        rules.add(new SpecialCharacterRule(1));
+        rules.add(new WhitespaceRule());
+        return rules;
+    }
+
+
+    /**
+     * Get password rules message resolver.
+     *
+     * @return message resolver
+     */
+    private MessageResolver getPasswordRulesMessageResolver() {
+        MessageResolver messageResolver;
+        InputStream inputStream = null;
+        try {
+            inputStream = this.getClass().getResourceAsStream("/password-validation_fr.properties");
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            messageResolver = new PropertiesMessageResolver(properties);
+        } catch (IOException e) {
+            this.ldapLogger.error("Error loading message properties.", e);
+            IOUtils.closeQuietly(inputStream);
+            messageResolver = new PropertiesMessageResolver();
+        }
+        return messageResolver;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.osivia.portal.api.directory.v2.service.PersonService#updatePassword(org.osivia.portal.api.directory.v2.model.Person, java.lang.String)
+     */
+    @Override
+    public void updatePassword(Person p, String newPassword) {
+
+        dao.updatePassword(p, newPassword);
+    }
+
+    /**
+     * Get avatar url for a person
+     *
+     * @param person the person
+     */
+    protected void appendAvatar(Person person) {
+        // 	Append avatar
+        INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
+        INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
+
         Link userAvatar = new Link("", false);
-		try {
-			userAvatar = cmsCustomizer.getUserAvatar(null, person.getUid());
-		} catch (CMSException e) {
-			
-		}
+        try {
+            userAvatar = cmsCustomizer.getUserAvatar(null, person.getUid());
+        } catch (CMSException e) {
+
+        }
         person.setAvatar(userAvatar);
-	}
-	
-	/**
-	 * Generate a portlet url for person card
-	 */
-	public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
-		Map<String, String> windowProperties = new HashMap<String, String>();
-		windowProperties.put("osivia.ajaxLink", "1");
-		windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
-		windowProperties.put("osivia.title", person.getDisplayName());
-		windowProperties.put("uidFichePersonne", person.getUid());
-		
+    }
+
+    /**
+     * Generate a portlet url for person card
+     */
+    public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
+        Map<String, String> windowProperties = new HashMap<String, String>();
+        windowProperties.put("osivia.ajaxLink", "1");
+        windowProperties.put("theme.dyna.partial_refresh_enabled", "true");
+        windowProperties.put("osivia.title", person.getDisplayName());
+        windowProperties.put("uidFichePersonne", person.getUid());
+
         String url = urlFactory.getStartPortletUrl(portalControllerContext, CARD_INSTANCE, windowProperties, PortalUrlType.DEFAULT);
-        return new Link(url,false);
-	}
-	
-	
-	@Override
-	public Object getEcmProfile(
-			PortalControllerContext portalControllerContext, Person person)
-			throws PortalException {
-		NuxeoController controller = new NuxeoController(portalControllerContext);
-		
-		return controller.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
-		
-	}
+        return new Link(url, false);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.service.PersonUpdateService#delete(org.osivia.portal.api.directory.v2.model.Person)
-	 */
-	@Override
-	public void delete(Person userConsulte) {
-		
-		CollabProfile searchProfiles = workspaceService.getEmptyProfile();
-		searchProfiles.setType(WorkspaceGroupType.space_group);
-		List<Name> name = new ArrayList<Name>();
-		name.add(userConsulte.getDn());
-		searchProfiles.setUniqueMember(name);
-		
-		List<CollabProfile> spaces = workspaceService.findByCriteria(searchProfiles);
-		for(CollabProfile space : spaces) {
-			workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
-		}
-		
-		dao.delete(userConsulte);
-		
-		ldapLogger.info("Person deleted : "+userConsulte.getUid());
 
-		
-	}
+    @Override
+    public Object getEcmProfile(
+            PortalControllerContext portalControllerContext, Person person)
+            throws PortalException {
+        NuxeoController controller = new NuxeoController(portalControllerContext);
 
-	@Override
-	public List<Person> findByNoConnectionDate(Person p) {
-		return dao.findByNoConnectionDate(p);
-	}
+        return controller.executeNuxeoCommand(new GetUserProfileCommand(person.getUid()));
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.service.PersonUpdateService#findByValidityDate(java.util.Date)
-	 */
-	@Override
-	public List<Person> findByValidityDate(Date d) {
-		return dao.findByValidityDate(d);
-	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.osivia.directory.v2.service.PersonUpdateService#delete(org.osivia.portal.api.directory.v2.model.Person)
+     */
+    @Override
+    public void delete(Person userConsulte) {
+
+        CollabProfile searchProfiles = workspaceService.getEmptyProfile();
+        searchProfiles.setType(WorkspaceGroupType.space_group);
+        List<Name> name = new ArrayList<Name>();
+        name.add(userConsulte.getDn());
+        searchProfiles.setUniqueMember(name);
+
+        List<CollabProfile> spaces = workspaceService.findByCriteria(searchProfiles);
+        for (CollabProfile space : spaces) {
+            workspaceService.removeMember(space.getWorkspaceId(), userConsulte.getDn());
+        }
+
+        dao.delete(userConsulte);
+
+        ldapLogger.info("Person deleted : " + userConsulte.getUid());
+
+
+    }
+
+    @Override
+    public List<Person> findByNoConnectionDate(Person p) {
+        return dao.findByNoConnectionDate(p);
+    }
+
+    /* (non-Javadoc)
+     * @see org.osivia.directory.v2.service.PersonUpdateService#findByValidityDate(java.util.Date)
+     */
+    @Override
+    public List<Person> findByValidityDate(Date d) {
+        return dao.findByValidityDate(d);
+    }
 
 
 }
