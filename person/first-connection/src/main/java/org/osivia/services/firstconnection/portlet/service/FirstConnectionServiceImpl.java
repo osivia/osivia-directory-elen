@@ -1,15 +1,20 @@
 package org.osivia.services.firstconnection.portlet.service;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.html.DOM4JUtils;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.services.firstconnection.portlet.model.UserForm;
 import org.osivia.services.firstconnection.portlet.repository.FirstConnectionRepository;
@@ -18,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 /**
  * First connection portlet service implementation.
@@ -77,6 +83,52 @@ public class FirstConnectionServiceImpl implements FirstConnectionService, Appli
         }
 
         return form;
+    }
+
+
+    @Override
+    public void validatePasswordRules(Errors errors, String field, String password) {
+        Map<String, String> messages = this.personService.validatePasswordRules(password);
+
+        if (MapUtils.isNotEmpty(messages)) {
+            for (Map.Entry<String, String> entry : messages.entrySet()) {
+                errors.rejectValue(field, entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+
+    @Override
+    public Element getPasswordRulesInformation(PortalControllerContext portalControllerContext, String password) {
+        // Information
+        Map<String, Boolean> information = this.personService.getPasswordRulesInformation(password);
+
+        // Container
+        Element container = DOM4JUtils.generateDivElement(StringUtils.EMPTY);
+
+        if (MapUtils.isNotEmpty(information)) {
+            Element ul = DOM4JUtils.generateElement("ul", "list-unstyled", StringUtils.EMPTY);
+            container.add(ul);
+
+            for (Map.Entry<String, Boolean> entry : information.entrySet()) {
+                Element li = DOM4JUtils.generateElement("li", null, StringUtils.EMPTY);
+                ul.add(li);
+
+                String htmlClass;
+                String icon;
+                if (BooleanUtils.isTrue(entry.getValue())) {
+                    htmlClass = "text-success";
+                    icon = "glyphicons glyphicons-check";
+                } else {
+                    htmlClass = null;
+                    icon = "glyphicons glyphicons-unchecked";
+                }
+                Element item = DOM4JUtils.generateElement("span", htmlClass, entry.getKey(), icon, null);
+                li.add(item);
+            }
+        }
+
+        return container;
     }
 
 

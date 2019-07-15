@@ -1,37 +1,48 @@
 // First connection functions
-
 $JQry(function() {
-	
-	$JQry(".first-connection input[type=password]").each(function(index, element) {
-		var $element = $JQry(element),
-			$formGroup = $element.closest(".form-group")
-			$progressContainer = $formGroup.find(".progress-container"),
-			$textContainer = $formGroup.find(".text-container");
-		
-		if ($progressContainer.get(0) !== undefined) {
-			$element.strengthMeter("progressBar", {
-				container: $progressContainer,
-				base: 100,
-				hierarchy: {
-				    "0": "progress-bar-danger",
-				    "20": "progress-bar-warning",
-				    "40": "progress-bar-success"
-				}
-			});
-		}
-		
-		if ($textContainer.get(0) !== undefined) {
-			$element.strengthMeter("text", {
-				container: $textContainer.children().first(),
-				hierarchy: {
-					"0": ["text-muted", $textContainer.data("empty")],
-					"1": ["text-danger", $textContainer.data("too-weak")],
-				    "20": ["text-warning", $textContainer.data("weak")],
-				    "30": ["text-warning", $textContainer.data("good")],
-				    "40": ["text-success", $textContainer.data("strong")],
-				}
-			});
-		}
-	});
-	
+    var passwordRulesInformationTimer;
+    var passwordRulesInformationXhr;
+
+
+    $JQry(".first-connection input[name=password]").each(function(index, element) {
+        var $element = $JQry(element);
+
+        if (!$element.data("loaded")) {
+            updatePasswordRulesInformation();
+
+            $element.on("input", function(event) {
+                // Clear timer
+                clearTimeout(passwordRulesInformationTimer);
+
+                passwordRulesInformationTimer = setTimeout(updatePasswordRulesInformation, 200);
+            });
+
+            $element.data("loaded", true);
+        }
+    });
+
+
+    function updatePasswordRulesInformation() {
+        var $placeholder = $JQry(".first-connection [data-password-information-placeholder]");
+        var $input = $JQry(".first-connection input[name=password]");
+
+        // Abort previous AJAX request
+        if (passwordRulesInformationXhr && passwordRulesInformationXhr.readyState !== 4) {
+            passwordRulesInformationXhr.abort();
+        }
+
+        passwordRulesInformationXhr = jQuery.ajax({
+            url: $placeholder.data("url"),
+            type: "POST",
+            async: true,
+            cache: false,
+            data: {
+                password: $input.val()
+            },
+            dataType: "html",
+            success : function(data, status, xhr) {
+                $placeholder.html(data);
+            }
+        });
+    }
 });
