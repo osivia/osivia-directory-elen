@@ -13,18 +13,24 @@
  */
 package org.osivia.directory.v2.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.naming.Name;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.portal.common.invocation.Scope;
@@ -50,11 +56,15 @@ import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
 import org.osivia.portal.core.context.ControllerContextAdapter;
+import org.passay.AbstractCharacterRule;
 import org.passay.DigitCharacterRule;
 import org.passay.LengthRule;
 import org.passay.LowercaseCharacterRule;
+import org.passay.MessageResolver;
 import org.passay.PasswordData;
 import org.passay.PasswordValidator;
+import org.passay.PropertiesMessageResolver;
+import org.passay.Rule;
 import org.passay.RuleResult;
 import org.passay.RuleResultDetail;
 import org.passay.SpecialCharacterRule;
@@ -81,7 +91,9 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 @Service
 public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
 
-    /** Person card portlet instance. */
+	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
+
+	/** Person card portlet instance. */
     private static final String CARD_INSTANCE = "directory-person-card-instance";
 
 
@@ -114,19 +126,6 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     protected IBundleFactory bundleFactory;
 
 
-    /** Log. */
-    private final Log log;
-
-
-    /**
-     * Constructor.
-     */
-    public PersonServiceImpl() {
-        super();
-        this.log = LogFactory.getLog(this.getClass());
-    }
-
-
     /**
      * {@inheritDoc}
      */
@@ -147,7 +146,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
             this.appendAvatar(p);
 
         } catch (NameNotFoundException e) {
-            this.log.warn("Person with dn " + dn + " not found");
+            ldapLogger.warn("Person with dn "+dn+" not found");
             return null;
         }
 
@@ -165,7 +164,7 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
             p = this.dao.getPersonNoCache(dn);
             this.appendAvatar(p);
         } catch (NameNotFoundException e) {
-            this.log.warn("Person with dn " + dn + " not found");
+            ldapLogger.warn("Person with dn "+dn+" not found");
             return null;
         }
 
@@ -203,6 +202,8 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     @Override
     public void create(Person p) {
         this.dao.create(p);
+		ldapLogger.info("Person created : "+p.getUid());
+        
     }
 
 
@@ -212,6 +213,9 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     @Override
     public void update(Person p) {
         this.dao.update(p);
+        
+		ldapLogger.info("Person updated : "+p.getUid());
+        
     }
 
 
@@ -244,30 +248,164 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
         return this.dao.verifyPassword(uid, currentPassword);
     }
 
-	/* (non-Javadoc)
-	 * @see org.osivia.directory.v2.service.PersonUpdateService#validatePasswordRules(org.osivia.portal.api.context.PortalControllerContext)
-	 */
-	@Override
-	public List<String> validatePasswordRules(PortalControllerContext portalControllerContext, String newPassword) {
+	
 
-		List<String> messages = new ArrayList<>();
+    @Override
+    public Map<String, String> validatePasswordRules(String password) {
+        // Rules
+        List<Rule> rules = this.getPasswordRules();
+        // Message resolver
+        MessageResolver messageResolver = this.getPasswordRulesMessageResolver();
 
-		PasswordValidator pwv = new PasswordValidator(Arrays.asList(new LengthRule(8, 30),
-				new UppercaseCharacterRule(1), new DigitCharacterRule(1), new SpecialCharacterRule(1),
-				new LowercaseCharacterRule(1), new WhitespaceRule()));
+        // Password validator
+        PasswordValidator passwordValidator = new PasswordValidator(messageResolver, rules);
 
-		RuleResult result = pwv.validate(new PasswordData(newPassword));
+        // Password data
+        PasswordData passwordData = new PasswordData(password);
 
-		Bundle bundle = bundleFactory.getBundle(portalControllerContext.getRequest().getLocale());
+        // Validation result
+        RuleResult result = passwordValidator.validate(passwordData);
 
-		for(RuleResultDetail detail : result.getDetails()) {
-			String translatedMsg = bundle.getString(detail.getErrorCode());
-			messages.add(translatedMsg);
-		}
+        Map<String, String> messages = new LinkedHashMap<String, String>(result.getDetails().size());
+        for (RuleResultDetail detail : result.getDetails()) {
+            String errorCode = detail.getErrorCode();
+            String message = messageResolver.resolve(detail);
+            messages.put(errorCode, message);
+        }
 
-		return messages;
-	}
+        return messages;
+    }
 
+
+    @Override
+    public Map<String, Boolean> getPasswordRulesInformation(String password) {
+        // Rules
+        List<Rule> rules = this.getPasswordRules();
+        // Message resolver
+        MessageResolver messageResolver = this.getPasswordRulesMessageResolver();
+
+        // Password data
+        PasswordData passwordData = new PasswordData(password);
+
+        // Informations
+        Map<String, Boolean> informations = new LinkedHashMap<>(rules.size());
+        for (Rule rule : rules) {
+            if (rule instanceof LengthRule) {
+                // Length rule
+                LengthRule lengthRule = (LengthRule) rule;
+                int minimumLength = lengthRule.getMinimumLength();
+                int maximumLength = lengthRule.getMaximumLength();
+
+                // Detail parameters
+                Map<String, Object> detailParameters = new LinkedHashMap<>(2);
+                detailParameters.put("minimumLength", minimumLength);
+                detailParameters.put("maximumLength", maximumLength);
+
+                if (minimumLength > 0) {
+                    // Minimum length rule
+                    Rule minimumLengthRule = new LengthRule(minimumLength, Integer.MAX_VALUE);
+                    RuleResultDetail detail = new RuleResultDetail(lengthRule.ERROR_CODE_MIN, detailParameters);
+                    String message = messageResolver.resolve(detail);
+                    RuleResult result = minimumLengthRule.validate(passwordData);
+
+                    informations.put(message, result.isValid());
+                }
+
+                if (maximumLength < Integer.MAX_VALUE) {
+                    // Maximum length rule
+                    Rule maximumLengthRule = new LengthRule(0, maximumLength);
+                    RuleResultDetail detail = new RuleResultDetail(lengthRule.ERROR_CODE_MAX, detailParameters);
+                    String message = messageResolver.resolve(detail);
+                    RuleResult result = maximumLengthRule.validate(passwordData);
+
+                    informations.put(message, result.isValid());
+                }
+            } else if (rule instanceof AbstractCharacterRule) {
+                // Character rule
+                AbstractCharacterRule characterRule = (AbstractCharacterRule) rule;
+
+                // Detail parameters
+                Map<String, Object> detailParameters = new LinkedHashMap<>(1);
+                detailParameters.put("minimumRequired", characterRule.getNumberOfCharacters());
+
+                // Code
+                String code;
+                if (characterRule instanceof LowercaseCharacterRule) {
+                    code = LowercaseCharacterRule.ERROR_CODE;
+                } else if (characterRule instanceof UppercaseCharacterRule) {
+                    code = UppercaseCharacterRule.ERROR_CODE;
+                } else if (characterRule instanceof DigitCharacterRule) {
+                    code = DigitCharacterRule.ERROR_CODE;
+                } else if (characterRule instanceof SpecialCharacterRule) {
+                    code = SpecialCharacterRule.ERROR_CODE;
+                } else {
+                    code = null;
+                }
+
+                if (StringUtils.isNotEmpty(code)) {
+                    RuleResultDetail detail = new RuleResultDetail(code, detailParameters);
+                    String message = messageResolver.resolve(detail);
+                    RuleResult result = characterRule.validate(passwordData);
+
+                    informations.put(message, result.isValid());
+                }
+            } else if (rule instanceof WhitespaceRule) {
+                // Whitespace rule
+                WhitespaceRule whitespaceRule = (WhitespaceRule) rule;
+
+                RuleResultDetail detail = new RuleResultDetail(WhitespaceRule.ERROR_CODE, null);
+                String message = messageResolver.resolve(detail);
+                RuleResult result = whitespaceRule.validate(passwordData);
+
+                informations.put(message, result.isValid());
+            }
+        }
+
+        return informations;
+    }
+
+
+    /**
+     * Get password rules.
+     *
+     * @return rules
+     */
+    private List<Rule> getPasswordRules() {
+        List<Rule> rules = new ArrayList<>();
+        rules.add(new LengthRule(8, 30));
+        rules.add(new LowercaseCharacterRule(1));
+        rules.add(new UppercaseCharacterRule(1));
+        rules.add(new DigitCharacterRule(1));
+        rules.add(new SpecialCharacterRule(1));
+        rules.add(new WhitespaceRule());
+        return rules;
+    }
+
+
+    /**
+     * Get password rules message resolver.
+     *
+     * @return message resolver
+     */
+    private MessageResolver getPasswordRulesMessageResolver() {
+        MessageResolver messageResolver;
+        InputStream inputStream = null;
+        try {
+            inputStream = this.getClass().getResourceAsStream("/password-validation_fr.properties");
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            messageResolver = new PropertiesMessageResolver(properties);
+        } catch (IOException e) {
+            this.ldapLogger.error("Error loading message properties.", e);
+            IOUtils.closeQuietly(inputStream);
+            messageResolver = new PropertiesMessageResolver();
+        }
+        return messageResolver;
+    }
+
+
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -377,6 +515,9 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 
         this.dao.delete(userConsulte);
 
+		ldapLogger.info("Person deleted : "+userConsulte.getUid());
+        
+        
     }
 
 

@@ -1,5 +1,6 @@
 package org.osivia.services.person.card.portlet.controller;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -11,8 +12,12 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 
 import org.apache.commons.collections.MapUtils;
+import org.dom4j.Element;
+import org.dom4j.io.HTMLWriter;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.person.card.portlet.model.PersonCardOptions;
 import org.osivia.services.person.card.portlet.model.PersonPasswordEditionForm;
@@ -25,11 +30,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.portlet.bind.PortletRequestDataBinder;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 /**
  * Person password edition portlet controller.
@@ -159,6 +166,30 @@ public class PersonPasswordEditionController {
     }
 
 
+    /**
+     * Password rules information resource mapping.
+     *
+     * @param request  resource request
+     * @param response resource response
+     * @param password password
+     */
+    @ResourceMapping("password-information")
+    public void passwordInformation(ResourceRequest request, ResourceResponse response, @RequestParam(name = "password", required = false) String password) throws PortletException, IOException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        // Password rules information
+        Element information = this.service.getPasswordRulesInformation(portalControllerContext, password);
+
+        // Content type
+        response.setContentType("text/html");
+
+        // Content
+        HTMLWriter htmlWriter = new HTMLWriter(response.getPortletOutputStream());
+        htmlWriter.write(information);
+        htmlWriter.close();
+    }
+    
     /**
      * Person password edition form init binder.
      *

@@ -12,6 +12,8 @@
 
 <portlet:actionURL name="save" var="saveUrl" />
 
+<portlet:resourceURL id="password-information" var="passwordInformationUrl"/>
+
 
 <c:set var="emptyPasswordLabel"><op:translate key="PASSWORD_EMPTY" /></c:set>
 <c:set var="tooWeakPasswordLabel"><op:translate key="PASSWORD_TOO_WEAK" /></c:set>
@@ -21,7 +23,7 @@
 
 
 <div class="first-connection">
-    <!-- Warning -->
+    <%--Warning--%>
     <div class="alert alert-warning">
         <span><op:translate key="FIRST_CONNECTION_WARNING"/></span>
     </div>
@@ -43,7 +45,7 @@
             </div>
         </spring:bind>
     
-        <!-- First name -->
+        <%--First name--%>
         <spring:bind path="firstName">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
                 <form:label path="firstName" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="FIRST_NAME" /></form:label>
@@ -59,7 +61,7 @@
             </div>
         </spring:bind>
         
-        <!-- Last name -->
+        <%--Last name--%>
         <spring:bind path="lastName">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
                 <form:label path="lastName" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="LAST_NAME" /></form:label>
@@ -75,72 +77,87 @@
             </div>
         </spring:bind>
         
-        <!-- Email -->
-        <div class="form-group">
-            <label class="col-sm-4 col-lg-3 col-form-label"><op:translate key="EMAIL" /></label>
-            <div class="col-sm-8 col-lg-9">
-                <p class="form-control-plaintext">${userForm.email}</p>
-            </div>
-        </div>
-        
-        <!-- Password -->
-        <spring:bind path="password">
+        <%--Email--%>
+        <spring:bind path="email">
             <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-                <form:label path="password" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="PASSWORD" /></form:label>
+                <form:label path="email" cssClass="col-sm-4 col-lg-3 col-form-labell"><op:translate
+                        key="EMAIL"/></form:label>
                 <div class="col-sm-8 col-lg-9">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="glyphicons glyphicons-keys"></i>
-                        </span>
-                        <form:password path="password" showPassword="true" cssClass="form-control"/>
-                    </div>
+                    <form:input path="email" cssClass="form-control"/>
                     <c:if test="${status.error}">
                         <span class="form-control-feedback">
                             <i class="glyphicons glyphicons-remove"></i>                    
                         </span>
                     </c:if>
-                    <div class="help-block">
-                        <div class="media">
-                            <div class="media-body">
-                                <div class="progress-container"></div>
-                            </div>
-                            <div class="media-right">
-                                <div class="text-container" data-empty="${emptyPasswordLabel}" data-too-weak="${tooWeakPasswordLabel}" data-weak="${weakPasswordLabel}" data-good="${goodPasswordLabel}" data-strong="${strongPasswordLabel}">
-                                    <div></div>
-                                </div>
+                    <form:errors path="email" cssClass="help-block"/>
+                </div>
+            </div>
+        </spring:bind>
+        
+
+        <c:if test="${userForm.mustChangePassword}">
+            <%--Password--%>
+            <spring:bind path="password">
+                <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
+                    <form:label path="password" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate
+                            key="PASSWORD"/></form:label>
+                    <div class="col-sm-8 col-lg-9">
+                        <div class="input-group">
+	                        <span class="input-group-addon">
+	                            <i class="glyphicons glyphicons-keys"></i>
+	                        </span>
+                            <form:password path="password" showPassword="true" cssClass="form-control"/>
+                        </div>
+                        <c:if test="${status.error}">
+	                        <span class="form-control-feedback">
+	                            <i class="glyphicons glyphicons-remove"></i>                    
+	                        </span>
+                        </c:if>
+                        <form:errors path="password" cssClass="help-block"/>
+                    </div>
+                </div>
+
+                <%--Password rules information--%>
+                <div class="row">
+                    <div class="col-sm-offset-4 col-sm-8 col-lg-offset-3 col-lg-9">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <p><op:translate key="PASSWORD_INFORMATION_TITLE"/></p>
+                                <div data-password-information-placeholder data-url="${passwordInformationUrl}"></div>
                             </div>
                         </div>
                     </div>
-                    <form:errors path="password" cssClass="help-block" />
                 </div>
-            </div>
-        </spring:bind>
-        
-        <!-- Password -->
-        <spring:bind path="passwordConfirmation">
-            <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
-                <form:label path="passwordConfirmation" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate key="PASSWORD_CONFIRMATION" /></form:label>
-                <div class="col-sm-8 col-lg-9">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="glyphicons glyphicons-keys"></i>
-                        </span>
-                        <form:password path="passwordConfirmation" showPassword="true" cssClass="form-control"/>
+            </spring:bind>
+
+            <%--Password confirmation--%>
+            <spring:bind path="passwordConfirmation">
+                <div class="form-group required ${status.error ? 'has-error has-feedback' : ''}">
+                    <form:label path="passwordConfirmation" cssClass="col-sm-4 col-lg-3 col-form-label"><op:translate
+                            key="PASSWORD_CONFIRMATION"/></form:label>
+                    <div class="col-sm-8 col-lg-9">
+                        <div class="input-group">
+	                        <span class="input-group-addon">
+	                            <i class="glyphicons glyphicons-keys"></i>
+	                        </span>
+                            <form:password path="passwordConfirmation" showPassword="true" cssClass="form-control"/>
+                        </div>
+                        <c:if test="${status.error}">
+	                        <span class="form-control-feedback">
+	                            <i class="glyphicons glyphicons-remove"></i>                    
+	                        </span>
+                        </c:if>
+                        <form:errors path="passwordConfirmation" cssClass="help-block"/>
                     </div>
-                    <c:if test="${status.error}">
-                        <span class="form-control-feedback">
-                            <i class="glyphicons glyphicons-remove"></i>                    
-                        </span>
-                    </c:if>
-                    <form:errors path="passwordConfirmation" cssClass="help-block" />
                 </div>
-            </div>
-        </spring:bind>
+            </spring:bind>
+        </c:if>
+
         
-        <!-- Buttons -->
+        <%--Buttons--%>
         <div class="row">
             <div class="col-sm-offset-4 col-sm-8 col-lg-offset-3 col-lg-9">
-                <!-- Save -->
+                    <%--Save--%>
                 <button type="submit" class="btn btn-primary">
                     <i class="glyphicons glyphicons-floppy-disk"></i>
                     <span><op:translate key="SAVE" /></span>

@@ -53,13 +53,20 @@ public interface PersonUpdateService extends PersonService {
 
 	
 	/**
-	 * Check if a password validate some character rules
+     * Check if a password validate some character rules.
 	 * 
-	 * @param portalControllerContext
-	 * @param newPassword
-	 * @return
+     * @param password password
+     * @return error messages
+     */
+	Map<String, String> validatePasswordRules(String password);
+
+	/**
+	 * Get password rules informations: rule message and validated indicator
+	 * @param password password
+	 * @return informations
 	 */
-	public List<String> validatePasswordRules(PortalControllerContext portalControllerContext, String newPassword);
+	Map<String, Boolean> getPasswordRulesInformation(String password);
+
 
 	/**
 	 * Update the password of a person

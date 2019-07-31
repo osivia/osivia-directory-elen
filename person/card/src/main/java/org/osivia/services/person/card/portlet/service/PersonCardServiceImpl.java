@@ -10,14 +10,17 @@ import javax.naming.Name;
 import javax.portlet.PortletException;
 import javax.portlet.PortletRequest;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.dom4j.Element;
 import org.osivia.directory.v2.model.ext.Avatar;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.directory.v2.service.RoleService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.html.DOM4JUtils;
 import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.notifications.INotificationsService;
@@ -35,6 +38,7 @@ import org.osivia.services.person.card.portlet.repository.PersonCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -515,29 +519,11 @@ public class PersonCardServiceImpl implements PersonCardService {
 
             if (person != null) {
             	
-                List<String> messages = personService.validatePasswordRules(portalControllerContext, form.getUpdate());
-                if(!messages.isEmpty()) {
-                	
-                	String messagesConcat = bundle.getString("PASSWORD_VALIDATION") + "<ul>";
-                	
-                	for(String message : messages) {
-                		messagesConcat = messagesConcat.concat("<li>").concat(message).concat("</li>");
-                	}
-                	messagesConcat.concat("</ul>");
-                	// Notification
-                    this.notificationsService.addSimpleNotification(portalControllerContext, messagesConcat,
-                            NotificationsType.ERROR);
-                    
-                    throw new PortletException(messagesConcat);
-                }
-                else {
-            	   	this.personService.updatePassword(person, form.getUpdate());
-                    // Notification
-                    this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_SUCCESS"),
-                            NotificationsType.SUCCESS);
-                }
-
-
+        	   	this.personService.updatePassword(person, form.getUpdate());
+                // Notification
+                this.notificationsService.addSimpleNotification(portalControllerContext, bundle.getString("PERSON_CARD_PASSWORD_EDITION_SUCCESS"),
+                        NotificationsType.SUCCESS);
+            
             }
         } else {
             // Forbidden
@@ -548,5 +534,49 @@ public class PersonCardServiceImpl implements PersonCardService {
 
         }
     }
+    
+	@Override
+	public void validatePasswordRules(Errors errors, String field, String password) {
+		Map<String, String> messages = this.personService.validatePasswordRules(password);
+
+		if (MapUtils.isNotEmpty(messages)) {
+			for (Map.Entry<String, String> entry : messages.entrySet()) {
+				errors.rejectValue(field, entry.getKey(), entry.getValue());
+			}
+		}
+	}    
+
+	@Override
+	public Element getPasswordRulesInformation(PortalControllerContext portalControllerContext, String password) {
+		// Information
+		Map<String, Boolean> information = this.personService.getPasswordRulesInformation(password);
+
+		// Container
+		Element container = DOM4JUtils.generateDivElement(StringUtils.EMPTY);
+
+		if (MapUtils.isNotEmpty(information)) {
+			Element ul = DOM4JUtils.generateElement("ul", "list-unstyled", StringUtils.EMPTY);
+			container.add(ul);
+
+			for (Map.Entry<String, Boolean> entry : information.entrySet()) {
+				Element li = DOM4JUtils.generateElement("li", null, StringUtils.EMPTY);
+				ul.add(li);
+
+				String htmlClass;
+				String icon;
+				if (BooleanUtils.isTrue(entry.getValue())) {
+					htmlClass = "text-success";
+					icon = "glyphicons glyphicons-check";
+				} else {
+					htmlClass = null;
+					icon = "glyphicons glyphicons-unchecked";
+				}
+				Element item = DOM4JUtils.generateElement("span", htmlClass, entry.getKey(), icon, null);
+				li.add(item);
+			}
+		}
+
+		return container;
+	}
 
 }

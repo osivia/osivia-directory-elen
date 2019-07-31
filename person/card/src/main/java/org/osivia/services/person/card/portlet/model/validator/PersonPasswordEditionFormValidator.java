@@ -3,6 +3,7 @@ package org.osivia.services.person.card.portlet.model.validator;
 import org.apache.commons.lang.StringUtils;
 import org.osivia.directory.v2.service.PersonUpdateService;
 import org.osivia.services.person.card.portlet.model.PersonPasswordEditionForm;
+import org.osivia.services.person.card.portlet.service.PersonCardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -22,6 +23,8 @@ public class PersonPasswordEditionFormValidator implements Validator {
     @Autowired
     private PersonUpdateService personService;
 
+    @Autowired
+    private PersonCardService service;
 
     /**
      * Constructor.
@@ -63,6 +66,8 @@ public class PersonPasswordEditionFormValidator implements Validator {
                 && !StringUtils.equals(form.getUpdate(), form.getConfirmation())) {
             errors.rejectValue("confirmation", "Invalid");
         }
+        
+        service.validatePasswordRules(errors, "update", form.getUpdate());
     }
 
 }

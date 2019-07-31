@@ -4,11 +4,13 @@ import java.io.IOException;
 
 import javax.portlet.PortletException;
 
+import org.dom4j.Element;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.person.card.portlet.model.PersonCard;
 import org.osivia.services.person.card.portlet.model.PersonCardOptions;
 import org.osivia.services.person.card.portlet.model.PersonEditionForm;
 import org.osivia.services.person.card.portlet.model.PersonPasswordEditionForm;
+import org.springframework.validation.Errors;
 
 /**
  * Person card portlet service interface.
@@ -113,5 +115,24 @@ public interface PersonCardService {
      * @throws PortletException
      */
     void updatePassword(PortalControllerContext portalControllerContext, PersonCardOptions options, PersonPasswordEditionForm form) throws PortletException;
+
+    
+    /**
+     * Validate password rules.
+     *
+     * @param errors   validation errors
+     * @param field    password field name
+     * @param password password value
+     */
+    void validatePasswordRules(Errors errors, String field, String password);    
+
+	/**
+	 * Get password rules informations DOM element.
+	 *
+	 * @param portalControllerContext portal controller context
+	 * @param password                password, may be null
+	 * @return DOM element
+	 */
+	Element getPasswordRulesInformation(PortalControllerContext portalControllerContext, String password);
 
 }
