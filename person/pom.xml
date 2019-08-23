@@ -21,6 +21,7 @@
         <module>first-connection</module>
         <module>management</module>
         <module>creation</module>
+        <module>user-saved-searches</module>
     </modules>
     
     
