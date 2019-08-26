@@ -1,6 +1,5 @@
 package org.osivia.services.user.savedsearches.administration.portlet.repository;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.user.UserPreferences;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.portlet.PortletException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,35 +80,4 @@ public class UserSavedSearchesAdministrationRepositoryImpl implements UserSavedS
         return userPreferences;
     }
 
-
-    // FIXME
-    @Override
-    public void tmpAddData(PortalControllerContext portalControllerContext) {
-        UserPreferences userPreferences = null;
-        try {
-            userPreferences = this.getUserPreferences(portalControllerContext);
-        } catch (PortletException e) {
-            e.printStackTrace();
-        }
-
-        List<UserSavedSearch> savedSearches = userPreferences.getSavedSearches();
-
-        int max = 0;
-        if (CollectionUtils.isEmpty(savedSearches)) {
-            savedSearches = new ArrayList<>(1);
-        } else {
-            for (UserSavedSearch savedSearch : savedSearches) {
-                max = Math.max(max, savedSearch.getId());
-            }
-        }
-
-
-        UserSavedSearch savedSearch = new UserSavedSearch(max + 1);
-        savedSearch.setDisplayName("Filtre #" + savedSearch.getId());
-        savedSearch.setData("data");
-        savedSearches.add(savedSearch);
-
-        userPreferences.setSavedSearches(savedSearches);
-        userPreferences.setUpdate(true);
-    }
 }

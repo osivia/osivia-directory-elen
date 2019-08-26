@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +67,22 @@ public class UserSavedSearchesAdministrationServiceImpl implements UserSavedSear
         return form;
     }
 
+
+    @Override
+    public String renderView(PortalControllerContext portalControllerContext) throws PortletException {
+        // Portlet request
+        PortletRequest request = portalControllerContext.getRequest();
+
+        // Form
+        UserSavedSearchesAdministrationForm form = this.getForm(portalControllerContext);
+
+        // Empty response
+        if (CollectionUtils.isEmpty(form.getSavedSearches())) {
+            request.setAttribute("osivia.emptyResponse", "1");
+        }
+
+        return "view";
+    }
 
     @Override
     public void save(PortalControllerContext portalControllerContext, UserSavedSearchesAdministrationForm form) throws PortletException {
@@ -151,10 +168,4 @@ public class UserSavedSearchesAdministrationServiceImpl implements UserSavedSear
         this.save(portalControllerContext, form);
     }
 
-
-    // FIXME
-    @Override
-    public void tmpAddData(PortalControllerContext portalControllerContext) {
-        repository.tmpAddData(portalControllerContext);
-    }
 }

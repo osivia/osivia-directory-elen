@@ -22,6 +22,15 @@ public interface UserSavedSearchesAdministrationService {
 
 
     /**
+     * Render view.
+     *
+     * @param portalControllerContext portal controller context
+     * @return view path
+     */
+    String renderView(PortalControllerContext portalControllerContext) throws PortletException;
+
+
+    /**
      * Save user saved searches administration.
      *
      * @param portalControllerContext portal controller context
@@ -57,9 +66,5 @@ public interface UserSavedSearchesAdministrationService {
      * @param id                      saved search identifier
      */
     void delete(PortalControllerContext portalControllerContext, int id) throws PortletException;
-
-
-    // FIXME
-    void tmpAddData(PortalControllerContext portalControllerContext);
 
 }

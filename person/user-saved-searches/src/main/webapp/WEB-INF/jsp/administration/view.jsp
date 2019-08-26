@@ -178,8 +178,3 @@
         </div>
     </div>
 </div>
-
-
-<hr>
-<portlet:actionURL name="tmpAddData" var="url"/>
-<a href="${url}" class="btn btn-danger">Ajouter un filtre (bouton de test à supprimer)</a>

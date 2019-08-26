@@ -48,11 +48,16 @@ public class UserSavedSearchesAdministrationController {
     /**
      * View render mapping.
      *
+     * @param request  render request
+     * @param response render response
      * @return view path
      */
     @RenderMapping
-    public String view() {
-        return "view";
+    public String view(RenderRequest request, RenderResponse response) throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        return this.service.renderView(portalControllerContext);
     }
 
 
@@ -135,15 +140,6 @@ public class UserSavedSearchesAdministrationController {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         return this.service.getForm(portalControllerContext);
-    }
-
-
-    // FIXME
-    @ActionMapping("tmpAddData")
-    public void tmpAddData(ActionRequest request, ActionResponse response) {
-        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
-
-        service.tmpAddData(portalControllerContext);
     }
 
 }

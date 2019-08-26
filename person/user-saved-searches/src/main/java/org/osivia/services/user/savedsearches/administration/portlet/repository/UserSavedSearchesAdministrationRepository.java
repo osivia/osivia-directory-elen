@@ -30,8 +30,4 @@ public interface UserSavedSearchesAdministrationRepository {
      */
     void saveUserSavedSearches(PortalControllerContext portalControllerContext, List<UserSavedSearch> savedSearches) throws PortletException;
 
-
-    // FIXME
-    void tmpAddData(PortalControllerContext portalControllerContext);
-
 }
