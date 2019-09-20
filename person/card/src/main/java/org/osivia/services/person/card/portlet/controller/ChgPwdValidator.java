@@ -13,10 +13,12 @@
  */
 package org.osivia.services.person.card.portlet.controller;
 
-        import org.springframework.stereotype.Component;
-        import org.springframework.validation.Errors;
-        import org.springframework.validation.ValidationUtils;
-        import org.springframework.validation.Validator;
+import org.osivia.services.person.card.portlet.service.PersonCardService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
+import org.springframework.validation.Validator;
 
 /**
  * Change password view validator
@@ -26,27 +28,31 @@ package org.osivia.services.person.card.portlet.controller;
 @Component("chgPwdValidator")
 public class ChgPwdValidator implements Validator {
 
-    public boolean supports(Class<?> klass) {
-        return FormChgPwd.class.isAssignableFrom(klass);
-    }
-
-    public void validate(Object target, Errors errors) {
+	/** Portlet service. */
+	@Autowired
+	private PersonCardService service;
 
 
-        FormChgPwd fiche = (FormChgPwd) target;
+	public boolean supports(Class<?> klass) {
+		return FormChgPwd.class.isAssignableFrom(klass);
+	}
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "newPwd", "NotEmpty.field");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPwd", "NotEmpty.field");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPwd", "NotEmpty.field");
+	public void validate(Object target, Errors errors) {
+		FormChgPwd fiche = (FormChgPwd) target;
 
-        if(fiche.getNewPwd().equals(fiche.getCurrentPwd())) {
-            errors.rejectValue("newPwd", "Pwd.not.changed");
-        }
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "newPwd", "NotEmpty.field");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPwd", "NotEmpty.field");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentPwd", "NotEmpty.field");
+	
+		if(fiche.getNewPwd().equals(fiche.getCurrentPwd())) {
+			errors.rejectValue("newPwd", "Pwd.not.changed");
+		}
+		
+		if(!fiche.getNewPwd().equals(fiche.getConfirmPwd())) {
+			errors.rejectValue("confirmPwd", "Not.Same.Pwd");
+		}
 
-        if(!fiche.getNewPwd().equals(fiche.getConfirmPwd())) {
-            errors.rejectValue("confirmPwd", "Not.Same.Pwd");
-        }
-
-    }
+		this.service.validatePasswordRules(errors, "newPwd", fiche.getNewPwd());
+	}
 
 }

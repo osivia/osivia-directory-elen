@@ -13,14 +13,17 @@
  */
 package org.osivia.services.person.card.portlet.service;
 
-import java.io.IOException;
-
+import org.dom4j.Element;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.services.person.card.portlet.controller.Card;
 import org.osivia.services.person.card.portlet.controller.FormChgPwd;
 import org.osivia.services.person.card.portlet.controller.FormEdition;
+import org.springframework.validation.Errors;
+
+import javax.portlet.PortletException;
+import java.io.IOException;
 
 /**
  * @author Loïc Billon
@@ -43,7 +46,7 @@ public interface PersonCardService {
 	 * @return
 	 */
 	public LevelDeletion findLevelDeletion(Person userConnecte, Person userConsulte);
-	
+
 	/**
 	 * Return the hability of change the user password
 	 * @param userConnecte
@@ -51,8 +54,8 @@ public interface PersonCardService {
 	 * @return
 	 */
 	public LevelChgPwd findLevelChgPwd(Person userConnecte, Person userConsulte);
-	
-	
+
+
 	/**
 	 * Load a person card (LDAP and nuxeo)
 	 * @param context
@@ -65,8 +68,8 @@ public interface PersonCardService {
 	 * Upload and store a temporary file for new avatar
 	 * @param portalControllerContext
 	 * @param form
-	 * @throws IOException 
-	 * @throws IllegalStateException 
+	 * @throws IOException
+	 * @throws IllegalStateException
 	 */
 	public void uploadAvatar(PortalControllerContext portalControllerContext,
 			FormEdition form) throws IllegalStateException, IOException;
@@ -82,19 +85,44 @@ public interface PersonCardService {
 	/**
 	 * Save all modifications
 	 * @param portalControllerContext
-	 * @param card 
+	 * @param card
 	 * @param form
-	 * @throws PortalException 
+	 * @throws PortalException
 	 */
 	public void saveCard(PortalControllerContext portalControllerContext,
 			Card card, FormEdition form) throws PortalException;
 
+
+    /**
+     * Submit a password change.
+     *
+     * @param portalControllerContext portal controller context
+     * @param card                    person card
+     * @param formChgPwd              form
+     * @return true if password has been changed
+     */
+    boolean changePassword(PortalControllerContext portalControllerContext, Card card, FormChgPwd formChgPwd);
+
+
+    /**
+     * Validate password rules.
+     *
+     * @param errors   validation errors
+     * @param field    password field name
+     * @param password password value
+     */
+    void validatePasswordRules(Errors errors, String field, String password);
+
+
 	/**
-	 * Submit a passowrd change
-	 * @param card 
-	 * @param formChgPwd
+	 * Get password rules informations DOM element.
+	 *
+	 * @param portalControllerContext portal controller context
+	 * @param password                password, may be null
+	 * @return DOM element
 	 */
-	public boolean changePassword(Card card, FormChgPwd formChgPwd);
+	Element getPasswordRulesInformation(PortalControllerContext portalControllerContext, String password) throws PortletException;
+
 
 	/**
 	 * Submit a passowrd change (for admins)
@@ -102,7 +130,7 @@ public interface PersonCardService {
 	 * @param formChgPwd
 	 */
 	public void overwritePassword(Card card, FormChgPwd formChgPwd);
-	
+
 	/**
 	 * Delete a person
 	 * @param card
@@ -116,6 +144,7 @@ public interface PersonCardService {
 	 * @param workspaceId
 	 */
 	public void exit(PortalControllerContext portalControllerContext, Card card, String workspaceId);
+
 
 
 
