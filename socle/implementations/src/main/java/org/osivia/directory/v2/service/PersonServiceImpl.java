@@ -96,7 +96,6 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
 	/** Person card portlet instance. */
     private static final String CARD_INSTANCE = "directory-person-card-instance";
 
-
     /** Application context. */
     @Autowired
     protected ApplicationContext applicationContext;
@@ -140,14 +139,9 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
      */
     @Override
     public Person getPerson(Name dn) {
-        Person p;
-        try {
-            p = this.dao.getPerson(dn);
-            this.appendAvatar(p);
-
-        } catch (NameNotFoundException e) {
-            ldapLogger.warn("Person with dn "+dn+" not found");
-            return null;
+        Person p = this.dao.getPerson(dn);
+        if(p != null) {
+            appendAvatar(p);
         }
 
 		return p;
@@ -157,14 +151,9 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     @Override
     public Person getPersonNoCache(Name dn) {
 
-        Person p;
-        try {
-            p = dao.getPersonNoCache(dn);
+        Person p = dao.getPersonNoCache(dn);;
+        if(p != null) {
             appendAvatar(p);
-
-        } catch (NameNotFoundException e) {
-            ldapLogger.warn("Person with dn "+dn+" not found");
-            return null;
         }
 
         return p;
@@ -177,9 +166,10 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
      */
     @Override
     public Person getPerson(String uid) {
-        Name dn = this.getEmptyPerson().buildDn(uid);
 
-        return this.getPerson(dn);
+        Name dn = this.getEmptyPerson().buildDn(uid);
+        return getPerson(dn);
+
     }
 
 

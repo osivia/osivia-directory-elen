@@ -30,9 +30,8 @@ public interface PersonDao {
 	/**
 	 * @param dn
 	 * @return
-	 * @throws NameNotFoundException 
 	 */
-	Person getPerson(Name dn) throws NameNotFoundException;
+	Person getPerson(Name dn);
 
 	/**
 	 * @param ps

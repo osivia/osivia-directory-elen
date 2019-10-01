@@ -15,7 +15,13 @@ package org.osivia.directory.v2.dao;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.naming.Name;
 import javax.naming.directory.BasicAttribute;
@@ -26,6 +32,8 @@ import javax.naming.directory.SearchControls;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osivia.directory.v2.MappingHelper;
 import org.osivia.directory.v2.model.converter.DateToGeneralizedTime;
 import org.osivia.portal.api.directory.v2.model.Person;
@@ -38,8 +46,6 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.BinaryLogicalFilter;
 import org.springframework.ldap.filter.Filter;
-import org.springframework.ldap.filter.LikeFilter;
-import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.LessThanOrEqualsFilter;
 import org.springframework.ldap.filter.LikeFilter;
 import org.springframework.ldap.filter.NotFilter;
@@ -57,6 +63,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PersonDaoImpl implements PersonDao {
 
+    private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
+    
+    
+    private static final String UID_REGEX = "^[a-zA-Z0-9-_.@]*$";
+    
     /** Person sample. */
     @Autowired
     protected Person sample;
@@ -74,12 +85,15 @@ public class PersonDaoImpl implements PersonDao {
     /** Search controls. */
     private SearchControls searchControls;
 
-
+    /** Pattern for uids */
+    private Pattern uidPattern;
     /**
      * Constructor.
      */
     public PersonDaoImpl() {
         super();
+        uidPattern = Pattern.compile(UID_REGEX);
+
     }
 
 
@@ -88,8 +102,28 @@ public class PersonDaoImpl implements PersonDao {
      */
     @Override
     @Cacheable(key = "#dn", value = {"personByDnCache"})
-    public Person getPerson(Name dn) throws NameNotFoundException {
-        return this.template.findByDn(dn, this.sample.getClass());
+    public Person getPerson(Name dn) {
+
+        String dnUid = dn.get(dn.size() -1);
+        String[] split = dnUid.split("=");
+        // Check uid for special characters, do not query ldap if syntax is incorrect
+        Matcher matcher = this.uidPattern.matcher(split[1]);
+        
+        Person findByDn = null;
+        if (matcher.matches()) {
+            try {
+                findByDn = this.template.findByDn(dn, this.sample.getClass());
+            }
+            catch(NameNotFoundException nex) {
+                ldapLogger.warn("Person with dn "+dn+" not found in directory");
+            }
+        }
+        else {
+            ldapLogger.warn("Person with uid "+split[1]+" will be not resolved");
+
+        }
+        
+        return findByDn;
     }
 
 
@@ -98,7 +132,26 @@ public class PersonDaoImpl implements PersonDao {
      */
     @Override
     public Person getPersonNoCache(Name dn) {
-        return this.template.findByDn(dn, this.sample.getClass());
+        
+        String dnUid = dn.get(dn.size() -1);
+        String[] split = dnUid.split("=");
+        // Check uid for special characters, do not query ldap if syntax is incorrect
+        Matcher matcher = this.uidPattern.matcher(split[1]);
+        
+        Person findByDn = null;
+        if (matcher.matches()) {
+            try {
+                findByDn = this.template.findByDn(dn, this.sample.getClass());
+            }
+            catch(NameNotFoundException nex) {
+                ldapLogger.warn("Person with dn "+dn+" not found");
+            }
+        }
+        else {
+            ldapLogger.warn("Person with uid "+split[1]+" will be not resolved");
+
+        }
+        return findByDn;
     }
 
 
