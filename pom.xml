@@ -11,7 +11,7 @@
     
     
     <properties>
-        <toutatice.version>4.7.18</toutatice.version>
+        <toutatice.version>4.7-SNAPSHOT</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
@@ -61,8 +61,8 @@
                     <version>3.3</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
                 
