@@ -19,7 +19,7 @@ import javax.portlet.PortletConfig;
 import javax.portlet.PortletContext;
 import javax.portlet.PortletException;
 
-import org.osivia.directory.v2.service.LdapServiceImpl;
+import org.osivia.directory.v2.service.DirServiceImpl;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.batch.IBatchService;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
@@ -64,7 +64,7 @@ public class DirProviderPortlet extends CMSPortlet {
         IDirDelegate iface = deletagate;
         provider.registerDelegate(iface);
 
-        LdapServiceImpl.setPortletContext(portletContext);
+        DirServiceImpl.setPortletContext(portletContext);
         
         
         // add coherence batch in scheduler

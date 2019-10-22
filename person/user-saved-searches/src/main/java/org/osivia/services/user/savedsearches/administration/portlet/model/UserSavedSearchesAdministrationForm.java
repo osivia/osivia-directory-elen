@@ -1,6 +1,6 @@
 package org.osivia.services.user.savedsearches.administration.portlet.model;
 
-import org.osivia.portal.api.user.UserSavedSearch;
+import org.osivia.directory.v2.model.preferences.UserSavedSearch;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

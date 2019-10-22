@@ -1,9 +1,9 @@
 package org.osivia.services.user.savedsearches.administration.portlet.configuration;
 
 import fr.toutatice.portail.cms.nuxeo.api.CMSPortlet;
-import org.osivia.portal.api.locator.Locator;
+import org.osivia.directory.v2.service.preferences.UserPreferencesService;
+import org.osivia.portal.api.directory.v2.DirServiceFactory;
 import org.osivia.portal.api.portlet.PortletAppUtils;
-import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -86,13 +86,13 @@ public class UserSavedSearchesAdministrationConfiguration extends CMSPortlet imp
 
 
     /**
-     * Get CMS service locator.
+     * Get user preferences service.
      *
-     * @return CMS service locator
+     * @return user preferences service
      */
     @Bean
-    public ICMSServiceLocator getCmsServiceLocator() {
-        return Locator.findMBean(ICMSServiceLocator.class, ICMSServiceLocator.MBEAN_NAME);
+    public UserPreferencesService getUserPreferencesService() {
+        return DirServiceFactory.getService(UserPreferencesService.class);
     }
 
 }

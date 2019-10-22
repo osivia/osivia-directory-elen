@@ -28,9 +28,6 @@ import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.Documents;
 import org.nuxeo.ecm.automation.client.model.PropertyList;
 import org.nuxeo.ecm.automation.client.model.PropertyMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
@@ -64,11 +61,11 @@ import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
  *
  * @author Loïc Billon
  * @since 4.4
- * @see LdapServiceImpl
+ * @see DirServiceImpl
  * @see WorkspaceService
  */
 @Service
-public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceService, ApplicationContextAware {
+public class WorkspaceServiceImpl extends DirServiceImpl implements WorkspaceService, ApplicationContextAware {
 
 
 	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");

@@ -16,7 +16,6 @@ package org.osivia.directory.v2.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -85,11 +84,11 @@ import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
  *
  * @author Loïc Billon
  * @since 4.4
- * @see LdapServiceImpl
+ * @see DirServiceImpl
  * @see PersonUpdateService
  */
 @Service
-public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateService {
+public class PersonServiceImpl extends DirServiceImpl implements PersonUpdateService {
 
 	private final static Log ldapLogger = LogFactory.getLog("org.osivia.directory.v2");
 

@@ -32,7 +32,7 @@ import org.springframework.stereotype.Service;
  * @since 4.4
  */
 @Service
-public class RoleServiceImpl extends LdapServiceImpl implements RoleService {
+public class RoleServiceImpl extends DirServiceImpl implements RoleService {
 
     /** Application context. */
     @Autowired

@@ -1,12 +1,10 @@
 package org.osivia.services.user.savedsearches.administration.portlet.repository;
 
+import org.osivia.directory.v2.model.preferences.UserPreferences;
+import org.osivia.directory.v2.model.preferences.UserSavedSearch;
+import org.osivia.directory.v2.service.preferences.UserPreferencesService;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.portal.api.user.UserPreferences;
-import org.osivia.portal.api.user.UserSavedSearch;
-import org.osivia.portal.core.cms.CMSServiceCtx;
-import org.osivia.portal.core.cms.ICMSService;
-import org.osivia.portal.core.cms.ICMSServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,11 +20,8 @@ import java.util.List;
 @Repository
 public class UserSavedSearchesAdministrationRepositoryImpl implements UserSavedSearchesAdministrationRepository {
 
-    /**
-     * CMS service locator.
-     */
     @Autowired
-    private ICMSServiceLocator cmsServiceLocator;
+    private UserPreferencesService userPreferencesService;
 
 
     /**
@@ -52,7 +47,7 @@ public class UserSavedSearchesAdministrationRepositoryImpl implements UserSavedS
         UserPreferences userPreferences = this.getUserPreferences(portalControllerContext);
 
         userPreferences.setSavedSearches(savedSearches);
-        userPreferences.setUpdate(true);
+        userPreferences.setUpdated(true);
     }
 
 
@@ -63,16 +58,10 @@ public class UserSavedSearchesAdministrationRepositoryImpl implements UserSavedS
      * @return user preferences
      */
     private UserPreferences getUserPreferences(PortalControllerContext portalControllerContext) throws PortletException {
-        // CMS service
-        ICMSService cmsService = this.cmsServiceLocator.getCMSService();
-        // CMS context
-        CMSServiceCtx cmsContext = new CMSServiceCtx();
-        cmsContext.setPortalControllerContext(portalControllerContext);
-
         // User preferences
         UserPreferences userPreferences;
         try {
-            userPreferences = cmsService.getUserPreferences(portalControllerContext);
+            userPreferences = this.userPreferencesService.getUserPreferences(portalControllerContext);
         } catch (PortalException e) {
             throw new PortletException(e);
         }

@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Toutatice -->
-        <toutatice.version>4.9</toutatice.version>
+        <toutatice.version>4.9-SNAPSHOT</toutatice.version>
 
         <jsoup.version>1.6.1</jsoup.version>
     </properties>

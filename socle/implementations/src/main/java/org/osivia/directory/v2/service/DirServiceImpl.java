@@ -5,12 +5,12 @@ import javax.portlet.PortletContext;
 import org.osivia.portal.api.directory.v2.IDirService;
 
 /**
- * LDAP service implementation abstract super-class.
+ * Directory service implementation abstract super-class.
  * 
  * @author Cédric Krommenhoek
  * @see IDirService
  */
-public abstract class LdapServiceImpl implements IDirService {
+public abstract class DirServiceImpl implements IDirService {
 
     /** Portlet context. */
     private static PortletContext portletContext;
@@ -19,7 +19,7 @@ public abstract class LdapServiceImpl implements IDirService {
     /**
      * Constructor.
      */
-    public LdapServiceImpl() {
+    public DirServiceImpl() {
         super();
     }
 
@@ -40,7 +40,7 @@ public abstract class LdapServiceImpl implements IDirService {
      * @param portletContext the portletContext to set
      */
     public static void setPortletContext(PortletContext portletContext) {
-        LdapServiceImpl.portletContext = portletContext;
+        DirServiceImpl.portletContext = portletContext;
     }
 
 }

@@ -1,8 +1,10 @@
 package org.osivia.services.user.savedsearches.administration.portlet.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.osivia.directory.v2.model.preferences.UserSavedSearch;
+import org.osivia.directory.v2.service.preferences.UserPreferencesService;
+import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.portal.api.user.UserSavedSearch;
 import org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationForm;
 import org.osivia.services.user.savedsearches.administration.portlet.model.comparator.UserSavedSearchOrderComparator;
 import org.osivia.services.user.savedsearches.administration.portlet.repository.UserSavedSearchesAdministrationRepository;
@@ -42,6 +44,13 @@ public class UserSavedSearchesAdministrationServiceImpl implements UserSavedSear
      */
     @Autowired
     private UserSavedSearchOrderComparator savedSearchOrderComparator;
+
+    /**
+     * User preferences service.
+     */
+    @Autowired
+    private UserPreferencesService userPreferencesService;
+
 
 
     /**
@@ -104,7 +113,12 @@ public class UserSavedSearchesAdministrationServiceImpl implements UserSavedSear
         List<UserSavedSearch> savedSearches = form.getSavedSearches();
 
         // Saved search index
-        int index = savedSearches.indexOf(new UserSavedSearch(id));
+        int index;
+        try {
+            index = savedSearches.indexOf(this.userPreferencesService.createUserSavedSearch(portalControllerContext, id));
+        } catch (PortalException e) {
+            index = -1;
+        }
 
         // Swap
         if (up && (index > 0)) {

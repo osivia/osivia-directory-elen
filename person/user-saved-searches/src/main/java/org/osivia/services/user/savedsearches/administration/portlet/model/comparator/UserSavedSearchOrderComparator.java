@@ -1,6 +1,6 @@
 package org.osivia.services.user.savedsearches.administration.portlet.model.comparator;
 
-import org.osivia.portal.api.user.UserSavedSearch;
+import org.osivia.directory.v2.model.preferences.UserSavedSearch;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;

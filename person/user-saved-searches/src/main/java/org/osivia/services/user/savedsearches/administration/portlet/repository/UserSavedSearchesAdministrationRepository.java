@@ -1,7 +1,7 @@
 package org.osivia.services.user.savedsearches.administration.portlet.repository;
 
+import org.osivia.directory.v2.model.preferences.UserSavedSearch;
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.portal.api.user.UserSavedSearch;
 
 import javax.portlet.PortletException;
 import java.util.List;

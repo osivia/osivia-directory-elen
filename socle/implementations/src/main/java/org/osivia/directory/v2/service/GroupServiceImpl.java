@@ -19,11 +19,11 @@ import org.springframework.stereotype.Service;
  * Group service implementation
  * 
  * @author Cédric Krommenhoek
- * @see LdapServiceImpl
+ * @see DirServiceImpl
  * @see GroupService
  */
 @Service
-public class GroupServiceImpl extends LdapServiceImpl implements GroupService {
+public class GroupServiceImpl extends DirServiceImpl implements GroupService {
 
     /** Application context. */
     @Autowired
