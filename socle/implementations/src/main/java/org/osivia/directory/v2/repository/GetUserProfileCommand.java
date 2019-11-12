@@ -66,7 +66,7 @@ public class GetUserProfileCommand  implements INuxeoCommand{
      */
     @Override
     public String getId() {
-        return "GetUserProfileCommand/" + this.username;
+        return this.getClass().getSimpleName() + "/" + this.username;
     }
 
 }

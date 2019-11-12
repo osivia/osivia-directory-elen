@@ -1,5 +1,8 @@
 package org.osivia.directory.v2.service.preferences;
 
+import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
 import org.apache.commons.lang.math.NumberUtils;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.PropertyList;
@@ -11,6 +14,7 @@ import org.osivia.directory.v2.model.preferences.UserSavedSearchImpl;
 import org.osivia.directory.v2.repository.preferences.UpdateUserPreferencesCommand;
 import org.osivia.directory.v2.service.DirServiceImpl;
 import org.osivia.portal.api.PortalException;
+import org.osivia.portal.api.cache.services.CacheInfo;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.osivia.portal.api.directory.v2.service.PersonService;
@@ -81,34 +85,48 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
         if (userPreferencesAttribute instanceof UserPreferences) {
             userPreferences = (UserPreferences) userPreferencesAttribute;
         } else if (principalTokenAttribute instanceof String) {
-            String user = (String) principalTokenAttribute;
+            // User identifier
+            String uid = (String) principalTokenAttribute;
 
-            // User person object
-            Person person = this.personService.getPerson(user);
-
-            // User profile Nuxeo document
-            Document profile;
-            if (person == null) {
-                profile = null;
-            } else {
-                Object ecmProfile = this.personService.getEcmProfile(portalControllerContext, person);
-                if (ecmProfile instanceof Document) {
-                    profile = (Document) ecmProfile;
-                } else {
-                    profile = null;
-                }
-            }
-
-            if (profile == null) {
-                userPreferences = null;
-            } else {
-                userPreferences = this.createUserPreferences(profile);
-
-                // Save user preferences in session
-                httpSession.setAttribute(USER_PREFERENCES_ATTRIBUTE, userPreferences);
-            }
+            userPreferences = this.getUserPreferences(portalControllerContext, uid);
         } else {
             userPreferences = null;
+        }
+
+        // Save user preferences in session
+        if (userPreferences != null) {
+            httpSession.setAttribute(USER_PREFERENCES_ATTRIBUTE, userPreferences);
+        }
+
+        return userPreferences;
+    }
+
+
+    @Override
+    public UserPreferences getUserPreferences(PortalControllerContext portalControllerContext, String uid) throws PortalException {
+        // User person object
+        Person person = this.personService.getPerson(uid);
+
+        // User profile Nuxeo document
+        Document profile;
+        if (person == null) {
+            profile = null;
+        } else {
+            Object ecmProfile = this.personService.getEcmProfile(portalControllerContext, person);
+            if (ecmProfile instanceof Document) {
+                profile = (Document) ecmProfile;
+            } else {
+                profile = null;
+            }
+        }
+
+        // User preferences
+        UserPreferences userPreferences;
+
+        if (profile == null) {
+            userPreferences = null;
+        } else {
+            userPreferences = this.createUserPreferences(profile);
         }
 
         return userPreferences;
@@ -124,6 +142,10 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
     protected UserPreferences createUserPreferences(Document profile) {
         // User preferences implementation
         UserPreferencesImpl userPreferences = this.applicationContext.getBean(UserPreferencesImpl.class, profile.getId());
+
+        // Terms of service
+        String termsOfService = profile.getString(UpdateUserPreferencesCommand.TERMS_OF_SERVICE);
+        userPreferences.setTermsOfService(termsOfService);
 
         // Folder displays
         Map<String, String> folderDisplays = new HashMap<>();
@@ -202,6 +224,19 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
     @Override
     public UserSavedSearch createUserSavedSearch(PortalControllerContext portalControllerContext, int id) throws PortalException {
         return this.applicationContext.getBean(UserSavedSearch.class, id);
+    }
+
+
+    @Override
+    public void saveUserPreferences(PortalControllerContext portalControllerContext, UserPreferences userPreferences) throws PortalException {
+        // Nuxeo controller
+        NuxeoController nuxeoController = new NuxeoController(portalControllerContext);
+        nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
+        nuxeoController.setCacheType(CacheInfo.CACHE_SCOPE_NONE);
+
+        // Nuxeo command
+        INuxeoCommand command = this.applicationContext.getBean(UpdateUserPreferencesCommand.class, userPreferences);
+        nuxeoController.executeNuxeoCommand(command);
     }
 
 }

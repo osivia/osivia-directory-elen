@@ -19,6 +19,22 @@ public interface UserPreferences {
 
 
     /**
+     * Get terms of service.
+     *
+     * @return terms of service
+     */
+    String getTermsOfService();
+
+
+    /**
+     * Set terms of service.
+     *
+     * @param termsOfService
+     */
+    void setTermsOfService(String termsOfService);
+
+
+    /**
      * Get user saved folder displays.
      *
      * @return folder displays

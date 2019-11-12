@@ -29,6 +29,11 @@ import java.util.Map;
 public class UpdateUserPreferencesCommand implements INuxeoCommand {
 
     /**
+     * Terms of service xpath.
+     */
+    public static final String TERMS_OF_SERVICE = "ttc_userprofile:termsOfService";
+
+    /**
      * Folder preferences xpath.
      */
     public static final String METADATA_FOLDERS_PREFS = "ttc_userprofile:folders_prefs";
@@ -100,6 +105,7 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
      */
     protected PropertyMap getProperties() {
         PropertyMap properties = new PropertyMap();
+        properties.set(TERMS_OF_SERVICE, this.preferences.getTermsOfService());
         properties.set(METADATA_FOLDERS_PREFS, this.convertFolders(this.preferences.getFolderDisplays()));
         properties.set(SAVED_SEARCHES_XPATH, this.convertSavedSearches(this.preferences.getSavedSearches()));
         return properties;

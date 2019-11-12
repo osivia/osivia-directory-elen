@@ -23,6 +23,10 @@ public class UserPreferencesImpl implements UserPreferences {
     private final String documentId;
 
     /**
+     * Terms of service.
+     */
+    private String termsOfService;
+    /**
      * Folder displays.
      */
     private Map<String, String> folderDisplays;
@@ -50,6 +54,18 @@ public class UserPreferencesImpl implements UserPreferences {
     @Override
     public String getDocumentId() {
         return this.documentId;
+    }
+
+
+    @Override
+    public String getTermsOfService() {
+        return this.termsOfService;
+    }
+
+
+    @Override
+    public void setTermsOfService(String termsOfService) {
+        this.termsOfService = termsOfService;
     }
 
 
