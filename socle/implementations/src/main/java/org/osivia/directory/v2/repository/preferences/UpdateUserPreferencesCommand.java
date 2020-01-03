@@ -50,6 +50,20 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
      * Saved searches xpath.
      */
     public static final String SAVED_SEARCHES_XPATH = "ttc_userprofile:savedSearches";
+    
+    /**
+     * Properties preferences xpath.
+     */
+    public static final String METADATA_PROPERTIES_PREFS = "ttc_userprofile:propertys_prefs";    
+    
+    /**
+     * Properties preferences name.
+     */
+    public static final String METADATA_PROPERTIES_PREFS_NAME = "name";       
+    /**
+     * Properties preferences value.
+     */
+    public static final String METADATA_PROPERTIES_PREFS_VALUE = "value";         
     /**
      * Saved search identifier.
      */
@@ -108,6 +122,7 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
         properties.set(TERMS_OF_SERVICE, this.preferences.getTermsOfService());
         properties.set(METADATA_FOLDERS_PREFS, this.convertFolders(this.preferences.getFolderDisplays()));
         properties.set(SAVED_SEARCHES_XPATH, this.convertSavedSearches(this.preferences.getSavedSearches()));
+        properties.set(METADATA_PROPERTIES_PREFS, this.convertProperties(this.preferences.getUserProperties()));
         return properties;
     }
 
@@ -132,6 +147,27 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
         return array.toString();
     }
 
+    
+    /**
+     * Convert properties to JSON.
+     *
+     * @param folders folders
+     * @return JSON
+     */
+    protected String convertProperties(Map<String, String> folders) {
+        JSONArray array = new JSONArray();
+
+        for (Map.Entry<String, String> entry : folders.entrySet()) {
+            JSONObject object = new JSONObject();
+            object.put(METADATA_PROPERTIES_PREFS_NAME, entry.getKey());
+            object.put(METADATA_PROPERTIES_PREFS_VALUE, entry.getValue());
+
+            array.add(object);
+        }
+
+        return array.toString();
+    }
+    
 
     /**
      * Convert saved searches to JSON.

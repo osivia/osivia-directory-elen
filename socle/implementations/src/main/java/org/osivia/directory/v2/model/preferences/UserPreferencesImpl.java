@@ -34,6 +34,12 @@ public class UserPreferencesImpl implements UserPreferences {
      * Saved searches.
      */
     private List<UserSavedSearch> savedSearches;
+    
+    /**
+     * User properties
+     */
+    private Map<String,String> userProperties;
+    
     /**
      * Updated user preferences indicator.
      */
@@ -102,6 +108,18 @@ public class UserPreferencesImpl implements UserPreferences {
     @Override
     public void setUpdated(boolean updated) {
         this.updated = updated;
+    }
+
+
+    @Override
+    public Map<String, String> getUserProperties() {
+        return userProperties;
+    }
+
+
+    @Override
+    public void setUserProperties(Map<String, String> properties) {
+        userProperties = properties;
     }
 
 }

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * User preferences service implementation.
@@ -193,6 +194,24 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
             }
         }
         userPreferences.setSavedSearches(savedSearches);
+        
+        // User properties
+        Map<String, String> userProperties = new ConcurrentHashMap<>();
+        PropertyList propertyList = profile.getProperties().getList(UpdateUserPreferencesCommand.METADATA_PROPERTIES_PREFS);
+        if ((propertyList != null) && !propertyList.isEmpty()) {
+            for (int i = 0; i < propertyList.size(); i++) {
+                PropertyMap userPropertyMap = propertyList.getMap(i);
+
+                Object objectValue = userPropertyMap.get(UpdateUserPreferencesCommand.METADATA_PROPERTIES_PREFS_VALUE);
+                Object objectName = userPropertyMap.get(UpdateUserPreferencesCommand.METADATA_PROPERTIES_PREFS_NAME);
+
+                if (objectName != null && objectValue != null) {
+                    userProperties.put(objectName.toString(), objectValue.toString());
+                }
+            }
+        }
+        userPreferences.setUserProperties(userProperties);
+        
 
         return userPreferences;
     }

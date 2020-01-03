@@ -65,6 +65,21 @@ public interface UserPreferences {
      */
     void setSavedSearches(List<UserSavedSearch> savedSearches);
 
+    
+    /**
+     * Gets the user properties.
+     *
+     * @return the user properties
+     */
+    Map<String,String> getUserProperties();
+    
+
+    /**
+     * Sets the user properties.
+     *
+     * @param properties the properties
+     */
+    void setUserProperties(Map<String,String> properties);    
 
     /**
      * Check if user preferences have been updated.
@@ -80,5 +95,9 @@ public interface UserPreferences {
      * @param updated updated indicator
      */
     void setUpdated(boolean updated);
+    
+    
+
+
 
 }
