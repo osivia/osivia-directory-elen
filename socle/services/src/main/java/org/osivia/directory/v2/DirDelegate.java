@@ -27,7 +27,9 @@ import org.osivia.portal.api.transaction.ITransactionResource;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
+import org.springframework.ldap.transaction.compensating.TempEntryRenamingStrategy;
 import org.springframework.ldap.transaction.compensating.manager.ContextSourceTransactionManagerDelegate;
+import org.springframework.ldap.transaction.compensating.support.DefaultTempEntryRenamingStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.web.portlet.context.PortletApplicationContextUtils;
@@ -115,8 +117,13 @@ public class DirDelegate implements IDirDelegate, PortletContextAware {
 
 	@Override
 	public ContextSourceTransactionManagerDelegate getDirectoryTxManagerDelegate() {
+	    
+	    ContextSourceTransactionManagerDelegate delegate = (ContextSourceTransactionManagerDelegate) appContext.getBean(ContextSourceTransactionManagerDelegate.class);
+	    delegate.setRenamingStrategy(new DefaultTempEntryRenamingStrategy());
 		
 		return appContext.getBean(ContextSourceTransactionManagerDelegate.class);
+		
+		
 	}
 
 
