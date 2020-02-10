@@ -17,7 +17,7 @@
 
 	<properties>
 		<springframework-ldap.version>2.1.0.RELEASE</springframework-ldap.version>
-		<springframework-data.version>1.12.1.RELEASE</springframework-data.version>
+		<springframework-data.version>1.13.13.RELEASE</springframework-data.version>
 		<ehcache.version>2.7.2</ehcache.version>
 	</properties>
 
