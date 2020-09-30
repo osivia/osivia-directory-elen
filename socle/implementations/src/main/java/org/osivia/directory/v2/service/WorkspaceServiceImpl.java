@@ -28,23 +28,22 @@ import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.Documents;
 import org.nuxeo.ecm.automation.client.model.PropertyList;
 import org.nuxeo.ecm.automation.client.model.PropertyMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.CollabProfileDao;
 import org.osivia.directory.v2.model.CollabProfile;
 import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
+import org.osivia.directory.v2.repository.GetUserProfileCommand;
 import org.osivia.directory.v2.repository.GetWorkspaceCommand;
 import org.osivia.directory.v2.repository.PurgeWorkspaceCommand;
-import org.osivia.directory.v2.repository.GetUserProfileCommand;
 import org.osivia.directory.v2.repository.ReIndexUserCommand;
 import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
+import org.osivia.portal.api.internationalization.Bundle;
+import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -96,6 +95,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
     /** Application context. */
     protected ApplicationContext applicationContext;
+    
+    @Autowired
+    private IBundleFactory bundleFactory;
 
 
     /**
@@ -253,6 +255,10 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(String workspaceId, List<WorkspaceRole> roles, Person owner) {
+    	
+    	
+    	Bundle bundle = bundleFactory.getBundle(null);
+    	
         // Creation of the member group
         CollabProfile members = this.applicationContext.getBean(sample.getClass());
         String cn = workspaceId + "_members";
@@ -260,6 +266,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         members.setWorkspaceId(workspaceId);
         members.setType(WorkspaceGroupType.space_group);
         members.setDn(this.sample.buildDn(cn));
+        members.setDisplayName(bundle.getString("ALL_MEMBERS"));
+        members.setDescription(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
 
         // Get a fresh copy of the owner in the directory
         owner = personService.getPersonNoCache(owner.getDn());
@@ -278,6 +286,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             roleGroup.setType(WorkspaceGroupType.security_group);
             roleGroup.setRole(entry);
             roleGroup.setDn(this.sample.buildDn(cnRole));
+            roleGroup.setDisplayName(bundle.getString("SECU_"+entry));
+            roleGroup.setDescription(bundle.getString("SECU_"+entry+"_DESC", workspaceId));
 
             this.dao.create(roleGroup);
 
@@ -348,15 +358,35 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     @Transactional(rollbackFor = Exception.class)
     // @CacheEvict(key = "#workspaceId", value = "membersByWksCache")
     public WorkspaceMember addOrModifyMember(String workspaceId, Name memberDn, WorkspaceRole role) {
+    	
+    	Bundle bundle = bundleFactory.getBundle(null);
+    	
         List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
 
         for (CollabProfile cp : list) {
             // add this new member in the members group (if needed)
             if (cp.getType() == WorkspaceGroupType.space_group) {
+            	
+                if(StringUtils.isBlank(cp.getDisplayName())) {
+                	cp.setDisplayName(bundle.getString("ALL_MEMBERS"));
+                }
+                if(StringUtils.isBlank(cp.getDescription())) {
+                	cp.setDescription(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
+                }
+                
                 this.attachPerson(memberDn, cp);
+                
             }
 
             if ((cp.getType() == WorkspaceGroupType.security_group) && (cp.getRole() == role)) {
+            	
+                if(StringUtils.isBlank(cp.getDisplayName())) {
+                	cp.setDisplayName(bundle.getString("SECU_"+cp.getRole()));
+                }
+                if(StringUtils.isBlank(cp.getDescription())) {
+                	cp.setDescription(bundle.getString("SECU_"+cp.getRole()+"_DESC", workspaceId));
+                }
+            	
                 this.attachPerson(memberDn, cp);
             }
 

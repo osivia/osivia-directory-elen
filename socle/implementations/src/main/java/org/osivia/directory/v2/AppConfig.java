@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.ldap.core.ContextSource;
@@ -285,6 +286,18 @@ public class AppConfig {
     @Bean
     public IBundleFactory getBundleFactory(IInternationalizationService internationalizationService) {
         return internationalizationService.getBundleFactory(this.getClass().getClassLoader(), this.applicationContext);
+    }
+
+    /**
+     * Get message source.
+     *
+     * @return message source
+     */
+    @Bean(name = "messageSource")
+    public ResourceBundleMessageSource getMessageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("Resource");
+        return messageSource;
     }
 
 }
