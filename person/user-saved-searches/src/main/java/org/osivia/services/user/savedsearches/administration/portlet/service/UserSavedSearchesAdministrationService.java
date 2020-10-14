@@ -2,6 +2,7 @@ package org.osivia.services.user.savedsearches.administration.portlet.service;
 
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationForm;
+import org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationWindowSettings;
 
 import javax.portlet.PortletException;
 
@@ -11,6 +12,34 @@ import javax.portlet.PortletException;
  * @author Cédric Krommenhoek
  */
 public interface UserSavedSearchesAdministrationService {
+
+    /**
+     * All categories indicator window property.
+     */
+    String ALL_CATEGORIES_WINDOW_PROPERTY = "osivia.user-saved-searches.all-categories";
+    /**
+     * Category identifier window property.
+     */
+    String CATEGORY_ID_WINDOW_PROPERTY = "osivia.user-saved-searches.category-id";
+
+
+    /**
+     * Get window settings.
+     *
+     * @param portalControllerContext portal controller context
+     * @return window settings.
+     */
+    UserSavedSearchesAdministrationWindowSettings getWindowSettings(PortalControllerContext portalControllerContext) throws PortletException;
+
+
+    /**
+     * Set window settings.
+     *
+     * @param portalControllerContext portal controller context
+     * @param windowSettings          window settings
+     */
+    void setWindowSettings(PortalControllerContext portalControllerContext, UserSavedSearchesAdministrationWindowSettings windowSettings) throws PortletException;
+
 
     /**
      * Get user saved searches administration form.

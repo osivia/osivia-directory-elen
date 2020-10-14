@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationForm;
+import org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationWindowSettings;
 import org.osivia.services.user.savedsearches.administration.portlet.service.UserSavedSearchesAdministrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ public class UserSavedSearchesAdministrationController {
     /**
      * Portlet context.
      */
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private PortletContext portletContext;
 
@@ -140,6 +142,22 @@ public class UserSavedSearchesAdministrationController {
         PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
 
         return this.service.getForm(portalControllerContext);
+    }
+
+
+    /**
+     * Get window settings model attribute.
+     *
+     * @param request  portlet request
+     * @param response portlet response
+     * @return window settings
+     */
+    @ModelAttribute("windowSettings")
+    public UserSavedSearchesAdministrationWindowSettings getWindowSettings(PortletRequest request, PortletResponse response) throws PortletException {
+        // Portal controller context
+        PortalControllerContext portalControllerContext = new PortalControllerContext(this.portletContext, request, response);
+
+        return this.service.getWindowSettings(portalControllerContext);
     }
 
 }

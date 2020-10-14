@@ -1,0 +1,75 @@
+<ul class="list-unstyled user-saved-searches-administration-sortable">
+    <c:forEach var="savedSearch" items="${categorySearches}" varStatus="status">
+        <li>
+            <form:hidden path="categorizedSavedSearches[${categoryId}][${status.index}].order"/>
+
+            <div class="card mb-2">
+                <div class="card-body p-2">
+                    <div class="d-flex align-items-center">
+                        <div class="">
+                            <a href="javascript:"
+                               class="d-block p-2 text-secondary no-ajax-link user-saved-searches-administration-sortable-handle">
+                                <i class="glyphicons glyphicons-basic-sort"></i>
+                                <span class="sr-only"><op:translate
+                                        key="USER_SAVED_SEARCHES_ADMINISTRATION_MOVE"/></span>
+                            </a>
+                        </div>
+
+                        <div class="flex-grow-1 my-1 mx-2">
+                            <h5 class="card-title mb-1">${savedSearch.displayName}</h5>
+                            <div>
+                                    <%--Rename--%>
+                                <a href="javascript:" class="card-link no-ajax-link" data-toggle="modal"
+                                   data-target="#${renameModalId}" data-id="${savedSearch.id}"
+                                   data-display-name="${savedSearch.displayName}">
+                                                    <span><op:translate
+                                                            key="USER_SAVED_SEARCHES_ADMINISTRATION_RENAME"/></span>
+                                </a>
+
+                                    <%--Delete--%>
+                                <a href="javascript:" class="card-link no-ajax-link" data-toggle="modal"
+                                   data-target="#${deleteConfirmationModalId}"
+                                   data-id="${savedSearch.id}">
+                                                    <span><op:translate
+                                                            key="USER_SAVED_SEARCHES_ADMINISTRATION_DELETE"/></span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="align-self-stretch">
+                            <div class="d-flex flex-column justify-content-between h-100">
+                                <div>
+                                    <c:if test="${not status.first}">
+                                        <portlet:actionURL name="move" var="moveUpUrl">
+                                            <portlet:param name="id" value="${savedSearch.id}"/>
+                                            <portlet:param name="direction" value="up"/>
+                                        </portlet:actionURL>
+                                        <a href="${moveUpUrl}" class="btn btn-link btn-sm">
+                                            <i class="glyphicons glyphicons-basic-arrow-up"></i>
+                                            <span class="sr-only"><op:translate
+                                                    key="USER_SAVED_SEARCHES_ADMINISTRATION_MOVE_UP"/></span>
+                                        </a>
+                                    </c:if>
+                                </div>
+
+                                <div>
+                                    <c:if test="${not status.last}">
+                                        <portlet:actionURL name="move" var="moveDownUrl">
+                                            <portlet:param name="id" value="${savedSearch.id}"/>
+                                            <portlet:param name="direction" value="down"/>
+                                        </portlet:actionURL>
+                                        <a href="${moveDownUrl}" class="btn btn-link btn-sm">
+                                            <i class="glyphicons glyphicons-basic-arrow-down"></i>
+                                            <span class="sr-only"><op:translate
+                                                    key="USER_SAVED_SEARCHES_ADMINISTRATION_MOVE_DOWN"/></span>
+                                        </a>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </c:forEach>
+</ul>

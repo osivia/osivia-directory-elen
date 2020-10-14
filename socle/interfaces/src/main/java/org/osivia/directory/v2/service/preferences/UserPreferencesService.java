@@ -34,6 +34,16 @@ public interface UserPreferencesService extends IDirService {
 
 
     /**
+     * Generate new user saved search identifier.
+     *
+     * @param portalControllerContext portal controller context
+     * @param userPreferences         user preferences
+     * @return identifier
+     */
+    int generateUserSavedSearchId(PortalControllerContext portalControllerContext, UserPreferences userPreferences) throws PortalException;
+
+
+    /**
      * Create user saved search.
      *
      * @param portalControllerContext portal controller context

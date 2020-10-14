@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * User saved searches administration form java-bean.
@@ -17,9 +18,9 @@ import java.util.List;
 public class UserSavedSearchesAdministrationForm {
 
     /**
-     * User saved searches.
+     * User categorized saved searches.
      */
-    private List<UserSavedSearch> savedSearches;
+    private Map<String, List<UserSavedSearch>> categorizedSavedSearches;
 
 
     /**
@@ -30,12 +31,11 @@ public class UserSavedSearchesAdministrationForm {
     }
 
 
-    public List<UserSavedSearch> getSavedSearches() {
-        return savedSearches;
+    public Map<String, List<UserSavedSearch>> getCategorizedSavedSearches() {
+        return categorizedSavedSearches;
     }
 
-    public void setSavedSearches(List<UserSavedSearch> savedSearches) {
-        this.savedSearches = savedSearches;
+    public void setCategorizedSavedSearches(Map<String, List<UserSavedSearch>> categorizedSavedSearches) {
+        this.categorizedSavedSearches = categorizedSavedSearches;
     }
-
 }

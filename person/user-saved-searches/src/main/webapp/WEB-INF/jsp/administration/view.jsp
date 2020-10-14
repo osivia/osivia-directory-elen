@@ -13,89 +13,47 @@
 <portlet:actionURL name="delete" var="deleteUrl"/>
 
 
+<%--@elvariable id="windowSettings" type="org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationWindowSettings"--%>
+<%--@elvariable id="form" type="org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationForm"--%>
 <div class="user-saved-searches-administration">
     <c:choose>
-        <c:when test="${empty form.savedSearches}">
+        <c:when test="${empty form.categorizedSavedSearches or (not windowSettings.allCategories and empty form.categorizedSavedSearches[windowSettings.categoryId])}">
             <p class="text-secondary"><op:translate key="USER_SAVED_SEARCHES_ADMINISTRATION_EMPTY"/></p>
         </c:when>
 
         <c:otherwise>
+            <%--@elvariable id="form" type="org.osivia.services.user.savedsearches.administration.portlet.model.UserSavedSearchesAdministrationForm"--%>
             <form:form action="${saveUrl}" method="post" modelAttribute="form">
-                <ul class="list-unstyled user-saved-searches-administration-sortable">
-                    <c:forEach var="savedSearch" items="${form.savedSearches}" varStatus="status">
-                        <li>
-                            <form:hidden path="savedSearches[${status.index}].order"/>
+                <c:choose>
+                    <c:when test="${windowSettings.allCategories}">
+                        <c:forEach var="entry" items="${form.categorizedSavedSearches}">
+                            <c:set var="categoryId" value="${entry.key}" scope="request"/>
+                            <c:set var="categorySearches" value="${entry.value}" scope="request"/>
 
-                            <div class="card mb-2">
-                                <div class="card-body p-2">
-                                    <div class="d-flex align-items-center">
-                                        <div class="">
-                                            <a href="javascript:"
-                                               class="d-block p-2 text-secondary no-ajax-link user-saved-searches-administration-sortable-handle">
-                                                <i class="glyphicons glyphicons-basic-sort"></i>
-                                                <span class="sr-only"><op:translate
-                                                        key="USER_SAVED_SEARCHES_ADMINISTRATION_MOVE"/></span>
-                                            </a>
-                                        </div>
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h3 class="h5 card-title">
+                                        <c:choose>
+                                            <c:when test="${empty categoryId}"><op:translate
+                                                    key="USER_SAVED_SEARCHES_ADMINISTRATION_DEFAULT_CATEGORY"/></c:when>
+                                            <c:otherwise><op:translate key="USER_SAVED_SEARCHES_ADMINISTRATION_CATEGORY"
+                                                                       args="${categoryId}"/></c:otherwise>
+                                        </c:choose>
+                                    </h3>
 
-                                        <div class="flex-grow-1 my-1 mx-2">
-                                            <h5 class="card-title mb-1">${savedSearch.displayName}</h5>
-                                            <div>
-                                                    <%--Rename--%>
-                                                <a href="javascript:" class="card-link no-ajax-link" data-toggle="modal"
-                                                   data-target="#${renameModalId}" data-id="${savedSearch.id}"
-                                                   data-display-name="${savedSearch.displayName}">
-                                                    <span><op:translate
-                                                            key="USER_SAVED_SEARCHES_ADMINISTRATION_RENAME"/></span>
-                                                </a>
-
-                                                    <%--Delete--%>
-                                                <a href="javascript:" class="card-link no-ajax-link" data-toggle="modal"
-                                                   data-target="#${deleteConfirmationModalId}"
-                                                   data-id="${savedSearch.id}">
-                                                    <span><op:translate
-                                                            key="USER_SAVED_SEARCHES_ADMINISTRATION_DELETE"/></span>
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        <div class="align-self-stretch">
-                                            <div class="d-flex flex-column justify-content-between h-100">
-                                                <div>
-                                                    <c:if test="${not status.first}">
-                                                        <portlet:actionURL name="move" var="moveUpUrl">
-                                                            <portlet:param name="id" value="${savedSearch.id}"/>
-                                                            <portlet:param name="direction" value="up"/>
-                                                        </portlet:actionURL>
-                                                        <a href="${moveUpUrl}" class="btn btn-link btn-sm">
-                                                            <i class="glyphicons glyphicons-basic-arrow-up"></i>
-                                                            <span class="sr-only"><op:translate
-                                                                    key="USER_SAVED_SEARCHES_ADMINISTRATION_MOVE_UP"/></span>
-                                                        </a>
-                                                    </c:if>
-                                                </div>
-
-                                                <div>
-                                                    <c:if test="${not status.last}">
-                                                        <portlet:actionURL name="move" var="moveDownUrl">
-                                                            <portlet:param name="id" value="${savedSearch.id}"/>
-                                                            <portlet:param name="direction" value="down"/>
-                                                        </portlet:actionURL>
-                                                        <a href="${moveDownUrl}" class="btn btn-link btn-sm">
-                                                            <i class="glyphicons glyphicons-basic-arrow-down"></i>
-                                                            <span class="sr-only"><op:translate
-                                                                    key="USER_SAVED_SEARCHES_ADMINISTRATION_MOVE_DOWN"/></span>
-                                                        </a>
-                                                    </c:if>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <%@ include file="user-saved-searches.jspf" %>
                                 </div>
                             </div>
-                        </li>
-                    </c:forEach>
-                </ul>
+                        </c:forEach>
+                    </c:when>
+
+                    <c:otherwise>
+                        <c:set var="categoryId" value="${windowSettings.categoryId}" scope="request"/>
+                        <c:set var="categorySearches" value="${form.categorizedSavedSearches[categoryId]}"
+                               scope="request"/>
+                        <%@ include file="user-saved-searches.jspf" %>
+                    </c:otherwise>
+                </c:choose>
 
                 <input type="submit" class="d-none">
             </form:form>

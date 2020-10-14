@@ -16,6 +16,10 @@
                     <action-name>view</action-name>
                     <unchecked/>
                 </policy-permission>
+                <policy-permission>
+                    <action-name>admin</action-name>
+                    <role-name>Administrators</role-name>
+                </policy-permission>
             </security-constraint>
         </instance>
     </deployment>

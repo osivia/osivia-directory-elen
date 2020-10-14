@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.portlet.PortletException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User saved searches administration portlet repository implementation.
@@ -20,6 +21,9 @@ import java.util.List;
 @Repository
 public class UserSavedSearchesAdministrationRepositoryImpl implements UserSavedSearchesAdministrationRepository {
 
+    /**
+     * User preferences service.
+     */
     @Autowired
     private UserPreferencesService userPreferencesService;
 
@@ -33,20 +37,29 @@ public class UserSavedSearchesAdministrationRepositoryImpl implements UserSavedS
 
 
     @Override
-    public List<UserSavedSearch> getUserSavedSearches(PortalControllerContext portalControllerContext) throws PortletException {
+    public Map<String, List<UserSavedSearch>> getUserCategorizedSavedSearches(PortalControllerContext portalControllerContext) throws PortletException {
         // User preferences
         UserPreferences userPreferences = this.getUserPreferences(portalControllerContext);
 
-        return userPreferences.getSavedSearches();
+        return userPreferences.getCategorizedSavedSearches();
     }
 
 
     @Override
-    public void saveUserSavedSearches(PortalControllerContext portalControllerContext, List<UserSavedSearch> savedSearches) throws PortletException {
+    public List<UserSavedSearch> getUserSavedSearches(PortalControllerContext portalControllerContext, String categoryId) throws PortletException {
         // User preferences
         UserPreferences userPreferences = this.getUserPreferences(portalControllerContext);
 
-        userPreferences.setSavedSearches(savedSearches);
+        return userPreferences.getSavedSearches(categoryId);
+    }
+
+
+    @Override
+    public void saveUserSavedSearches(PortalControllerContext portalControllerContext, String categoryId, List<UserSavedSearch> savedSearches) throws PortletException {
+        // User preferences
+        UserPreferences userPreferences = this.getUserPreferences(portalControllerContext);
+
+        userPreferences.setSavedSearches(categoryId, savedSearches);
         userPreferences.setUpdated(true);
     }
 

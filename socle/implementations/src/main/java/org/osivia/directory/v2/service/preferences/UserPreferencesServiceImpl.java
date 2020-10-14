@@ -3,6 +3,8 @@ package org.osivia.directory.v2.service.preferences;
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
 import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.nuxeo.ecm.automation.client.model.Document;
@@ -24,10 +26,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -139,7 +138,7 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
      * Create user preferences.
      *
      * @param profile user profile Nuxeo document
-     * @return
+     * @return user preferences
      */
     protected UserPreferences createUserPreferences(Document profile) {
         // User preferences implementation
@@ -256,13 +255,31 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
 
 
     @Override
-    public UserSavedSearch createUserSavedSearch(PortalControllerContext portalControllerContext, int id) throws PortalException {
+    public int generateUserSavedSearchId(PortalControllerContext portalControllerContext, UserPreferences userPreferences) {
+        int max = 0;
+
+        if (MapUtils.isNotEmpty(userPreferences.getCategorizedSavedSearches())) {
+            for (List<UserSavedSearch> searches : userPreferences.getCategorizedSavedSearches().values()) {
+                if (CollectionUtils.isNotEmpty(searches)) {
+                    for (UserSavedSearch search : searches) {
+                        max = Math.max(max, search.getId());
+                    }
+                }
+            }
+        }
+
+        return max + 1;
+    }
+
+
+    @Override
+    public UserSavedSearch createUserSavedSearch(PortalControllerContext portalControllerContext, int id) {
         return this.applicationContext.getBean(UserSavedSearch.class, id);
     }
 
 
     @Override
-    public void saveUserPreferences(PortalControllerContext portalControllerContext, UserPreferences userPreferences) throws PortalException {
+    public void saveUserPreferences(PortalControllerContext portalControllerContext, UserPreferences userPreferences) {
         // Nuxeo controller
         NuxeoController nuxeoController = new NuxeoController(portalControllerContext);
         nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
