@@ -4,6 +4,8 @@ import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.nuxeo.ecm.automation.client.Session;
 import org.nuxeo.ecm.automation.client.adapters.DocumentService;
 import org.nuxeo.ecm.automation.client.model.DocRef;
@@ -47,23 +49,18 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
     public static final String METADATA_FOLDERS_PREFS_VALUE = "display_style";
 
     /**
-     * Saved searches xpath.
+     * Categorized saved searches xpath.
      */
-    public static final String SAVED_SEARCHES_XPATH = "ttc_userprofile:savedSearches";
-    
+    public static final String SAVED_SEARCHES_XPATH = "ttc_userprofile:categorizedSavedSearches";
+
     /**
-     * Properties preferences xpath.
+     * Saved search category identifier.
      */
-    public static final String METADATA_PROPERTIES_PREFS = "ttc_userprofile:propertys_prefs";    
-    
+    public static final String SAVED_SEARCH_CATEGORY_ID = "categoryId";
     /**
-     * Properties preferences name.
+     * Saved search category searches.
      */
-    public static final String METADATA_PROPERTIES_PREFS_NAME = "name";       
-    /**
-     * Properties preferences value.
-     */
-    public static final String METADATA_PROPERTIES_PREFS_VALUE = "value";         
+    public static final String SAVED_SEARCH_CATEGORY_SEARCHES = "categorySearches";
     /**
      * Saved search identifier.
      */
@@ -80,6 +77,20 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
      * Saved search data.
      */
     public static final String SAVED_SEARCH_DATA = "data";
+
+    /**
+     * Properties preferences xpath.
+     */
+    public static final String METADATA_PROPERTIES_PREFS = "ttc_userprofile:propertys_prefs";
+
+    /**
+     * Properties preferences name.
+     */
+    public static final String METADATA_PROPERTIES_PREFS_NAME = "name";
+    /**
+     * Properties preferences value.
+     */
+    public static final String METADATA_PROPERTIES_PREFS_VALUE = "value";
 
 
     // User preferences
@@ -121,7 +132,7 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
         PropertyMap properties = new PropertyMap();
         properties.set(TERMS_OF_SERVICE, this.preferences.getTermsOfService());
         properties.set(METADATA_FOLDERS_PREFS, this.convertFolders(this.preferences.getFolderDisplays()));
-        properties.set(SAVED_SEARCHES_XPATH, this.convertSavedSearches(this.preferences.getSavedSearches()));
+        properties.set(SAVED_SEARCHES_XPATH, this.convertSavedSearches(this.preferences.getCategorizedSavedSearches()));
         properties.set(METADATA_PROPERTIES_PREFS, this.convertProperties(this.preferences.getUserProperties()));
         return properties;
     }
@@ -147,7 +158,7 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
         return array.toString();
     }
 
-    
+
     /**
      * Convert properties to JSON.
      *
@@ -167,33 +178,47 @@ public class UpdateUserPreferencesCommand implements INuxeoCommand {
 
         return array.toString();
     }
-    
+
 
     /**
-     * Convert saved searches to JSON.
+     * Convert categorized saved searches to JSON.
      *
-     * @param savedSearches saved searches
+     * @param categorizedSavedSearches categorized saved searches
      * @return JSON
      */
-    protected String convertSavedSearches(List<UserSavedSearch> savedSearches) {
+    protected String convertSavedSearches(Map<String, List<UserSavedSearch>> categorizedSavedSearches) {
         String result;
 
-        if (CollectionUtils.isEmpty(savedSearches)) {
+        if (MapUtils.isEmpty(categorizedSavedSearches)) {
             result = null;
         } else {
-            JSONArray array = new JSONArray();
+            JSONArray categories = new JSONArray();
 
-            for (UserSavedSearch savedSearch : savedSearches) {
-                JSONObject object = new JSONObject();
-                object.put(SAVED_SEARCH_ID, savedSearch.getId());
-                object.put(SAVED_SEARCH_DISPLAY_NAME, savedSearch.getDisplayName());
-                object.put(SAVED_SEARCH_ORDER, savedSearch.getOrder());
-                object.put(SAVED_SEARCH_DATA, savedSearch.getData());
+            for (Map.Entry<String, List<UserSavedSearch>> entry : categorizedSavedSearches.entrySet()) {
+                String categoryId = StringUtils.trimToEmpty(entry.getKey());
+                List<UserSavedSearch> categorySearches = entry.getValue();
 
-                array.add(object);
+                if (CollectionUtils.isNotEmpty(categorySearches)) {
+                    JSONArray searches = new JSONArray();
+                    for (UserSavedSearch categorySearch : categorySearches) {
+                        JSONObject search = new JSONObject();
+                        search.put(SAVED_SEARCH_ID, categorySearch.getId());
+                        search.put(SAVED_SEARCH_DISPLAY_NAME, categorySearch.getDisplayName());
+                        search.put(SAVED_SEARCH_ORDER, categorySearch.getOrder());
+                        search.put(SAVED_SEARCH_DATA, categorySearch.getData());
+
+                        searches.add(search);
+                    }
+
+                    JSONObject category = new JSONObject();
+                    category.put(SAVED_SEARCH_CATEGORY_ID, categoryId);
+                    category.put(SAVED_SEARCH_CATEGORY_SEARCHES, searches);
+
+                    categories.add(category);
+                }
             }
 
-            result = array.toString();
+            result = categories.toString();
         }
 
         return result;

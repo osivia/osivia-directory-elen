@@ -51,7 +51,7 @@ public interface UserPreferences {
 
 
     /**
-     * Get user saved searches.
+     * Get default user saved searches.
      *
      * @return saved searches
      */
@@ -59,27 +59,53 @@ public interface UserPreferences {
 
 
     /**
-     * Set user saved searches.
+     * Set default user saved searches.
      *
      * @param savedSearches saved searches
      */
     void setSavedSearches(List<UserSavedSearch> savedSearches);
 
-    
+
+    /**
+     * Get categorized user saved searches.
+     *
+     * @param categoryId category identifier
+     * @return saved searches
+     */
+    List<UserSavedSearch> getSavedSearches(String categoryId);
+
+
+    /**
+     * Set categorized user saved searches.
+     *
+     * @param categoryId    category identifier
+     * @param savedSearches saved searches
+     */
+    void setSavedSearches(String categoryId, List<UserSavedSearch> savedSearches);
+
+
+    /**
+     * Get categorized user saved searches.
+     *
+     * @return saved searches
+     */
+    Map<String, List<UserSavedSearch>> getCategorizedSavedSearches();
+
+
     /**
      * Gets the user properties.
      *
      * @return the user properties
      */
-    Map<String,String> getUserProperties();
-    
+    Map<String, String> getUserProperties();
+
 
     /**
      * Sets the user properties.
      *
      * @param properties the properties
      */
-    void setUserProperties(Map<String,String> properties);    
+    void setUserProperties(Map<String, String> properties);
 
     /**
      * Check if user preferences have been updated.
@@ -95,9 +121,5 @@ public interface UserPreferences {
      * @param updated updated indicator
      */
     void setUpdated(boolean updated);
-    
-    
-
-
 
 }

@@ -1,9 +1,13 @@
 package org.osivia.directory.v2.model.preferences;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,15 +35,15 @@ public class UserPreferencesImpl implements UserPreferences {
      */
     private Map<String, String> folderDisplays;
     /**
-     * Saved searches.
+     * Categorized saved searches.
      */
-    private List<UserSavedSearch> savedSearches;
-    
+    private Map<String, List<UserSavedSearch>> categorizedSavedSearches;
+
     /**
      * User properties
      */
-    private Map<String,String> userProperties;
-    
+    private Map<String, String> userProperties;
+
     /**
      * Updated user preferences indicator.
      */
@@ -89,13 +93,49 @@ public class UserPreferencesImpl implements UserPreferences {
 
     @Override
     public List<UserSavedSearch> getSavedSearches() {
-        return this.savedSearches;
+        return this.getSavedSearches(StringUtils.EMPTY);
     }
 
 
     @Override
     public void setSavedSearches(List<UserSavedSearch> savedSearches) {
-        this.savedSearches = savedSearches;
+        this.setSavedSearches(StringUtils.EMPTY, savedSearches);
+    }
+
+
+    @Override
+    public List<UserSavedSearch> getSavedSearches(String categoryId) {
+        List<UserSavedSearch> savedSearches;
+        if (MapUtils.isEmpty(this.categorizedSavedSearches)) {
+            savedSearches = null;
+        } else {
+            savedSearches = this.categorizedSavedSearches.get(categoryId);
+        }
+        return savedSearches;
+    }
+
+
+    @Override
+    public void setSavedSearches(String categoryId, List<UserSavedSearch> savedSearches) {
+        if (this.categorizedSavedSearches == null) {
+            this.categorizedSavedSearches = new HashMap<>();
+        }
+        if (CollectionUtils.isEmpty(savedSearches)) {
+            this.categorizedSavedSearches.remove(categoryId);
+        } else {
+            this.categorizedSavedSearches.put(categoryId, savedSearches);
+        }
+    }
+
+
+    @Override
+    public Map<String, List<UserSavedSearch>> getCategorizedSavedSearches() {
+        return categorizedSavedSearches;
+    }
+
+
+    public void setCategorizedSavedSearches(Map<String, List<UserSavedSearch>> categorizedSavedSearches) {
+        this.categorizedSavedSearches = categorizedSavedSearches;
     }
 
 

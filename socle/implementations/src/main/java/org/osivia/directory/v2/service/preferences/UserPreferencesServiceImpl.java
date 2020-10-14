@@ -3,6 +3,7 @@ package org.osivia.directory.v2.service.preferences;
 import fr.toutatice.portail.cms.nuxeo.api.INuxeoCommand;
 import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
 import fr.toutatice.portail.cms.nuxeo.api.services.NuxeoCommandContext;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.nuxeo.ecm.automation.client.model.PropertyList;
@@ -166,34 +167,48 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
         userPreferences.setFolderDisplays(folderDisplays);
 
         // Saved searches
-        List<UserSavedSearch> savedSearches;
-        PropertyList savedSearchesPropertyList = profile.getProperties().getList(UpdateUserPreferencesCommand.SAVED_SEARCHES_XPATH);
-        if ((savedSearchesPropertyList == null) || savedSearchesPropertyList.isEmpty()) {
-            savedSearches = null;
+        Map<String, List<UserSavedSearch>> categorizedSavedSearches;
+        PropertyList categories = profile.getProperties().getList(UpdateUserPreferencesCommand.SAVED_SEARCHES_XPATH);
+        if ((categories == null) || categories.isEmpty()) {
+            categorizedSavedSearches = null;
         } else {
-            savedSearches = new ArrayList<>(savedSearchesPropertyList.size());
+            categorizedSavedSearches = new HashMap<>(categories.size());
 
-            for (int i = 0; i < savedSearchesPropertyList.size(); i++) {
-                PropertyMap savedSearchPropertyMap = savedSearchesPropertyList.getMap(i);
+            for (int i = 0; i < categories.size(); i++) {
+                PropertyMap category = categories.getMap(i);
 
-                // Identifier
-                int id = NumberUtils.toInt(savedSearchPropertyMap.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_ID));
-                // Saved search
-                UserSavedSearchImpl savedSearch = this.applicationContext.getBean(UserSavedSearchImpl.class, id);
-                // Display name
-                String displayName = savedSearchPropertyMap.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_DISPLAY_NAME);
-                savedSearch.setDisplayName(displayName);
-                // Order
-                Integer order = NumberUtils.createInteger(savedSearchPropertyMap.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_ORDER));
-                savedSearch.setOrder(order);
-                // Data
-                String data = savedSearchPropertyMap.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_DATA);
-                savedSearch.setData(data);
+                // Category identifier
+                String categoryId = StringUtils.trimToEmpty(category.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_CATEGORY_ID));
+                // Category searches
+                PropertyList searches = category.getList(UpdateUserPreferencesCommand.SAVED_SEARCH_CATEGORY_SEARCHES);
 
-                savedSearches.add(savedSearch);
+                if ((searches != null) && !searches.isEmpty()) {
+                    List<UserSavedSearch> categorySearches = new ArrayList<>(searches.size());
+                    categorizedSavedSearches.put(categoryId, categorySearches);
+
+                    for (int j = 0; j < searches.size(); j++) {
+                        PropertyMap search = searches.getMap(j);
+
+                        // Identifier
+                        int id = NumberUtils.toInt(search.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_ID));
+                        // Saved search
+                        UserSavedSearchImpl categorySearch = this.applicationContext.getBean(UserSavedSearchImpl.class, id);
+                        // Display name
+                        String displayName = search.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_DISPLAY_NAME);
+                        categorySearch.setDisplayName(displayName);
+                        // Order
+                        Integer order = NumberUtils.createInteger(search.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_ORDER));
+                        categorySearch.setOrder(order);
+                        // Data
+                        String data = search.getString(UpdateUserPreferencesCommand.SAVED_SEARCH_DATA);
+                        categorySearch.setData(data);
+
+                        categorySearches.add(categorySearch);
+                    }
+                }
             }
         }
-        userPreferences.setSavedSearches(savedSearches);
+        userPreferences.setCategorizedSavedSearches(categorizedSavedSearches);
         
         // User properties
         Map<String, String> userProperties = new ConcurrentHashMap<>();
