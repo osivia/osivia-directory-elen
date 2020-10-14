@@ -375,7 +375,7 @@ public class PersonServiceImpl extends DirServiceImpl implements PersonUpdateSer
         rules.add(new LowercaseCharacterRule(1));
         rules.add(new UppercaseCharacterRule(1));
         rules.add(new DigitCharacterRule(1));
-        rules.add(new SpecialCharacterRule(1));
+        rules.add(new EnhancedSpecialCharacter(1));
         rules.add(new WhitespaceRule());
         return rules;
     }
