@@ -4,7 +4,7 @@
 
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.9-SNAPSHOT</version>
+    <version>4.9.6</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
@@ -238,7 +238,7 @@
         <url>https://github.com/osivia/osivia-directory</url>
         <connection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/osivia/osivia-directory.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>4.9.6</tag>
   </scm>
 
 
