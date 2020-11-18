@@ -266,7 +266,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         members.setWorkspaceId(workspaceId);
         members.setType(WorkspaceGroupType.space_group);
         members.setDn(this.sample.buildDn(cn));
-        members.setDisplayName(bundle.getString("ALL_MEMBERS"));
+        members.setDisplayName(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
         members.setDescription(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
 
         // Get a fresh copy of the owner in the directory
@@ -286,7 +286,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             roleGroup.setType(WorkspaceGroupType.security_group);
             roleGroup.setRole(entry);
             roleGroup.setDn(this.sample.buildDn(cnRole));
-            roleGroup.setDisplayName(bundle.getString("SECU_"+entry));
+            roleGroup.setDisplayName(bundle.getString("SECU_"+entry+"_DESC", workspaceId));
             roleGroup.setDescription(bundle.getString("SECU_"+entry+"_DESC", workspaceId));
 
             this.dao.create(roleGroup);
@@ -368,7 +368,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             if (cp.getType() == WorkspaceGroupType.space_group) {
             	
                 if(StringUtils.isBlank(cp.getDisplayName())) {
-                	cp.setDisplayName(bundle.getString("ALL_MEMBERS"));
+                	cp.setDisplayName(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
                 }
                 if(StringUtils.isBlank(cp.getDescription())) {
                 	cp.setDescription(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
@@ -381,7 +381,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             if ((cp.getType() == WorkspaceGroupType.security_group) && (cp.getRole() == role)) {
             	
                 if(StringUtils.isBlank(cp.getDisplayName())) {
-                	cp.setDisplayName(bundle.getString("SECU_"+cp.getRole()));
+                	cp.setDisplayName(bundle.getString("SECU_"+cp.getRole()+"_DESC", workspaceId));
                 }
                 if(StringUtils.isBlank(cp.getDescription())) {
                 	cp.setDescription(bundle.getString("SECU_"+cp.getRole()+"_DESC", workspaceId));
