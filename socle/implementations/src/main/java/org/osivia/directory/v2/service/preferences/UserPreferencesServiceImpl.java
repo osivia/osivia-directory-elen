@@ -183,6 +183,7 @@ public class UserPreferencesServiceImpl extends DirServiceImpl implements UserPr
 
                 if ((searches != null) && !searches.isEmpty()) {
                     List<UserSavedSearch> categorySearches = new ArrayList<>(searches.size());
+                    CollectionUtils.synchronizedCollection(categorySearches);
                     categorizedSavedSearches.put(categoryId, categorySearches);
 
                     for (int j = 0; j < searches.size(); j++) {
