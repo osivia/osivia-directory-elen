@@ -29,10 +29,12 @@ import org.osivia.directory.v2.model.ext.WorkspaceGroupType;
 import org.osivia.directory.v2.model.ext.WorkspaceMember;
 import org.osivia.directory.v2.model.ext.WorkspaceMemberImpl;
 import org.osivia.directory.v2.model.ext.WorkspaceRole;
+import org.osivia.directory.v2.repository.CleanWorkspaceParticipationCommand;
 import org.osivia.directory.v2.repository.GetUserProfileCommand;
 import org.osivia.directory.v2.repository.ReIndexUserCommand;
 import org.osivia.directory.v2.repository.UpdateWorkspaceCommand;
 import org.osivia.portal.api.PortalException;
+import org.osivia.portal.api.cache.services.CacheInfo;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.BeansException;
@@ -501,6 +503,19 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         	INuxeoCommand reindexUser = this.applicationContext.getBean(ReIndexUserCommand.class, nxProfile);
             nuxeoController.executeNuxeoCommand(reindexUser);
 
+        }
+        
+        // when leaving a space, clean orphan notifications and ACLs
+        if(!attach) {
+            nuxeoController = new NuxeoController(this.getPortletContext());
+            nuxeoController.setAuthType(NuxeoCommandContext.AUTH_TYPE_SUPERUSER);
+            nuxeoController.setCacheType(CacheInfo.CACHE_SCOPE_NONE);
+            nuxeoController.setAsynchronousCommand(true);
+        	
+        	nuxeoController.setAsynchronousCommand(true);
+        	INuxeoCommand cleanWorkspace = this.applicationContext.getBean(CleanWorkspaceParticipationCommand.class, user, workspaceId);
+            nuxeoController.executeNuxeoCommand(cleanWorkspace);
+        	
         }
         
     }
