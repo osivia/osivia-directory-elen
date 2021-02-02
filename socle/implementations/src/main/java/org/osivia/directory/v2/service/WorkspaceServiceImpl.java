@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nuxeo.ecm.automation.client.model.Document;
@@ -596,9 +597,11 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             if (cp.getType() == WorkspaceGroupType.local_group) {
                 String cpSuffix = cp.getCn().replace(workspaceId + "_", "");
 
-                int parseInt = Integer.parseInt(cpSuffix);
-                if (parseInt >= i) {
-                    i = parseInt + 1;
+                if(NumberUtils.isNumber(cpSuffix)) {
+                    int parseInt = Integer.parseInt(cpSuffix);
+                    if (parseInt >= i) {
+                        i = parseInt + 1;
+                    }
                 }
             }
         }
