@@ -11,7 +11,7 @@
     
     
     <properties>
-        <toutatice.version>4.4.23-jdk8</toutatice.version>
+        <toutatice.version>4.4.24</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
