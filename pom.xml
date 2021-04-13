@@ -4,7 +4,7 @@
 
     <groupId>org.osivia.services.directory</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>4.9-SNAPSHOT</version>
+    <version>5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Toutatice -->
-        <toutatice.version>4.9.2</toutatice.version>
+        <toutatice.version>5.0-SNAPSHOT</toutatice.version>
 
         <jsoup.version>1.6.1</jsoup.version>
     </properties>

@@ -20,8 +20,9 @@ import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.osivia.directory.v2.model.PortalGroup;
 import org.osivia.directory.v2.service.PortalGroupService;
 import org.osivia.portal.api.Constants;
+import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
-import org.osivia.portal.api.windows.StartingWindowBean;
+import org.osivia.portal.api.dynamic.IDynamicService;
 import org.osivia.services.group.management.portlet.model.GroupManagementForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -50,6 +51,10 @@ public class GroupManagementServiceImpl implements GroupManagementService {
     /** Group service. */
     @Autowired
     private PortalGroupService groupService;
+    
+    /** Dynamic page service. */
+    @Autowired
+    private IDynamicService dynamicService;
 
 
     /** Log. */
@@ -93,13 +98,17 @@ public class GroupManagementServiceImpl implements GroupManagementService {
             Map<String, String> properties = new HashMap<>();
             properties.put("osivia.hideTitle", "1");
             properties.put("osivia.bootstrapPanelStyle", String.valueOf(true));
-            properties.put(ThemeConstants.PORTAL_PROP_REGION, region);
             properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
             properties.put("osivia.ajaxLink", "1");
             properties.put("osivia.group.cn", selected);
 
-            StartingWindowBean window = new StartingWindowBean("GROUP", "directory-group-card-instance", properties);
-            request.setAttribute(Constants.PORTLET_ATTR_START_WINDOW, window);
+
+            try {
+                dynamicService.startDynamicWindow(portalControllerContext, region, "directory-group-card-instance", properties);
+            } catch (PortalException e) {
+                throw new PortletException(e);
+            }
+
         }
     }
 

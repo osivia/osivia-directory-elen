@@ -32,8 +32,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.portal.common.invocation.Scope;
-import org.jboss.portal.core.controller.ControllerContext;
 import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.nuxeo.ecm.automation.client.model.Document;
 import org.osivia.directory.v2.dao.PersonDao;
@@ -49,12 +47,12 @@ import org.osivia.portal.api.internationalization.Bundle;
 import org.osivia.portal.api.internationalization.IBundleFactory;
 import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
+import org.osivia.portal.api.portalobject.bridge.PortalObjectUtils;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
-import org.osivia.portal.core.context.ControllerContextAdapter;
 import org.passay.AbstractCharacterRule;
 import org.passay.DigitCharacterRule;
 import org.passay.LengthRule;
@@ -536,28 +534,15 @@ public class PersonServiceImpl extends DirServiceImpl implements PersonUpdateSer
     @Override
     public boolean isPortalAdministrator(PortalControllerContext portalControllerContext) throws PortalException {
         // Controller context & portlet request
-        ControllerContext controllerContext;
         PortletRequest request;
         if (portalControllerContext == null) {
-            controllerContext = null;
             request = null;
         } else {
-            controllerContext = ControllerContextAdapter.getControllerContext(portalControllerContext);
             request = portalControllerContext.getRequest();
         }
 
         // Portal administrator indicator attribute value
-        Boolean attribute;
-        if (controllerContext == null) {
-            attribute = null;
-        } else {
-            // Search attribute value in principal scope
-            attribute = (Boolean) controllerContext.getAttribute(Scope.PRINCIPAL_SCOPE, "osivia.isAdmin");
-        }
-        if ((attribute == null) && (request != null)) {
-            // Search attribute value in portlet request
-            attribute = (Boolean) request.getAttribute(InternalConstants.ADMINISTRATOR_INDICATOR_ATTRIBUTE_NAME);
-        }
+        Boolean attribute = PortalObjectUtils.isAdmin(portalControllerContext);
 
         return BooleanUtils.toBoolean(attribute);
     }

@@ -6,6 +6,8 @@ import javax.portlet.PortletContext;
 import org.osivia.directory.v2.service.PortalGroupService;
 import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
+import org.osivia.portal.api.dynamic.IDynamicService;
+import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.portlet.PortletAppUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -87,6 +89,11 @@ public class GroupManagementConfiguration implements PortletConfigAware {
     @Bean
     public PortalGroupService getGroupService() {
         return DirServiceFactory.getService(PortalGroupService.class);
+    }
+    
+    @Bean
+    public IDynamicService getDynamicWindowService() {
+        return Locator.getService(IDynamicService.class);
     }
 
 }

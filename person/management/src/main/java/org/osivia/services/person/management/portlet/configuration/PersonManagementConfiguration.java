@@ -8,6 +8,8 @@ import javax.portlet.PortletContext;
 import org.osivia.portal.api.Constants;
 import org.osivia.portal.api.directory.v2.DirServiceFactory;
 import org.osivia.portal.api.directory.v2.service.PersonService;
+import org.osivia.portal.api.dynamic.IDynamicService;
+import org.osivia.portal.api.locator.Locator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -89,6 +91,11 @@ public class PersonManagementConfiguration implements PortletContextAware {
     @Bean
     public PersonService getPersonService() {
     	return DirServiceFactory.getService(PersonService.class);
+    }
+    
+    @Bean
+    public IDynamicService getDynamicWindowService() {
+        return Locator.getService(IDynamicService.class);
     }
 
 }

@@ -22,9 +22,11 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.portal.theme.ThemeConstants;
 import org.jboss.portal.theme.impl.render.dynamic.DynaRenderOptions;
 import org.osivia.portal.api.Constants;
+import org.osivia.portal.api.PortalException;
 import org.osivia.portal.api.context.PortalControllerContext;
 import org.osivia.portal.api.directory.v2.model.Person;
-import org.osivia.portal.api.windows.StartingWindowBean;
+import org.osivia.portal.api.dynamic.IDynamicService;
+
 import org.osivia.services.person.management.portlet.model.PersonManagementForm;
 import org.osivia.services.person.management.portlet.model.User;
 import org.osivia.services.person.management.portlet.repository.PersonManagementRepository;
@@ -56,6 +58,10 @@ public class PersonManagementServiceImpl implements PersonManagementService {
     /** View resolver. */
     @Autowired
     private InternalResourceViewResolver viewResolver;
+    
+    /** Dynamic page service. */
+    @Autowired
+    private IDynamicService dynamicService;
 
 
     /** Log. */
@@ -179,13 +185,18 @@ public class PersonManagementServiceImpl implements PersonManagementService {
             Map<String, String> properties = new HashMap<>();
             properties.put("osivia.hideTitle", "1");
             properties.put("osivia.bootstrapPanelStyle", String.valueOf(true));
-            properties.put(ThemeConstants.PORTAL_PROP_REGION, region);
+
             properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
             properties.put("osivia.ajaxLink", "1");
             properties.put("uidFichePersonne", id);
 
-            StartingWindowBean window = new StartingWindowBean("USER", "directory-person-card-instance", properties);
-            request.setAttribute(Constants.PORTLET_ATTR_START_WINDOW, window);
+            try {
+                dynamicService.startDynamicWindow(portalControllerContext, region, "directory-person-card-instance", properties);
+            } catch (PortalException e) {
+                throw new PortletException(e);
+            }
+            
+
         }
     }
 
