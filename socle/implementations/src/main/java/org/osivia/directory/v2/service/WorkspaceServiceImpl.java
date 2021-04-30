@@ -143,10 +143,20 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
      */
     @Override
     public List<CollabProfile> findByWorkspaceId(String workspaceId) {
-        CollabProfile searchProfile = this.applicationContext.getBean(sample.getClass());
-        searchProfile.setWorkspaceId(workspaceId);
+    	
+    	List<CollabProfile> list = new ArrayList<>();
+    	CollabProfile searchProfile = null;
+    	
+    	if(StringUtils.isNotBlank(workspaceId)) {
+	    	
+    		searchProfile = this.applicationContext.getBean(sample.getClass());
+	        searchProfile.setWorkspaceId(workspaceId);
 
-        return this.findByCriteria(searchProfile);
+	        list = this.findByCriteria(searchProfile);
+    	}
+    	
+    	return list;
+
     }
 
 
@@ -414,13 +424,20 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     @Transactional(rollbackFor = Exception.class)
     // @CacheEvict(key = "#workspaceId", value = "membersByWksCache")
     public void removeMember(String workspaceId, Name memberDn) {
-        List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
+    	
+    	if(StringUtils.isNotBlank(workspaceId)) {
+	        List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
+	
+	        for (CollabProfile cp : list) {
+	            this.detachPerson(memberDn, cp, true);
+	        }
+	
+	        ldapLogger.info("Space member removed : "+workspaceId+ " "+memberDn.toString());
+    	}
+    	else {
+	        ldapLogger.error("Try to remove a Space member with no workspace identifier : "+memberDn.toString());
 
-        for (CollabProfile cp : list) {
-            this.detachPerson(memberDn, cp, true);
-        }
-
-        ldapLogger.info("Space member removed : "+workspaceId+ " "+memberDn.toString());
+    	}
 
     }
 
