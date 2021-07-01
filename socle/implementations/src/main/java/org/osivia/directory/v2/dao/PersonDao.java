@@ -38,7 +38,7 @@ public interface PersonDao {
 	 * @param ps
 	 * @return
 	 */
-	List<Person> findByCriteria(Person p);
+	List<Person> findByCriteria(Person search, boolean connectedOnly);
 
 	/**
 	 * @param p
@@ -88,5 +88,6 @@ public interface PersonDao {
 	 * @return list of person
 	 */	
 	List<Person> findByValidityDate(Date d);
+
 
 }

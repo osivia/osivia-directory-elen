@@ -141,13 +141,17 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     @Override
     public List<Person> findByCriteria(Person search) {
 
-        List<Person> persons = dao.findByCriteria(search);
+    	return findByCriteria(search, false);
+    }
+
+    @Override
+    public List<Person> findByCriteria(Person search, boolean connectedOnly) {
+        List<Person> persons = dao.findByCriteria(search, connectedOnly);
         for (Person p : persons) {
             appendAvatar(p);
         }
         return persons;
     }
-
 
     /* (non-Javadoc)
      * @see org.osivia.portal.api.directory.v2.service.PersonService#update(org.osivia.portal.api.directory.v2.model.Person)

@@ -113,4 +113,11 @@ public interface PersonUpdateService extends PersonService {
 	public List<Person> findByValidityDate(Date d);
 
 
+	/**
+	 * Return a list of persons (filtered by connection date)
+	 * @param d the date
+	 * @param connectedOnly filter by connection date
+	 * @return list of person
+	 */
+	List<Person> findByCriteria(Person search, boolean connectedOnly);
 }

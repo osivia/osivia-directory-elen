@@ -81,11 +81,23 @@ public class PersonDaoImpl implements PersonDao {
 	
 
 	@Override
-	public List<Person> findByCriteria(Person p) {
+	public List<Person> findByCriteria(Person p, boolean connectedOnly) {
 
 		OrFilter filter = MappingHelper.generateOrFilter(p);
-				
-		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
+		
+		if(connectedOnly) {
+			String field = MappingHelper.getLdapFieldName(sample, "lastConnection");
+			LikeFilter dateFilter = new LikeFilter(field, "*");
+			
+			AndFilter connectedFilter = new AndFilter();
+			connectedFilter.and(dateFilter);
+			connectedFilter.and(filter);
+			
+			return (List<Person>) template.find(sample.buildBaseDn(), connectedFilter, getSearchControls() , sample.getClass());
+		}
+		else {
+			return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
+		}
 		
 	}
 	
