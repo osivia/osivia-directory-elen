@@ -100,6 +100,15 @@ public interface WorkspaceService extends IDirService {
 
 
     /**
+     * Create a workspace with all default roles and a title
+     *
+     * @param workspaceId workspace identifier
+     * @param title workspace title
+     * @param owner workspace owner
+     */
+	void create(String identifier, Person owner, String title);
+
+    /**
      * Create a workspace with specified roles.
      *
      * @param workspaceId workspace identifier
@@ -108,6 +117,14 @@ public interface WorkspaceService extends IDirService {
      */
     void create(String workspaceId, List<WorkspaceRole> roles, Person owner);
 
+    /**
+     * Create a workspace with specified roles.
+     *
+     * @param workspaceId workspace identifier
+     * @param roles workspace roles
+     * @param owner workspace owner
+     */
+    void create(String workspaceId, List<WorkspaceRole> roles, Person owner, String title);
 
     /**
      * Delete a workspace and his subgroups, unkink users associated.
@@ -242,7 +259,6 @@ public interface WorkspaceService extends IDirService {
 	 * Send alert about directory bugs
 	 */
 	void sendIntegrityAlert(PortalControllerContext pcc);
-
 
 
 

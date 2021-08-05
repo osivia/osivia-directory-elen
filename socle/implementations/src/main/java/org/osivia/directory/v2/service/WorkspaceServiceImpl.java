@@ -259,14 +259,32 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         this.create(workspaceId, Arrays.asList(WorkspaceRole.values()), owner);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void create(String workspaceId, Person owner, String title) {
+        this.create(workspaceId, Arrays.asList(WorkspaceRole.values()), owner, title);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void create(String workspaceId, List<WorkspaceRole> roles, Person owner) {
+        this.create(workspaceId, Arrays.asList(WorkspaceRole.values()), owner, null);
+
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void create(String workspaceId, List<WorkspaceRole> roles, Person owner) {
+    public void create(String workspaceId, List<WorkspaceRole> roles, Person owner, String title) {
     	
+    	if(title == null) {
+    		title = workspaceId;
+    	}
     	
     	Bundle bundle = bundleFactory.getBundle(null);
     	
@@ -277,8 +295,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         members.setWorkspaceId(workspaceId);
         members.setType(WorkspaceGroupType.space_group);
         members.setDn(this.sample.buildDn(cn));
-        members.setDisplayName(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
-        members.setDescription(bundle.getString("ALL_MEMBERS_DESC", workspaceId));
+        members.setDisplayName(bundle.getString("ALL_MEMBERS_DESC", title));
+        members.setDescription(bundle.getString("ALL_MEMBERS_DESC", title));
 
         // Get a fresh copy of the owner in the directory
         owner = personService.getPersonNoCache(owner.getDn());
@@ -297,8 +315,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
             roleGroup.setType(WorkspaceGroupType.security_group);
             roleGroup.setRole(entry);
             roleGroup.setDn(this.sample.buildDn(cnRole));
-            roleGroup.setDisplayName(bundle.getString("SECU_"+entry+"_DESC", workspaceId));
-            roleGroup.setDescription(bundle.getString("SECU_"+entry+"_DESC", workspaceId));
+            roleGroup.setDisplayName(bundle.getString("SECU_"+entry+"_DESC", title));
+            roleGroup.setDescription(bundle.getString("SECU_"+entry+"_DESC", title));
 
             this.dao.create(roleGroup);
 
