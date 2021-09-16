@@ -288,9 +288,11 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     	
     	Bundle bundle = bundleFactory.getBundle(null);
     	
+    	String workspaceIdMin = workspaceId.toLowerCase();
+    	
         // Creation of the member group
         CollabProfile members = this.applicationContext.getBean(sample.getClass());
-        String cn = workspaceId + "_members";
+        String cn = workspaceIdMin + "_members";
         members.setCn(cn);
         members.setWorkspaceId(workspaceId);
         members.setType(WorkspaceGroupType.space_group);
@@ -309,7 +311,7 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         // Création of security groups
         for (WorkspaceRole entry : roles) {
             CollabProfile roleGroup = this.applicationContext.getBean(sample.getClass());
-            String cnRole = workspaceId + "_" + entry.getId();
+            String cnRole = workspaceIdMin + "_" + entry.getId();
             roleGroup.setCn(cnRole);
             roleGroup.setWorkspaceId(workspaceId);
             roleGroup.setType(WorkspaceGroupType.security_group);
@@ -643,7 +645,9 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
 
         // local group creation
         CollabProfile localGroup = this.applicationContext.getBean(sample.getClass());
-        String cn = workspaceId + "_" + Integer.toString(i);
+        
+        String workspaceIdMin = workspaceId.toLowerCase();
+        String cn = workspaceIdMin + "_" + Integer.toString(i);
         localGroup.setCn(cn);
         localGroup.setWorkspaceId(workspaceId);
         localGroup.setType(WorkspaceGroupType.local_group);
