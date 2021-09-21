@@ -230,6 +230,8 @@ public class PersonServiceImpl extends DirServiceImpl implements PersonUpdateSer
 
         UpdateUserProfileCommand updateCmd = new UpdateUserProfileCommand(nuxeoProfile, properties, avatar);
         controller.executeNuxeoCommand(updateCmd);
+        
+        controller.refreshUserInfo(p.getUid());
 
         if (avatar != null) {
             controller.refreshUserAvatar(p.getUid());
