@@ -134,6 +134,13 @@ public interface WorkspaceService extends IDirService {
      */
     void delete(String workspaceId, String docId);
 
+    /**
+     * Update all profiles when a workspace title change
+     * 
+     * @param workspaceId
+     * @param newTitle
+     */
+    void modifyTitle(String workspaceId, String newTitle);
 
     /**
      * Add a person to a workspace, change his level rights.

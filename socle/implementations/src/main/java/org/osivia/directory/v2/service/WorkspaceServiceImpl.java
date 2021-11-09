@@ -382,6 +382,34 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
     }
 
 
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void modifyTitle(String workspaceId, String newTitle) {
+		
+		List<CollabProfile> list = this.findByWorkspaceId(workspaceId);
+		Bundle bundle = bundleFactory.getBundle(null);
+		
+		for (CollabProfile cp : list) {
+			
+			if(cp.getType() == WorkspaceGroupType.space_group) {
+		        cp.setDisplayName(bundle.getString("ALL_MEMBERS_DESC", newTitle));
+		        cp.setDescription(bundle.getString("ALL_MEMBERS_DESC", newTitle));
+		        
+		        dao.update(cp);
+			}
+			else if(cp.getType() == WorkspaceGroupType.security_group) {
+				cp.setDisplayName(bundle.getString("SECU_"+cp.getRole()+"_DESC", newTitle));
+	            cp.setDescription(bundle.getString("SECU_"+cp.getRole()+"_DESC", newTitle));
+	            
+	            dao.update(cp);
+			}
+		}
+		
+		ldapLogger.info("Space title modified : "+workspaceId+ " ("+newTitle+")");
+	}
+
+
     /**
      * {@inheritDoc}
      */
