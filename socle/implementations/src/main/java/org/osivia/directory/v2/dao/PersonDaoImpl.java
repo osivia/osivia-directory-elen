@@ -105,11 +105,15 @@ public class PersonDaoImpl implements PersonDao {
 	public List<Person> findByNoConnectionDate(Person p) {
 		
 		
-		String field = MappingHelper.getLdapFieldName(sample, "lastConnection");
-		NotFilter dateFilter = new NotFilter(new LikeFilter(field, "*"));
+		String lastCoField = MappingHelper.getLdapFieldName(sample, "lastConnection");
+		NotFilter dateFilter = new NotFilter(new LikeFilter(lastCoField, "*"));
+		
+		String profilesField = MappingHelper.getLdapFieldName(sample, "profiles");
+		NotFilter noProfileFilter = new NotFilter(new LikeFilter(profilesField, "*"));		
 		
 		AndFilter filter = MappingHelper.generateAndFilter(p);
 		filter.and(dateFilter);
+		filter.and(noProfileFilter);
 		
 		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
 
