@@ -437,8 +437,8 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     }
 
     @Override
-    public List<Person> findByNoConnectionDate(Person p) {
-        return dao.findByNoConnectionDate(p);
+    public List<Person> findByNoConnectionDate(Date creationDate) {
+        return dao.findByNoConnectionDate(creationDate);
     }
 
     /* (non-Javadoc)
@@ -448,6 +448,11 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     public List<Person> findByValidityDate(Date d) {
         return dao.findByValidityDate(d);
     }
+
+	@Override
+	public List<Person> findInactives(Date referenceDate) {
+		return dao.findInactives(referenceDate);
+	}
 
 
 }

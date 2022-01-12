@@ -77,10 +77,10 @@ public interface PersonDao {
 
 	/**
  	 * Return a list of persons with no connection date (has never logged on portal)
- 	 * @param p the person search
+ 	 * @param creationDate min creation date
 	 * @return
 	 */
-	List<Person> findByNoConnectionDate(Person p);
+	List<Person> findByNoConnectionDate(Date creationDate);
 	
 	/**
 	 * Return a list of persons with a validity date less than the one passed 
@@ -88,6 +88,17 @@ public interface PersonDao {
 	 * @return list of person
 	 */	
 	List<Person> findByValidityDate(Date d);
+
+	/**
+	 * Return a list of persons who not logged in since the reference date
+	 * 
+	 * @param referenceDate
+	 * @return
+	 */
+	List<Person> findInactives(Date referenceDate);
+
+	
+
 
 
 }

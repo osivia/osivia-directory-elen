@@ -13,6 +13,7 @@
  */
 package org.osivia.directory.v2.dao;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -102,18 +103,29 @@ public class PersonDaoImpl implements PersonDao {
 	}
 	
 	@Override
-	public List<Person> findByNoConnectionDate(Person p) {
+	public List<Person> findByNoConnectionDate(Date creationDate) {
 		
 		
 		String lastCoField = MappingHelper.getLdapFieldName(sample, "lastConnection");
-		NotFilter dateFilter = new NotFilter(new LikeFilter(lastCoField, "*"));
+		NotFilter lastCoFilter = new NotFilter(new LikeFilter(lastCoField, "*"));
 		
 		String profilesField = MappingHelper.getLdapFieldName(sample, "profiles");
-		NotFilter noProfileFilter = new NotFilter(new LikeFilter(profilesField, "*"));		
+		NotFilter noProfileFilter = new NotFilter(new LikeFilter(profilesField, "*"));
 		
-		AndFilter filter = MappingHelper.generateAndFilter(p);
-		filter.and(dateFilter);
+		String creationField = MappingHelper.getLdapFieldName(sample, "creationDate");
+
+		DateToGeneralizedTime converter = new DateToGeneralizedTime();
+		LessThanOrEqualsFilter oldDateFilter = new LessThanOrEqualsFilter(creationField, converter.convert(creationDate));
+		NotFilter noDateFilter = new NotFilter(new LikeFilter(creationField, "*"));
+
+		OrFilter creationFilter = new OrFilter();
+		creationFilter.append(oldDateFilter);
+		creationFilter.append(noDateFilter);
+		
+		AndFilter filter = new AndFilter();
+		filter.and(lastCoFilter);
 		filter.and(noProfileFilter);
+		filter.and(creationFilter);
 		
 		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
 
@@ -217,6 +229,25 @@ public class PersonDaoImpl implements PersonDao {
 	public void delete(Person p) {
 		template.delete(p);
 		
+	}
+
+
+	@Override
+	public List<Person> findInactives(Date referenceDate) {
+		
+		DateToGeneralizedTime converter = new DateToGeneralizedTime();
+		String lastCoField = MappingHelper.getLdapFieldName(sample, "lastConnection");
+		LessThanOrEqualsFilter oldDateFilter = new LessThanOrEqualsFilter(lastCoField, converter.convert(referenceDate));
+		
+		
+		String profilesField = MappingHelper.getLdapFieldName(sample, "profiles");
+		NotFilter noProfileFilter = new NotFilter(new LikeFilter(profilesField, "*"));
+		
+		AndFilter filter = new AndFilter();
+		filter.and(oldDateFilter);
+		filter.and(noProfileFilter);
+		
+		return (List<Person>) template.find(sample.buildBaseDn(), filter, getSearchControls() , sample.getClass());
 	}
 
 	

@@ -100,10 +100,10 @@ public interface PersonUpdateService extends PersonService {
 
 	/**
 	 * Return a list of persons with no connection date (has never logged on portal)
-	 * @param p the search profile
+	 * @param creationDate
 	 * @return list of person
 	 */
-	public List<Person> findByNoConnectionDate(Person p);
+	List<Person> findByNoConnectionDate(Date creationDate);
 
 	/**
 	 * Return a list of persons with a validity date less than the one passed
@@ -119,5 +119,14 @@ public interface PersonUpdateService extends PersonService {
 	 * @param connectedOnly filter by connection date
 	 * @return list of person
 	 */
-	List<Person> findByCriteria(Person search, boolean connectedOnly);
+	public List<Person> findByCriteria(Person search, boolean connectedOnly);
+
+	/**
+	 * Return a list of persons who not logged in since the reference date
+	 * @param referenceDate
+	 * @return
+	 */
+	public List<Person> findInactives(Date referenceDate);
+
+	
 }
