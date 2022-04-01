@@ -660,7 +660,8 @@ public class WorkspaceServiceImpl extends LdapServiceImpl implements WorkspaceSe
         int i = 1;
         for (CollabProfile cp : list) {
             if (cp.getType() == WorkspaceGroupType.local_group) {
-                String cpSuffix = cp.getCn().replace(workspaceId + "_", "");
+            	
+                String cpSuffix = cp.getCn().replace(workspaceId.toLowerCase() + "_", "");
 
                 if(NumberUtils.isNumber(cpSuffix)) {
                     int parseInt = Integer.parseInt(cpSuffix);
