@@ -441,9 +441,7 @@ public class PersonServiceImpl extends DirServiceImpl implements PersonUpdateSer
     @Override
     public Link getCardUrl(PortalControllerContext portalControllerContext, Person person) throws PortalException {
         Map<String, String> windowProperties = new HashMap<String, String>();
-        windowProperties.put("osivia.ajaxLink", "1");
         windowProperties.put("osivia.hideTitle", "1");
-        windowProperties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, "true");
         windowProperties.put(InternalConstants.PROP_WINDOW_TITLE, person.getDisplayName());
         windowProperties.put("uidFichePersonne", person.getUid());
 
@@ -465,8 +463,6 @@ public class PersonServiceImpl extends DirServiceImpl implements PersonUpdateSer
         Map<String, String> properties = new HashMap<String, String>();
         properties.put(InternalConstants.PROP_WINDOW_TITLE, bundle.getString(InternationalizationConstants.KEY_MY_PROFILE));
         properties.put("osivia.hideTitle", "1");
-        properties.put("osivia.ajaxLink", "1");
-        properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
 
         Map<String, String> parameters = new HashMap<String, String>();
 

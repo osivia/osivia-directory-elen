@@ -98,8 +98,6 @@ public class GroupManagementServiceImpl implements GroupManagementService {
             Map<String, String> properties = new HashMap<>();
             properties.put("osivia.hideTitle", "1");
             properties.put("osivia.bootstrapPanelStyle", String.valueOf(true));
-            properties.put(DynaRenderOptions.PARTIAL_REFRESH_ENABLED, String.valueOf(true));
-            properties.put("osivia.ajaxLink", "1");
             properties.put("osivia.group.cn", selected);
 
 
