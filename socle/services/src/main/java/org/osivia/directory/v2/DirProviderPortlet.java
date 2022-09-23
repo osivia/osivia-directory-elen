@@ -25,7 +25,10 @@ import org.osivia.portal.api.batch.IBatchService;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
 import org.osivia.portal.api.directory.v2.IDirProvider;
 import org.osivia.portal.api.locator.Locator;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.portlet.context.PortletApplicationContextUtils;
 
 import fr.toutatice.portail.cms.nuxeo.api.CMSPortlet;
@@ -55,6 +58,16 @@ public class DirProviderPortlet extends CMSPortlet {
 
         // export the directory service for other portlets
         ApplicationContext context = PortletApplicationContextUtils.getWebApplicationContext(portletContext);
+        
+
+        // In case of redeployment of portal.war
+        // The webapp is not reloaded and the beans are not initialized
+        // so it may raise classNotFoundException 
+        // Example for (Class.forName("org.apache.commons.collections.keyvalue.MultiKey") in InternationalizationService
+        ((AnnotationConfigWebApplicationContext) context).refresh();
+
+        
+        
         deletagate =  context.getBean(DirDelegate.class);
 
         deletagate.setPortletContext(portletContext);
