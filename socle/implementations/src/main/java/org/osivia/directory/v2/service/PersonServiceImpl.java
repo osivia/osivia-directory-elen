@@ -13,21 +13,9 @@
  */
 package org.osivia.directory.v2.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.naming.Name;
-import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
-
+import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
+import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -52,33 +40,21 @@ import org.osivia.portal.api.internationalization.IInternationalizationService;
 import org.osivia.portal.api.locator.Locator;
 import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
-import org.osivia.portal.core.cms.CMSException;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
 import org.osivia.portal.core.context.ControllerContextAdapter;
-import org.passay.AbstractCharacterRule;
-import org.passay.DigitCharacterRule;
-import org.passay.LengthRule;
-import org.passay.LowercaseCharacterRule;
-import org.passay.MessageResolver;
-import org.passay.PasswordData;
-import org.passay.PasswordValidator;
-import org.passay.PropertiesMessageResolver;
-import org.passay.Rule;
-import org.passay.RuleResult;
-import org.passay.RuleResultDetail;
-import org.passay.SpecialCharacterRule;
-import org.passay.UppercaseCharacterRule;
-import org.passay.WhitespaceRule;
+import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.ldap.NameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.toutatice.portail.cms.nuxeo.api.NuxeoController;
-import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoCustomizer;
-import fr.toutatice.portail.cms.nuxeo.api.services.INuxeoService;
+import javax.naming.Name;
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Person service implementation.
@@ -170,6 +146,13 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
         Name dn = this.getEmptyPerson().buildDn(uid);
         return getPerson(dn);
 
+    }
+
+
+    @Override
+    public Person refreshPerson(String uid) {
+        Name dn = this.getEmptyPerson().buildDn(uid);
+        return this.dao.refreshPerson(dn);
     }
 
 
@@ -407,18 +390,12 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
      *
      * @param person the person
      */
-    @SuppressWarnings("deprecation")
     protected void appendAvatar(Person person) {
         // Append avatar
         INuxeoService nuxeoService = Locator.findMBean(INuxeoService.class, INuxeoService.MBEAN_NAME);
         INuxeoCustomizer cmsCustomizer = nuxeoService.getCMSCustomizer();
 
-        Link userAvatar = new Link("", false);
-        try {
-            userAvatar = cmsCustomizer.getUserAvatar(null, person.getUid());
-        } catch (CMSException e) {
-
-        }
+        Link userAvatar = cmsCustomizer.getUserAvatar(person);
         person.setAvatar(userAvatar);
     }
 

@@ -13,13 +13,11 @@
  */
 package org.osivia.directory.v2.dao;
 
-import java.util.Date;
-import java.util.List;
+import org.osivia.portal.api.directory.v2.model.Person;
 
 import javax.naming.Name;
-
-import org.osivia.portal.api.directory.v2.model.Person;
-import org.springframework.ldap.NameNotFoundException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Loïc Billon
@@ -32,6 +30,13 @@ public interface PersonDao {
 	 * @return
 	 */
 	Person getPerson(Name dn);
+
+    /**
+     * Refresh person.
+     * @param dn person DN
+     * @return person
+     */
+    Person refreshPerson(Name dn);
 
 	/**
 	 * @param ps

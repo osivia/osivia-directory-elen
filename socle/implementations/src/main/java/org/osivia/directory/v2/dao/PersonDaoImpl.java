@@ -13,22 +13,6 @@
  */
 package org.osivia.directory.v2.dao;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.naming.Name;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.ModificationItem;
-import javax.naming.directory.SearchControls;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -40,19 +24,25 @@ import org.osivia.portal.api.directory.v2.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.ldap.NameNotFoundException;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.ldap.filter.AndFilter;
-import org.springframework.ldap.filter.BinaryLogicalFilter;
-import org.springframework.ldap.filter.Filter;
-import org.springframework.ldap.filter.LessThanOrEqualsFilter;
-import org.springframework.ldap.filter.LikeFilter;
-import org.springframework.ldap.filter.NotFilter;
-import org.springframework.ldap.filter.OrFilter;
+import org.springframework.ldap.filter.*;
 import org.springframework.ldap.odm.annotations.Attribute;
 import org.springframework.ldap.odm.annotations.Transient;
 import org.springframework.stereotype.Repository;
+
+import javax.naming.Name;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
+import javax.naming.directory.SearchControls;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Person DAO implementation.
@@ -103,27 +93,14 @@ public class PersonDaoImpl implements PersonDao {
     @Override
     @Cacheable(key = "#dn", value = {"personByDnCache"})
     public Person getPerson(Name dn) {
+        return this.getPersonNoCache(dn);
+    }
 
-        String dnUid = dn.get(dn.size() -1);
-        String[] split = dnUid.split("=");
-        // Check uid for special characters, do not query ldap if syntax is incorrect
-        Matcher matcher = this.uidPattern.matcher(split[1]);
-        
-        Person findByDn = null;
-        if (matcher.matches()) {
-            try {
-                findByDn = this.template.findByDn(dn, this.sample.getClass());
-            }
-            catch(NameNotFoundException nex) {
-                ldapLogger.warn("Person with dn "+dn+" not found in directory");
-            }
-        }
-        else {
-            ldapLogger.warn("Person with uid "+split[1]+" will be not resolved");
 
-        }
-        
-        return findByDn;
+    @Override
+    @CachePut(key = "#dn", value = {"personByDnCache"})
+    public Person refreshPerson(Name dn) {
+        return this.getPersonNoCache(dn);
     }
 
 
@@ -132,25 +109,22 @@ public class PersonDaoImpl implements PersonDao {
      */
     @Override
     public Person getPersonNoCache(Name dn) {
-        
-        String dnUid = dn.get(dn.size() -1);
+        String dnUid = dn.get(dn.size() - 1);
         String[] split = dnUid.split("=");
         // Check uid for special characters, do not query ldap if syntax is incorrect
         Matcher matcher = this.uidPattern.matcher(split[1]);
-        
+
         Person findByDn = null;
         if (matcher.matches()) {
             try {
                 findByDn = this.template.findByDn(dn, this.sample.getClass());
+            } catch (NameNotFoundException nex) {
+                ldapLogger.warn("Person with dn " + dn + " not found in directory");
             }
-            catch(NameNotFoundException nex) {
-                ldapLogger.warn("Person with dn "+dn+" not found");
-            }
+        } else {
+            ldapLogger.warn("Person with uid " + split[1] + " will be not resolved");
         }
-        else {
-            ldapLogger.warn("Person with uid "+split[1]+" will be not resolved");
 
-        }
         return findByDn;
     }
 
