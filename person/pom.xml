@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.osivia.services.directory</groupId>
+        <groupId>org.osivia.services.directory.elen</groupId>
         <artifactId>osivia-services-directory-parent</artifactId>
-        <version>4.7-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     
-    <groupId>org.osivia.services.directory.person</groupId>
+    <groupId>org.osivia.services.directory.elen.person</groupId>
     <artifactId>osivia-services-directory-person-parent</artifactId>
     <packaging>pom</packaging>
     
@@ -16,10 +16,8 @@
 
 
     <modules>  
-        <module>card</module>
         <module>user-settings</module>
         <module>first-connection</module>
-        <module>management</module>
         <module>creation</module>
     </modules>
     
@@ -28,7 +26,7 @@
 
         <!-- Socle -->
         <dependency>
-            <groupId>org.osivia.services.directory.socle</groupId>
+            <groupId>org.osivia.services.directory.elen.socle</groupId>
             <artifactId>osivia-services-directory-socle-interfaces</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>

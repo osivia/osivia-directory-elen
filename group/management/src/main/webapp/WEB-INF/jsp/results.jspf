@@ -1,3 +1,0 @@
-<div class="form-group results">
-    <jsp:include page="results.jsp" />
-</div>

@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osivia.portal.api.directory.v2.IDirDelegate;
 import org.osivia.portal.api.directory.v2.IDirService;
+import org.osivia.portal.api.transaction.ITransactionResource;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
@@ -117,4 +118,9 @@ public class DirDelegate implements IDirDelegate, PortletContextAware {
 		return appContext.getBean(ContextSourceTransactionManagerDelegate.class);
 	}
 
+    @Override
+    public ITransactionResource getTransactionResource() {
+        return new TransactionalResource( getDirectoryTxManagerDelegate() );
+     }
+	
 }

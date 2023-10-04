@@ -42,7 +42,6 @@ import org.osivia.portal.api.urls.IPortalUrlFactory;
 import org.osivia.portal.api.urls.Link;
 import org.osivia.portal.core.constants.InternalConstants;
 import org.osivia.portal.core.constants.InternationalizationConstants;
-import org.osivia.portal.core.context.ControllerContextAdapter;
 import org.passay.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -501,25 +500,20 @@ public class PersonServiceImpl extends LdapServiceImpl implements PersonUpdateSe
     public boolean isPortalAdministrator(PortalControllerContext portalControllerContext) throws PortalException {
         // Controller context & portlet request
         ControllerContext controllerContext;
-        PortletRequest request;
+        HttpServletRequest request;
         if (portalControllerContext == null) {
             controllerContext = null;
             request = null;
         } else {
-            controllerContext = ControllerContextAdapter.getControllerContext(portalControllerContext);
-            request = portalControllerContext.getRequest();
+            request = portalControllerContext.getHttpServletRequest();
         }
         // Portal administrator indicator attribute value
         Boolean attribute;
-        if (controllerContext == null) {
+        if (request == null) {
             attribute = null;
         } else {
-            // Search attribute value in principal scope
-            attribute = (Boolean) controllerContext.getAttribute(Scope.PRINCIPAL_SCOPE, "osivia.isAdmin");
-        }
-        if ((attribute == null) && (request != null)) {
             // Search attribute value in portlet request
-            attribute = (Boolean) request.getAttribute(InternalConstants.ADMINISTRATOR_INDICATOR_ATTRIBUTE_NAME);
+            attribute = (Boolean) request.getSession().getAttribute("osivia.isAdmin");
         }
 
         return BooleanUtils.toBoolean(attribute);

@@ -77,7 +77,7 @@ public final class PersonImpl implements Person, Serializable {
     private String title;
 
     /** UID. */
-    @Attribute
+    @Attribute(name = "elenid")
     private String uid;
 
     /** Profiles. */
@@ -385,7 +385,7 @@ public final class PersonImpl implements Person, Serializable {
      */
     @Override
     public Name buildDn(String uid)  {
-        return LdapNameBuilder.newInstance(buildBaseDn()).add("uid=" + Rdn.escapeValue(uid)).build();
+        return LdapNameBuilder.newInstance(buildBaseDn()).add("elenid=" + Rdn.escapeValue(uid)).build();
     }
 
 
