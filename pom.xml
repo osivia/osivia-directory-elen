@@ -11,7 +11,7 @@
     
     
     <properties>
-        <toutatice.version>5.2.15</toutatice.version>
+        <toutatice.version>5.2.16</toutatice.version>
         
         <jsoup.version>1.6.1</jsoup.version>
     </properties>
