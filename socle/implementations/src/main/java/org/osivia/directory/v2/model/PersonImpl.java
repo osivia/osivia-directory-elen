@@ -79,6 +79,14 @@ public final class PersonImpl implements Person, Serializable {
     /** UID. */
     @Attribute(name = "elenid")
     private String uid;
+    
+    /** UID. */
+    @Attribute
+    private String uidInit;
+
+    
+
+
 
     /** Profiles. */
     @Attribute(name = "portalPersonProfile")
@@ -397,4 +405,14 @@ public final class PersonImpl implements Person, Serializable {
         return this.dn.toString();
     }
 
+    public String getUidInit() {
+        return uidInit;
+    }
+
+
+    
+    public void setUidInit(String uidInit) {
+        this.uidInit = uidInit;
+    }
+    
 }
