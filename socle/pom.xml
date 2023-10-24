@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.osivia.services.directory.elen</groupId>
 		<artifactId>osivia-services-directory-parent</artifactId>
-		<version>1.0.0-RC2</version>
+		<version>1.0.0-RC3</version>
 	</parent>
 
 	<groupId>org.osivia.services.directory.elen.socle</groupId>
