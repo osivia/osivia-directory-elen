@@ -4,7 +4,7 @@
     
     <groupId>org.osivia.services.directory.elen</groupId>
     <artifactId>osivia-services-directory-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>OSIVIA Services - Directory - Parent</name>
